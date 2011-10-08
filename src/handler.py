@@ -37,19 +37,22 @@ class Bot( asynchat.async_chat ):
         # join desired channel:
         if line.find('End of /MOTD command.') > 0:
             self.write('JOIN %s' % self.channel)
-            # I know I should be checking if the JOIN command actually worked...
+            
+        # After NAMES list, the bot is in the channel
+        elif line.find(':End of /NAMES list.') > 0:
             self.joined_channel = True
         
         # respond to pings:
-        if self.joined_channel and line.startswith('PING'):
+        elif line.startswith('PING'):
             self.write('PONG')
             
         # if it isn't a ping request LOG IT:
-        else:
+        elif self.joined_channel:
             params = urlencode({'raw': line})
-            f = urlopen('http://192.168.1.102/irc:8080', params)
-            if f.read() != 'OK':
-                print "ERROR @ %s \n %s", line, f.read()
+            f = urlopen('http://192.168.1.102:8080/irc/', params)
+            response = f.read()
+            if response  != 'OK':
+                print "ERROR @ %s" % f.read()
  
     def run(self, host, port):
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
