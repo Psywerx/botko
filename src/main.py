@@ -9,7 +9,7 @@ if __name__ == '__main__':
     from handler import Bot
     
     # initialize
-    mypybot = Bot('botko123', 'botko', '#smotko-testing')
+    mypybot = Bot()
      
     # and run
     mypybot.run('irc.freenode.org', 6667)
