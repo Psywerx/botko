@@ -19,10 +19,10 @@ if __name__ == '__main__':
             
             
             # initialize
-            mypybot = Bot()
+            botko = Bot()
              
             # and run
-            mypybot.run(IRC_SERVER, IRC_PORT)
+            botko.run(IRC_SERVER, IRC_PORT)
             
             
         except Exception as e:
