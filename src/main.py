@@ -8,6 +8,7 @@ Created on Oct 7, 2011
 from traceback import format_exc
 from datetime import datetime
 from time import sleep
+from settings import *
 
 if __name__ == '__main__':
     from handler import Bot
@@ -16,13 +17,16 @@ if __name__ == '__main__':
             
         try:
             
+            
             # initialize
             mypybot = Bot()
              
             # and run
-            mypybot.run('irc.freenode.org', 6667)
+            mypybot.run(IRC_SERVER, IRC_PORT)
+            
             
         except Exception as e:
+            # ugly code to restart the bot on error
             
             f = open('error_log', 'a')
             f.write(str(datetime.now()) + "\n")
