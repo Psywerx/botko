@@ -1,10 +1,13 @@
 #!/usr/bin/python
 
-import socket, asyncore, asynchat
+from urllib import urlopen, urlencode
+from datetime import datetime
+import random
 import settings
 import signal
-from urllib import urlopen, urlencode
-import random
+import socket
+import asyncore
+import asynchat
 
  
 class Bot( asynchat.async_chat ):
@@ -50,6 +53,9 @@ class Bot( asynchat.async_chat ):
         if self.debug:
             print '>> %s' % text
         self.push( text + '\r\n' ) 
+    
+    def say(self, text):
+        self.write('PRIVMSG ' + self.channel + ' :' + text)
  
     def handle_connect(self):
         self.write('NICK %s' % self.nick)
@@ -83,8 +89,14 @@ class Bot( asynchat.async_chat ):
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             f = urlopen(settings.SERVER_URL, params)
             response = f.read()
-            if response  != 'OK':
-                print "ERROR @ %s" % response
+            if response.startswith('REPOST'):
+                self.say(response[8:])
+            elif response  != 'OK':
+                print "ERROR @ "
+                f = open('error_log', 'a')
+                f.write(str(datetime.now()) + "\n")
+                f.write(str(response + "\n\n"))
+                f.close()
  
     def run(self, host, port):
                 
