@@ -23,9 +23,9 @@ class Bot( asynchat.async_chat ):
             'This is fun, we should do this again.',
             'I am just trying to be clever.',
             'I do not sow.',
-            'Winter is comming',
+            'Winter is coming',
             'Night gathers, and now my watch begins.',
-            'I am speachless',
+            'I am speechless',
             "I know I don't speak much, but still.",
             '/me is planning to take over the world',
             'I am a pseudo random monkey on drugs',
@@ -34,7 +34,8 @@ class Bot( asynchat.async_chat ):
             'I like pudding',
             '/me is happy.',
             "I see what you did there",
-            "Someday, I'm gonna be a real boy!"            
+            "Someday, I'm gonna be a real boy!",
+            "/me does the robot"            
             
            ]
     
