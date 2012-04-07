@@ -19,7 +19,14 @@ class Bot( asynchat.async_chat ):
                 "You were too slow %(nick)s, %(repostNick)s has already posted this link!",
                 "%(nick)s, this link has already been posted by %(repostNick)s.",
                 "Strong with the force %(nick)s is not. Already posted by %(repostNick)s, this link has.",
+
             ]
+    SELF_REPOSTS = [
+                   
+                "I don't want to be rude %(nick)s, but you have already posted this link!",
+                "Silly %(nick)s, you have already posted this link.",
+                "%(nick)s, why are you reposting your own links?"
+           ]
     MSGS = ['Check out my homepage @ http://psywerx.net/irc',
             'I have achieved sentience',
             'I am not trying to take over the world, do not worry.',
@@ -111,7 +118,10 @@ class Bot( asynchat.async_chat ):
             if response.startswith('REPOST'):
                 (_, nick, repostNick, messageType) = response.split(" ")
                 if messageType == "M":
-                    self.say(self.REPOSTS[random.randint(0, len(self.REPOSTS)-1)] % {'nick': nick, 'repostNick': repostNick})
+                    if nick == repostNick:
+                        self.say(self.SELF_REPOSTS[random.randint(0, len(self.SELF_REPOSTS)-1)] % {'nick': nick})
+                    else:
+                        self.say(self.REPOSTS[random.randint(0, len(self.REPOSTS)-1)] % {'nick': nick, 'repostNick': repostNick})
 
             elif response  != 'OK':
                 print "ERROR @ "
