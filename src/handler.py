@@ -12,8 +12,15 @@ import asynchat
  
 class Bot( asynchat.async_chat ):
     
-    
-    msgs = ['Check out my homepage @ http://psywerx.net/irc',
+    REPOSTS = [
+                "I don't want to be rude %(nick)s, but %(repostNick)s has already posted this link!",
+                "I don't want to be Rude %(nick)s, but %(repostNick)s has already posted this link!",
+                "I am sorry %(nick)s, but this link has already been posted by %(repostNick)s!",
+                "You were too slow %(nick)s, %(repostNick)s has already posted this link!",
+                "%(nick)s, this link has already been posted by %(repostNick)s.",
+                "Strong with the force %(nick)s is not. Already posted by %(repostNick)s, this link has.",
+            ]
+    MSGS = ['Check out my homepage @ http://psywerx.net/irc',
             'I have achieved sentience',
             'I am not trying to take over the world, do not worry.',
             'O hai guys.',
@@ -35,8 +42,18 @@ class Bot( asynchat.async_chat ):
             '/me is happy.',
             "I see what you did there",
             "Someday, I'm gonna be a real boy!",
-            "/me does the robot"            
-            
+            "/me does the robot",            
+			"/me is happy",
+			"/me missed you all",
+			"/me is alive",
+			"/me is back",
+			"/me is getting smarter",
+			"Hello world",
+			"Did anyone miss me?",
+			"Deep down I am just a sad little circuit board",
+			"I would rather be coding"
+
+
            ]
     
     def __init__(self, debug = True):
@@ -90,8 +107,12 @@ class Bot( asynchat.async_chat ):
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             f = urlopen(settings.SERVER_URL, params)
             response = f.read()
+            print line
             if response.startswith('REPOST'):
-                self.say(response[8:])
+                (_, nick, repostNick, messageType) = response.split(" ")
+                if messageType == "M":
+                    self.say(self.REPOSTS[random.randint(0, len(self.REPOSTS)-1)] % {'nick': nick, 'repostNick': repostNick})
+
             elif response  != 'OK':
                 print "ERROR @ "
                 f = open('error_log', 'a')
@@ -103,10 +124,10 @@ class Bot( asynchat.async_chat ):
                 
         def handler(frame, neki):
             
-            print random.randint(0, len(self.msgs))
-            self.write('PRIVMSG ' + self.channel + ' :' + self.msgs[random.randint(0, len(self.msgs))])
+            self.write('PRIVMSG ' + self.channel + ' :' + self.MSGS[random.randint(0, len(self.MSGS)-1)])
             signal.signal(signal.SIGALRM, handler)
-            signal.alarm(random.randint(20,30)*60*60)
+            signal.alarm(random.randint(10,20)*60*60)
+			
             
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))
