@@ -27,7 +27,10 @@ class Bot( asynchat.async_chat ):
                 "%(nick)s, my memory banks indicate that %(repostNick)s already posted this link.",
                 "%(nick)s, you know what you did... and so does %(repostNick)s.",
             ]
-    SELF_REPOSTS = [                   
+    SELF_REPOSTS = [
+                   
+                "You really like that link, don't you? %(nick)s!",
+                "Hey everyone, %(nick)s is reposting his own link, so it has to be good.",
                 "I don't want to be rude %(nick)s, but you have already posted this link!",
                 "I want to be rude %(nick)s, so I'll point out that you have already posted this link!",
                 "Silly %(nick)s, you have already posted this link.",
