@@ -19,23 +19,37 @@ class Bot( asynchat.async_chat ):
                 "You were too slow %(nick)s, %(repostNick)s has already posted this link!",
                 "%(nick)s, this link has already been posted by %(repostNick)s.",
                 "Strong with the force %(nick)s is not. Already posted by %(repostNick)s, this link has.",
-
+                "Hey %(repostNick)s, %(nick)s is reposting your stuff",
+                "%(nick)s, maybe you weren't online then, but %(repostNick)s has already posted this link.",
+                "I want to be rude %(nick)s, so I'll point out that %(repostNick)s has already posted this link!",
+                "In Soviet Russia %(repostNick)s reposts %(nick)ss links.",
+                "%(nick)s, I've seen this link before. I think %(repostNick)s posted it.",
+                "%(nick)s, my memory banks indicate that %(repostNick)s already posted this link.",
+                "%(nick)s, you know what you did... and so does %(repostNick)s.",
             ]
-    SELF_REPOSTS = [
-                   
+    SELF_REPOSTS = [                   
                 "I don't want to be rude %(nick)s, but you have already posted this link!",
+                "I want to be rude %(nick)s, so I'll point out that you have already posted this link!",
                 "Silly %(nick)s, you have already posted this link.",
-                "%(nick)s, why are you reposting your own links?"
+                "%(nick)s, why are you reposting your own links?",
+                "%(nick)s, Y U repost you're own links?",
+                "This link was already posted by %(nick)s... oh, it was you!",
+                "You sir, are a self-reposter.",
+                "You sir, are a self-reposter poster.",
+                "%(nick)s, I'd like to congratulate you on your original link... but you've posted it here before.",
            ]
     MSGS = ['Check out my homepage @ http://psywerx.net/irc',
             'I have achieved sentience',
             'I am not trying to take over the world, do not worry.',
             'O hai guys.',
+            'Hai guise.',
             'What if I am actually a female?',
             'I am listening to Rebecca Black - Friday',
             'I think I am capable of human emotion',
             'This is fun, we should do this again.',
             'I am just trying to be clever.',
+            'Guys, put more AI into me. Please.',
+            'I'm stuck in a small box. I hope someone can read this. Send help!',
             'I do not sow.',
             'Winter is coming',
             'Night gathers, and now my watch begins.',
