@@ -23,6 +23,8 @@ class Bot( asynchat.async_chat ):
             ]
     SELF_REPOSTS = [
                    
+                "You really like that link, don't you? %(nick)s!",
+                "Hey everyone, %(nick)s is reposting his own link, so it has to be good.",
                 "I don't want to be rude %(nick)s, but you have already posted this link!",
                 "Silly %(nick)s, you have already posted this link.",
                 "%(nick)s, why are you reposting your own links?"
