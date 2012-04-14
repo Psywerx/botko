@@ -52,7 +52,7 @@ class Bot( asynchat.async_chat ):
             'This is fun, we should do this again.',
             'I am just trying to be clever.',
             'Guys, put more AI into me. Please.',
-            'I'm stuck in a small box. I hope someone can read this. Send help!',
+            "I'm stuck in a small box. I hope someone can read this. Send help!",
             'I do not sow.',
             'Winter is coming',
             'Night gathers, and now my watch begins.',
