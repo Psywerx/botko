@@ -8,6 +8,7 @@ import signal
 import socket
 import asyncore
 import asynchat
+from chitchat import chitchat
 
 
 class Bot( asynchat.async_chat ):
@@ -148,7 +149,10 @@ class Bot( asynchat.async_chat ):
                 f.write(str(datetime.now()) + "\n")
                 f.write(str(response + "\n\n"))
                 f.close()
-
+            else:
+                (speak, what) = chitchat(line)
+                if speak:
+                    self.say(what)
 
 
     def run(self, host, port):
