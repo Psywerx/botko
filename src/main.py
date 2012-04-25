@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     while True:
 
-        try:
+        #try:
 
             # initialize
             botko = Bot()
@@ -24,7 +24,7 @@ if __name__ == '__main__':
             botko.run(IRC_SERVER, IRC_PORT)
 
 
-        except Exception as e:
+        #except Exception as e:
             # ugly code to restart the bot on error
 
             f = open('error_log', 'a')

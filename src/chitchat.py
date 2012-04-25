@@ -19,13 +19,14 @@ class Chatty(object):
     # used when deciding whether to speak
     window_big = 60
     window_small = 10
+    accel_damp = 5
 
     def __init__(self):
         self.buffer = []
         self.corpus = Corpus()
         self.avg_len = range(self.messages)
         self.counter = 0
-        self.recent_timestamps = range(self.CHATTINESS_LONG)
+        self.recent_timestamps = range(self.window_big)
 
     def chat(self, line):
         if "PRIVMSG "+settings.CHANNEL not in line:
@@ -60,7 +61,7 @@ class Chatty(object):
 
     def should_speak(self):
         # starting conditions, we don't have enough timestamps :(
-        if self.counter < self.CHATTINESS_LONG:
+        if self.counter < self.window_big:
             return False
 
         return random.random() < max(self.accel_rate(),
@@ -76,15 +77,18 @@ class Chatty(object):
         return float(now-oldest_10)/float(now-oldest)
 
     def accel_rate(self):
-        last_15 = self.timestamps(0, 15)
+        w = self.accep_damp
+
+        last_15 = self.timestamps(0, w*3)
 
         v = [self.avg_diff(last_15[s:e]) for s,e in
-             zip(range(0, 20, 5), range(5, 20, 5))]
+             zip(range(0, w*3+w, w),
+                 range(w, w*3+w, w))]
 
         a1 = float(v[0]-v[1])
         a2 = float(v[1]-v[2])
 
-        if a2 <= 0 or a1 <= 0
+        if a2 <= 0 or a1 <= 0:
             return 0.0001
 
         return a2/a1
