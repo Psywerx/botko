@@ -2,35 +2,45 @@
 from time import time
 from itertools import *
 from Corpus import Corpus
-
-CORPUS = Corpus()
-
+from math import ceil
 
 def take(n, iterable):
     "Return first n items of the iterable as a list"
     return list(islice(iterable, n))
 
-def talk(n):
-    CORPUS.reset()
-    acc = take(n, CORPUS)
 
-    return " ".join([" ".join(ngram) for ngram in acc])
+class Chatty(object):
+    # how many recent messages to consider in stuff
+    MSGS = 5
 
-BUFFER = []
+    def __init__(self):
+        self.buffer = []
+        self.corpus = Corpus()
+        self.avg_len = range(self.MSGS)
+        self.counter = 0
 
-def chitchat(line):
-    if "PRIVMSG" not in line:
+    def chat(self, line):
+        if "PRIVMSG" not in line:
+            return False, ""
+
+        _, meta, message = line.split(':', 2)
+
+        self.buffer.append(message)
+        self.avg_len[self.counter%self.MSGS] = len(message.split(" "))
+
+        if len(self.buffer) >= self.MSGS:
+            self.corpus.add(" ".join(self.buffer))
+            del self.buffer[:]
+
+            print self.talk()
+            print ""
+
+
         return False, ""
 
-    _, meta, message = line.split(':', 2)
-    BUFFER.append(message)
+    def talk(self):
+        self.corpus.reset()
+        line = take(ceil(sum(self.avg_len)/self.MSGS),
+                    self.corpus)
 
-    if len(BUFFER) >= 5: # 5 felt like a good enough number of messages to treat as a unit
-        CORPUS.add(" ".join(BUFFER))
-        del BUFFER[:]
-
-        print talk(5)
-        print ""
-
-
-    return False, ""
+        return " ".join([" ".join(ngram) for ngram in line])
