@@ -40,30 +40,24 @@ class Corpus(UserDict.IterableUserDict):
         key = self.__hash(ngram)
         self.data[key] = value
 
-    # from http://eli.thegreenplace.net/2010/01/22/weighted-random-generation-in-python/
-    def __weighted_choice(self, weights):
-        rnd = random.random() * sum(weights)
-        for i, w in enumerate(weights):
-            rnd -= w
+    # adapted from
+    # http://eli.thegreenplace.net/2010/01/22/weighted-random-generation-in-python/
+    def __weighted_choice(self, items):
+        rnd = random.random() * sum([w for w, k in items])
+        for i, item in enumerate(items):
+            rnd -= item[0]
             if rnd < 0:
-                return i
+                return item[1]
 
     def __next(self, ngram):
-
-        keys = []
-        weights = []
         item = self.__getitem__(ngram)
 
         if len(item['next']) == 0:
             raise StopIteration
 
-        for k, w in item['next'].items():
-            keys.append(k)
-            weights.append(w)
-
-        key = keys[self.__weighted_choice(weights)]
-
-        return self.data[key]['text']
+        return self.data[self.__weighted_choice(zip(item['next'].values(),
+                                                    item['next'].keys()))
+                         ]['text']
 
     def next(self):
         if not hasattr(self, 'current_ngram'):
@@ -104,13 +98,8 @@ class Corpus(UserDict.IterableUserDict):
 
     def rewind(self):
         # make a weighed random pick where to start
-        keys = []
-        weights = []
 
-        for k in self.data.keys():
-            keys.append(k)
-            weights.append(self.data[k]['weight'])
-
-
-        key = keys[self.__weighted_choice(weights)]
-        self.current_ngram = self.data[key]['text']
+        self.current_ngram = self.data[
+            self.__weighted_choice(zip([e['weight'] for e in self.data.values()],
+                                       self.data.keys()))
+            ]['text']
