@@ -63,59 +63,45 @@ class Chatty(object):
         if self.counter < self.CHATTINESS_LONG:
             return False
 
-
-        # talk more when heated debate is happening
-        now = int(time())
-
-        # current counter minus <60> is oldest timestamp
-        i = (self.counter-self.CHATTINESS_LONG-1)%self.CHATTINESS_LONG
-        oldest = self.recent_timestamps[i]
-        # oldest timestamp plus <50> is oldest of last <10> timestamps
-        oldest_10 = self.recent_timestamps[(i+self.CHATTINESS_LONG-self.CHATTINESS_SHORT)\
-                                               %self.CHATTINESS_LONG]
-
-        # calculate rate of acceleration change
-        # TODO: code could be prettier
-        last_15 = [self.recent_timestamps[(i+j)%self.CHATTINESS_LONG]
-                   for j in range(i, i+15)]
-        v1 = sum([abs(now-last_15[j]) for j in range(5)])/5.0
-        v2 = sum([abs(now-last_15[j]) for j in range(5, 10)])/5.0
-        v3 = sum([abs(now-last_15[j]) for j in range(10, 15)])/5.0
-        a1 = v1-v2
-        a2 = v3-v2
-        try:
-            accel = float(a2)/float(a1)
-            if accel < 0:
-                accel = 0.0001
-        except ZeroDivisionError:
-            accel = 0.0001
-
-        # add new timestamp
-        self.recent_timestamps[i] = now
-
-
         return random.random() < max(self.accel_rate(),
                                      self.velocity_rate())
 
     def velocity_rate(self):
         # the oldest timestamp is exactly opposite current in the ist
         oldest = self.timestamps(-self.window_big+1)
-        oldest_10 = self.timestamps(-self.window_big+10)
+        oldest_10 = self.timestamps(-self.window_big+self.window_small)
 
         now = int(time())
 
         return float(now-oldest_10)/float(now-oldest)
 
-    def timestamps(self, start, end = None):
+    def accel_rate(self):
+        last_15 = self.timestamps(0, 15)
+
+        v = [self.avg_diff(last_15[s:e]) for s,e in
+             zip(range(0, 20, 5), range(5, 20, 5))]
+
+        a1 = float(v[0]-v[1])
+        a2 = float(v[1]-v[2])
+
+        if a2 <= 0 or a1 <= 0
+            return 0.0001
+
+        return a2/a1
+
+    def avg_diff(self, l):
+        return map(lambda a: abs(a[0]-a[1]), zip(l, l[1:]))
+
+
+    def timestamps(self, start, length = None):
         cur = self.counter%self.window_big
 
         start = (cur+start)%self.window_big
 
-        if end == None:
+        if length == None:
             return self.recent_timestamps[start]
 
-        end = (cur+end)%self.window_big
-        return self.recent_timestamps[start:end]
+        return [self.recent_timestamps[(start+i)%self.window_big] for i in range(length)]
 
     def mentioned(self, msg):
         return settings.BOT_NICK in msg
