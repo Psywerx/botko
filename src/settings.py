@@ -9,6 +9,6 @@ SERVER_URL   = "http://localhost:8000/irc/add/"
 BOT_NICK = "_chatty-botko_"
 BOT_NAME     = "chatty-botko"
 #CHANNEL      = "#smotko-testing"
-CHANNEL = "#swizec-testing"
+CHANNEL = "#psywerx"
 IRC_SERVER   = 'irc.freenode.org'
 IRC_PORT     = 6667

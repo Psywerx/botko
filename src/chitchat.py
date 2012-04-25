@@ -77,7 +77,7 @@ class Chatty(object):
         return float(now-oldest_10)/float(now-oldest)
 
     def accel_rate(self):
-        w = self.accep_damp
+        w = self.accel_damp
 
         last_15 = self.timestamps(0, w*3)
 
