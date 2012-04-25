@@ -15,8 +15,8 @@ class Chatty(object):
     MSGS = 5
 
     # used when deciding whether to speak
-    CHATTINESS_LONG = 10
-    CHATTINESS_SHORT = 2
+    CHATTINESS_LONG = 60
+    CHATTINESS_SHORT = 10
 
     def __init__(self):
         self.buffer = []
