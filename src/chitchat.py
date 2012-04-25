@@ -74,24 +74,29 @@ class Chatty(object):
                                                %self.CHATTINESS_LONG]
 
         # calculate rate of acceleration change
-        last_3 = [self.recent_timestamps[(i+j)%self.CHATTINESS_LONG]
-                  for j in range(i, i+3)]
-        v1 = abs(now-last_3[0])
-        v2 = abs(last_3[0]-last_3[1])
-        v3 = abs(last_3[1]-last_3[2])
+        # TODO: code could be prettier
+        last_15 = [self.recent_timestamps[(i+j)%self.CHATTINESS_LONG]
+                   for j in range(i, i+15)]
+        v1 = sum([abs(now-last_15[j]) for j in range(5)])/5.0
+        v2 = sum([abs(now-last_15[j]) for j in range(5, 10)])/5.0
+        v3 = sum([abs(now-last_15[j]) for j in range(10, 15)])/5.0
         a1 = v1-v2
         a2 = v3-v2
         try:
-            rate = float(a2)/float(a1)
+            accel = float(a2)/float(a1)
+            if accel < 0:
+                accel = 0.0001
         except ZeroDivisionError:
-            rate = 0.1
+            accel = 0.0001
 
         # add new timestamp
         self.recent_timestamps[i] = now
 
         # ratio between speed of last <10> messages and speed of last <60>
         # determines probability of speaking
-        return random.random() < 10*rate*float(now-oldest_10)/float(now-oldest)
+        speed = float(now-oldest_10)/float(now-oldest)
+
+        return random.random() < max(accel, speed)
 
     def mentioned(self, msg):
         return settings.BOT_NICK in msg
