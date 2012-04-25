@@ -30,6 +30,7 @@ class Corpus(UserDict.IterableUserDict):
             entry = self.data[key]
         except KeyError:
             entry = {'text': ngram,
+                     'weight': 1,
                      'next': {}}
             self.data[key] = entry
 
@@ -89,9 +90,27 @@ class Corpus(UserDict.IterableUserDict):
         except KeyError:
             self.data[key1]['next'][key2] = 1
 
+        self.data[key1]['weight'] += 1
+
     def add(self, text):
+        # decrease main weights and drop useless entries
+        for k in self.data.keys():
+            self.data[k]['weight'] -= 0.1
+            if self.data[k]['weight'] < 0:
+                del self.data[k]
+
         [self.add_pair(cur, next) for cur, next in pairwise(ngrams(text,
                                                                    self.ngram_len))]
 
     def rewind(self):
-        self.current_ngram = self.data[random.choice(self.keys())]['text']
+        # make a weighed random pick where to start
+        keys = []
+        weights = []
+
+        for k in self.data.keys():
+            keys.append(k)
+            weights.append(self.data[k]['weight'])
+
+
+        key = keys[self.__weighted_choice(weights)]
+        self.current_ngram = self.data[key]['text']
