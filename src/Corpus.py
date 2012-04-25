@@ -3,7 +3,18 @@ from itertools import *
 import random
 import UserDict
 
+def pairwise(iterable):
+        "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+        a, b = tee(iterable)
+        next(b, None)
+        return izip(a, b)
+
+def ngrams(text, l):
+    text = text.split(" ")
+    return [text[i:i+1] for i in xrange(len(text)-1) if len(text[i:i+1]) > 0]
+
 class Corpus(UserDict.IterableUserDict):
+    ngram_len = 1
 
     def __iter__(self):
         return self
@@ -60,7 +71,7 @@ class Corpus(UserDict.IterableUserDict):
         self.current_ngram = self.__next(self.current_ngram)
         return self.current_ngram
 
-    def add(self, current, next):
+    def add_pair(self, current, next):
         key1 = self.__hash(current)
         key2 = self.__hash(next)
 
@@ -77,3 +88,9 @@ class Corpus(UserDict.IterableUserDict):
             self.data[key1]['next'][key2] += 1
         except KeyError:
             self.data[key1]['next'][key2] = 1
+
+    def add(self, text):
+        [self.add_pair(cur, next) for cur, next in pairwise(ngrams(text,
+                                                                   self.ngram_len))]
+
+
