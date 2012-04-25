@@ -78,12 +78,12 @@ class Corpus(UserDict.IterableUserDict):
         entry1 = self.__getitem__(current)
         entry2 = self.__getitem__(next) # for the side-effect
 
-        # increase weight
-        try:
-            entry1['next'][key2] += 1
-        except KeyError:
-            entry1['next'][key2] = 1
+        # weaken old connections and drop bad ones
+        self.data[key1]['next'] = dict([(k, w-0.1)
+                                        for k, w in self.data[key1]['next'].items()
+                                        if w > 0])
 
+        # increase weight
         try:
             self.data[key1]['next'][key2] += 1
         except KeyError:
