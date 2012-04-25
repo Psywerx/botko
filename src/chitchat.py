@@ -94,7 +94,7 @@ class Chatty(object):
         return a2/a1
 
     def avg_diff(self, l):
-        return map(lambda a: abs(a[0]-a[1]), zip(l, l[1:]))
+        return sum(map(lambda a: abs(a[0]-a[1]), zip(l, l[1:])))/float(len(l))
 
 
     def timestamps(self, start, length = None):
