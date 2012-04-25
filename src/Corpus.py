@@ -66,7 +66,7 @@ class Corpus(UserDict.IterableUserDict):
 
     def next(self):
         if not hasattr(self, 'current_ngram'):
-            self.current_ngram = self.data[random.choice(self.keys())]['text']
+            self.reset()
 
         self.current_ngram = self.__next(self.current_ngram)
         return self.current_ngram
@@ -93,4 +93,5 @@ class Corpus(UserDict.IterableUserDict):
         [self.add_pair(cur, next) for cur, next in pairwise(ngrams(text,
                                                                    self.ngram_len))]
 
-
+    def reset(self):
+        self.current_ngram = self.data[random.choice(self.keys())]['text']
