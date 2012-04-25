@@ -5,6 +5,8 @@ from Corpus import Corpus
 from math import ceil
 import random
 
+import settings
+
 def take(n, iterable):
     "Return first n items of the iterable as a list"
     return list(islice(iterable, n))
@@ -38,7 +40,7 @@ class Chatty(object):
             self.corpus.add(" ".join(self.buffer))
             del self.buffer[:]
 
-        speak = self.should_speak()
+        speak = self.should_speak() or self.mentioned(message)
         msg = self.talk() if speak else ""
 
         self.counter += 1
@@ -46,6 +48,9 @@ class Chatty(object):
         return speak, msg
 
     def talk(self):
+        if self.counter < self.MSGS:
+            return "I'm just admiring the shape of your skull"
+
         self.corpus.rewind()
         line = take(ceil(sum(self.avg_len)/self.MSGS),
                     self.corpus)
@@ -73,3 +78,6 @@ class Chatty(object):
         # ratio between speed of last <10> messages and speed of last <60>
         # determines probability of speaking
         return random.random() > 1-float(now-oldest_10)/float(now-oldest)
+
+    def mentioned(self, msg):
+        return settings.BOT_NICK in msg
