@@ -15,6 +15,7 @@ def ngrams(text, l):
 
 class Corpus(UserDict.IterableUserDict):
     ngram_len = 1
+    decay = 0.1
 
     def __iter__(self):
         return self
@@ -74,7 +75,7 @@ class Corpus(UserDict.IterableUserDict):
         entry2 = self.__getitem__(next) # for the side-effect
 
         # weaken old connections and drop bad ones
-        self.data[key1]['next'] = dict([(k, w-0.1)
+        self.data[key1]['next'] = dict([(k, w-self.decay)
                                         for k, w in self.data[key1]['next'].items()
                                         if w > 0])
 
@@ -89,7 +90,7 @@ class Corpus(UserDict.IterableUserDict):
     def add(self, text):
         # decrease main weights and drop useless entries
         for k in self.data.keys():
-            self.data[k]['weight'] -= 0.1
+            self.data[k]['weight'] -= self.decay
             if self.data[k]['weight'] < 0:
                 del self.data[k]
 
