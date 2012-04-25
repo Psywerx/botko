@@ -1,4 +1,3 @@
-
 from itertools import *
 import random
 import UserDict
@@ -11,7 +10,7 @@ def pairwise(iterable):
 
 def ngrams(text, l):
     text = text.split(" ")
-    return [text[i:i+1] for i in xrange(len(text)-1) if len(text[i:i+1]) > 0]
+    return [text[i:i+l] for i in xrange(len(text)-l) if len(text[i:i+l]) > 0]
 
 class Corpus(UserDict.IterableUserDict):
     ngram_len = 1
