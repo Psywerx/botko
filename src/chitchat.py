@@ -15,8 +15,8 @@ class Chatty(object):
     MSGS = 5
 
     # used when deciding whether to speak
-    CHATTINESS_LONG = 60
-    CHATTINESS_SHORT = 10
+    CHATTINESS_LONG = 10
+    CHATTINESS_SHORT = 2
 
     def __init__(self):
         self.buffer = []
@@ -46,7 +46,7 @@ class Chatty(object):
         return speak, msg
 
     def talk(self):
-        self.corpus.reset()
+        self.corpus.rewind()
         line = take(ceil(sum(self.avg_len)/self.MSGS),
                     self.corpus)
 
@@ -58,15 +58,16 @@ class Chatty(object):
 
         # current counter minus <60> is oldest timestamp
         i = (self.counter-self.CHATTINESS_LONG-1)%self.CHATTINESS_LONG
-        oldest = self.last_60[i]
+        oldest = self.recent_timestamps[i]
         # oldest timestamp plus <50> is oldest of last <10> timestamps
-        oldest_10 = self.last_60[(i+self.CHATTINESS_LONG-self.CHATTINESS_SHORT)\
-                                     %self.CHATTINESS_LONG]
+        oldest_10 = self.recent_timestamps[(i+self.CHATTINESS_LONG-self.CHATTINESS_SHORT)\
+                                               %self.CHATTINESS_LONG]
 
         # add new timestamp
-        self.last_60[i] = now
+        self.recent_timestamps[i] = now
 
-        if oldest == 0 or oldest_10 == 0:
+        # starting conditions
+        if self.counter < self.CHATTINESS_LONG:
             return False
 
         # ratio between speed of last <10> messages and speed of last <60>
