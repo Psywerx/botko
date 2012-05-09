@@ -10,3 +10,4 @@ BOT_NAME     = "botko"
 CHANNEL      = "#smotko-testing"
 IRC_SERVER   = 'irc.freenode.org'
 IRC_PORT     = 6667
+SIMON_USERS  = ["smotko"]
