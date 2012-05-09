@@ -76,8 +76,8 @@ class Bot( asynchat.async_chat ):
 			"Did anyone miss me?",
 			"Deep down I am just a sad little circuit board",
 			"I would rather be coding"
-
-
+            "I know the question to 42. But I'm not tellin'"
+            
            ]
     
     def __init__(self, debug = True):
