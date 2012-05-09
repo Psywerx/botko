@@ -124,6 +124,10 @@ class Bot( asynchat.async_chat ):
         elif line.startswith('PING'):
             self.write('PONG')
             
+        # respond to echo requests            
+        elif line.startswith('simon says: '):
+            self.write(line[12:])            
+            
         # if it isn't a ping request LOG IT:
         
         elif self.joined_channel:
