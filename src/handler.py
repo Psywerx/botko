@@ -123,10 +123,17 @@ class Bot( asynchat.async_chat ):
         # respond to pings:
         elif line.startswith('PING'):
             self.write('PONG')
-            
+      
         # if it isn't a ping request LOG IT:
         
         elif self.joined_channel:
+             # respond to echo requests            
+            if not line.startswith('ERROR'):
+                s = line.split(' ', 2)
+                nick = s[0].split('@')[0][1:].split('!')[0]
+                msg = s[2].split(' :', 1)[1]
+                if msg.startswith('simon says: ') and nick in settings.SIMON_USERS:
+                    self.say(msg[12:])        
             
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             f = urlopen(settings.SERVER_URL, params)
@@ -139,14 +146,14 @@ class Bot( asynchat.async_chat ):
                         self.say(self.SELF_REPOSTS[random.randint(0, len(self.SELF_REPOSTS)-1)] % {'nick': nick})
                     else:
                         self.say(self.REPOSTS[random.randint(0, len(self.REPOSTS)-1)] % {'nick': nick, 'repostNick': repostNick})
-
+        
             elif response  != 'OK':
                 print "ERROR @ "
                 f = open('error_log', 'a')
                 f.write(str(datetime.now()) + "\n")
                 f.write(str(response + "\n\n"))
                 f.close()
- 
+                
     def run(self, host, port):
                 
         def handler(frame, neki):
