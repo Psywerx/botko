@@ -135,10 +135,11 @@ class Bot(asynchat.async_chat):
         elif self.joined_channel:
             # respond to some messages     
             try:    
+                # simon says:
                 nick, msg = self.parse(line)
                 if msg.lower().startswith('simon says: ') and nick in settings.SIMON_USERS:
                     self.say(msg[12:])   
-				#fortune cookies
+                # fortune cookies
                 if msg.lower().startswith('i want a cookie'):
                     f = urlopen(settings.COOKIEZ_URL)
                     response = ' '.join(f.read().split('\n'))
