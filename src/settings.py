@@ -10,4 +10,6 @@ BOT_NAME     = "botko"
 CHANNEL      = "#smotko-testing"
 IRC_SERVER   = 'irc.freenode.org'
 IRC_PORT     = 6667
+COOKIEZ_URL  = "http://www.fortunefortoday.com/getfortuneonly.php"
 SIMON_USERS  = ["smotko"]
+

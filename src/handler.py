@@ -127,13 +127,19 @@ class Bot( asynchat.async_chat ):
         # if it isn't a ping request LOG IT:
         
         elif self.joined_channel:
-             # respond to echo requests            
+             # respond to some messages            
             if not line.startswith('ERROR'):
                 s = line.split(' ', 2)
                 nick = s[0].split('@')[0][1:].split('!')[0]
-                msg = s[2].split(' :', 1)[1]
+                msg = s[2].split(' :', 1)[1]               
+                #echo
                 if msg.startswith('simon says: ') and nick in settings.SIMON_USERS:
-                    self.say(msg[12:])        
+                    self.say(msg[12:])                                     
+                #fortune cookies
+                if msg.startswith('i want a cookie'):
+                    f = urlopen(settings.COOKIEZ_URL)
+                    response = ' '.join(f.read().split('\n'))
+                    self.say(response)
             
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             f = urlopen(settings.SERVER_URL, params)
