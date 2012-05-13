@@ -1,0 +1,29 @@
+botko-store: saving things into named variables.
+    Use case - Movie-night storage:
+        ADDING: 
+         Smotko: _botko_ movie-night store This cool movie
+        _botko_: Thank you Smotko. I stored your movie in movie-night.
+        
+        LISTING:
+         Smotko: _botko_ movie-night
+        _botko_: currently in movie-night: This cool movie, Some other cool movie
+        
+         Smotko: _botko_ stores
+        _botko_: movie-night, cool-books, bash-tricks
+        
+        REMOVING:
+         Smotko: _botko_ movie-night remove This cool movie!
+        _botko_: This cool movie removed from movie-night!
+        
+        CLEAR:
+         Smotko: _botko_ movie-night clear
+        _botko_: All items in movie-night cleared.
+       
+botko-count: everytime somebody says <nick>++, _botko_ should count.
+    Use cases:
+        * Every week, month, year *
+        _botko_: Best IRCer this week/month/year is <nick>, with 42 upboats!
+        _botko_: Closely followed by <some-other-nick>, with 36 upboats!
+        
+         Smotko: _botko_ leaderboard for this month
+        _botko_: <nick> 42, <some-other-nick> 36, ...

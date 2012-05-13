@@ -1,1 +1,7 @@
 A simple IRC bot
+
+Features:
+    1. Log IRC chats (server side code @ https://github.com/Smotko/psywerx)
+    2. Say random things from time to time
+    3. Simon says (by edofic)
+    4. I want a cookie (by edofic)
