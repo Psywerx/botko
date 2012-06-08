@@ -24,7 +24,7 @@ class Bot(asynchat.async_chat):
         self.ident = None
         self.debug = debug
         self.joined_channel = False
-        self.logic = logic
+        self.logic = logic.BotLogic(self)
         self.ac_in_buffer_size = self.ac_out_buffer_size = 8192   # 2*default
 
     def write(self, text):
@@ -45,15 +45,17 @@ class Bot(asynchat.async_chat):
     def log_error(self, error):
         f = open('error.log', 'a')
         f.write(str(datetime.now()) + '\n')
-        f.write(str(error + "\n\n"))
+        f.write(str(error + '\n\n'))
         f.close()
+        if self.debug:
+          print error
     
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
         if self.debug:
             print '%s' % line
-        self.logic.new_input(line, self)
+        self.logic.new_input(line)
     
     def run(self, host, port):
         def handler(frame, neki):
