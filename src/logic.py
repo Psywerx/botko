@@ -23,38 +23,59 @@ class BotLogic:
               _, nick, repostNick, messageType = response.split(' ')
               if messageType == 'M':
                   responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
-                  self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick': nick, 'repostNick': repostNick})
+                  self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick})
           elif response != 'OK':
               self.bot.log_error(response)
       except URLError:
           self.bot.log_error('ERROR Could not log line: ' + line)
+    
+    def get_action_code(self, line):
+        if line.startswith('ERROR'): raise Exception('some IRC error')
+        # behold, IRC protocol documentation:
+        # :card.freenode.net 376 kjhgfdsa :End of /MOTD command.
+        # :card.freenode.net 353 kjhgfdsa = #ubuntu :cornfeed calexnk edlinde Jettis zenix
+        # :card.freenode.net 366 kjhgfdsa #ubuntu :End of /NAMES list.
+        # :MsAshley!~pjwaffle@75-172-10-58.tukw.qwest.net PRIVMSG #ubuntu :It opens an http-vnc port, however, according to nmap
+        # :sh4d0wg0d!~root@187.101.162.128 JOIN #ubuntu
+        # :Dreamer3!~Dreamer3@74-133-171-106.dhcp.insightbb.com QUIT :Quit: Leaving...
+        action = line.split(' ', 2)[1]
+        if action == '376': return 'END_MOTD'
+        if action == '353': return 'NAMES_LIST'
+        if action == '366': return 'END_NAMES'
+        return action.upper()
 
-    def parse(self, line):
-        if line.startswith('ERROR'):
-          raise Exception('some error')
-        # TODO: document IRC protocol more
-        s = line.split(' ', 2)
-        nick = s[0].split('@')[0][1:].split('!')[0]
-        msg = s[2].trim().split(':', 1)[1].trim()
+    def parse_msg(self, line):
+        nick = line[1:line.find('!')]
+        msg_start = line.find(':', 1)
+        msg = line[msg_start:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
         return nick, msg
 
     def new_input(self, line):
-        if 'End of /MOTD command.' in line:  # after server MOTD, join desired channel
-            # TODO: ensure 'End of /MOTD command.' message came from server
-            self.bot.write('JOIN %s' % bot.channel)
-        elif 'End of /NAMES list.' in line:  # after NAMES list, the bot is in the channel
-            # TODO: ensure command from server
-            # TODO: catch NAMES
+        if line.startswith('PING'):   # respond to pings
+            return self.bot.write('PONG')
+        try:
+            action_code = self.get_action_code(line)
+        except:
+            return self.bot.log_error('ERROR on IRC: ' + line)
+          
+        if action_code is 'END_MOTD':  # after server MOTD, join desired channel
+            self.bot.write('JOIN ' + bot.channel)
+        
+        elif action_code is 'NAMES_LIST':
+            pass  # TODO
+        
+        elif action_code is 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.bot.joined_channel = True
-        elif line.startswith('PING'):   # respond to pings
-            self.bot.write('PONG')
-            
         elif bot.joined_channel:  # respond to some messages     
             try:
-                nick, msg = parse(line)
+                nick, msg = parse_msg(line)
             except:
-                self.bot.log_error('ERROR parsing line: ' + line)
-                return
+                return self.bot.log_error('ERROR parsing msg line: ' + line)
+            
+            if action_code is 'JOIN':
+                pass  # TODO
+            elif action_code is in ('PART', 'QUIT'):
+                pass  # TODO
             
             self.log_line_and_notify_on_repost(line)
                 
@@ -70,7 +91,7 @@ class BotLogic:
             
             # count karma upvote
             if '++' in msg_lower:
-              pass
+              pass  # TODO
             
             tokens = self.trimmer.sub(' ', msg_lower).split(' ')
             
