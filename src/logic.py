@@ -1,20 +1,27 @@
-import settings
 from urllib import urlencode
 from urllib2 import urlopen
 import re
+import pickle
+from collections import defaultdict
+
+import settings
 
 class BotLogic:
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
+        self.joined_channel = False
         self.trimmer = re.compile('[ ]+')  # used for replacing a series of spaces with a single one
+        self.usertrim = re.compile('[!+@]')  # used to strip nicknames of any mode-dependent prefixes (@-op, +-voice, etc.)
+        self.known_users = {}   # dict of known users present in the channel
         self.actions = {}   # actions dict, holding 'keyword':action_func, easily populated below for multiple keywords per action
                             # action_func accepts one argument, which is a list of tokens following the keyword
-        karma = (self.karma_stats, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats', ))
-        movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez'))
-        for action in (karma, movies):
+        karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats', ))
+        movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
+        notify = (self.notify, ('notify', 'remind', 'tell', ))
+        for action in (karma, movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
-    
+        
     def log_line_and_notify_on_repost(self, line):
       try:
           params = urlencode({'raw': line, 'token': settings.TOKEN})
@@ -51,8 +58,7 @@ class BotLogic:
         return nick, msg
 
     def new_input(self, line):
-        if line.startswith('PING'):   # respond to pings
-            return self.bot.write('PONG')
+        if line.startswith('PING'): return self.bot.write('PONG')  # ping-pong
         try:
             action_code = self.get_action_code(line)
         except:
@@ -60,22 +66,20 @@ class BotLogic:
           
         if action_code is 'END_MOTD':  # after server MOTD, join desired channel
             self.bot.write('JOIN ' + bot.channel)
-        
         elif action_code is 'NAMES_LIST':
-            pass  # TODO
-        
+            self.known_users = {nick.lower():0 for nick in self.usertrim(line.split(':')[2], '').split(' ')}
         elif action_code is 'END_NAMES':  # after NAMES list, the bot is in the channel
-            self.bot.joined_channel = True
-        elif bot.joined_channel:  # respond to some messages     
+            self.joined_channel = True
+        elif self.joined_channel:  # respond to some messages     
             try:
                 nick, msg = parse_msg(line)
             except:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
             
             if action_code is 'JOIN':
-                pass  # TODO
+                self.known_users[nick] = 0  # make newly-joined user known
             elif action_code is in ('PART', 'QUIT'):
-                pass  # TODO
+                del self.known_users[nick]  # forget user when he quits/parts?
             
             self.log_line_and_notify_on_repost(line)
                 
@@ -91,12 +95,17 @@ class BotLogic:
             
             # count karma upvote
             if '++' in msg_lower:
-              pass  # TODO
+              for user in msg.split(' '):
+                if user.startswith('++') and user[2:] in self.known_users:
+                  self.karma.increase(user[2:])
+                elif user.endswith('++') and user[:-2] in self.known_users:
+                  self.karma.increase(user[:-2])
+                  
             
             tokens = self.trimmer.sub(' ', msg_lower).split(' ')
             
             # other actions require that botko is called first, e.g.
-            # Someone: _botko_ gief karma stac
+            # Someone: _botko_ gief karma statz
             if len(tokens) >= 2 and tokens[0] == bot.nick:
               
               # allow action keyword on the first or the second place, e.g.
@@ -111,7 +120,20 @@ class BotLogic:
                 self.bot.say('What, I don\'t even...')
                 self.print_usage()
     
-    def karma_stats(tokens):
+    def karma(tokens):
+        def increase(user):
+          try:
+            f = open('karma_stats.dict', 'rb')
+            stats = pickle.load(f)
+            f.close()
+          except pickle.UnpicklingError:
+            stats = defaultdict(int)
+          
+          stats[user] += 1
+          f = open('karma_stats.dict', 'wb')
+          pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
+          f.close()
+          
         # show karma stats
         pass
     
