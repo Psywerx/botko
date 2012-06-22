@@ -6,6 +6,13 @@ from collections import defaultdict
 
 import settings
 
+def static_var(varname, value):
+    """Create a static var `varname` with initial `value` on a decorated function."""
+    def decorate(func):
+        setattr(func, varname, value)
+        return func
+    return decorate
+
 class BotLogic:
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
@@ -17,7 +24,7 @@ class BotLogic:
                             # action_func accepts one argument, which is a list of tokens following the keyword
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats', ))
         movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
-        notify = (self.notify, ('notify', 'remind', 'tell', ))
+        notify = (self.notifications, ('notify', 'remind', 'tell', ))
         for action in (karma, movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
@@ -67,9 +74,10 @@ class BotLogic:
         if action_code is 'END_MOTD':  # after server MOTD, join desired channel
             self.bot.write('JOIN ' + bot.channel)
         elif action_code is 'NAMES_LIST':
-            self.known_users = {nick.lower():0 for nick in self.usertrim(line.split(':')[2], '').split(' ')}
+            self.known_users = {nick.lower():nick for nick in self.usertrim(line.split(':')[2], '').split(' ')}
         elif action_code is 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.joined_channel = True
+
         elif self.joined_channel:  # respond to some messages     
             try:
                 nick, msg = parse_msg(line)
@@ -77,7 +85,7 @@ class BotLogic:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
             
             if action_code is 'JOIN':
-                self.known_users[nick] = 0  # make newly-joined user known
+                self.known_users[nick.lower()] = nick  # make newly-joined user known
             elif action_code is in ('PART', 'QUIT'):
                 del self.known_users[nick]  # forget user when he quits/parts?
             
@@ -93,13 +101,16 @@ class BotLogic:
             if msg_lower.startswith('i want a cookie'):
                 self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')))
             
+            if msg_lower == '@all':
+              self.bot.say('CC: ' + self.known_users.values().join(', '))
+            
             # count karma upvote
             if '++' in msg_lower:
-              for user in msg.split(' '):
-                if user.startswith('++') and user[2:] in self.known_users:
-                  self.karma.increase(user[2:])
-                elif user.endswith('++') and user[:-2] in self.known_users:
-                  self.karma.increase(user[:-2])
+                for user in msg.split(' '):
+                    if user.startswith('++') and user[2:] in self.known_users:
+                        self.karma.increase(self.known_users[user[2:]])
+                    elif user.endswith('++') and user[:-2] in self.known_users:
+                        self.karma.increase(self.known_users[user[:-2]])
                   
             
             tokens = self.trimmer.sub(' ', msg_lower).split(' ')
@@ -108,35 +119,43 @@ class BotLogic:
             # Someone: _botko_ gief karma statz
             if len(tokens) >= 2 and tokens[0] == bot.nick:
               
-              # allow action keyword on the first or the second place, e.g.
-              # Someone: _botko_ action_kw_here or_action_kw_here
-              action, kw_pos = self.actions.get(tokens[1]), 2
-              if action is None and len():
-                action, kw_pos = self.actions.get(tokens[2]), 3
-              
-              if action is not None:
-                action(tokens[kw_pos:])
-              else:
-                self.bot.say('What, I don\'t even...')
-                self.print_usage()
+                # allow action keyword on the first or the second place, e.g.
+                #   Someone: _botko_ action_kw_here action_params
+                #   Someone: _botko_ whatever action_kw_here action_params
+                action, kw_pos = self.actions.get(tokens[1]), 1
+                if action is None and len():
+                    action, kw_pos = self.actions.get(tokens[2]), 2
+                
+                if action is not None:
+                    action(tokens[kw_pos+1:])   # send following tokens to the action logic
+                else:
+                    self.bot.say('What you want, I don\'t even...')
+                    self.print_usage()
     
+    @static_var('increase', None)
     def karma(tokens):
-        def increase(user):
-          try:
-            f = open('karma_stats.dict', 'rb')
-            stats = pickle.load(f)
+        karma.increase = lambda user:
+            try:
+                f = open('karma_stats.dict', 'rb')
+                stats = pickle.load(f)
+                f.close()
+            except pickle.UnpicklingError:
+                stats = defaultdict(int)
+            
+            stats[user] += 1
+            f = open('karma_stats.dict', 'wb')
+            pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
             f.close()
-          except pickle.UnpicklingError:
-            stats = defaultdict(int)
-          
-          stats[user] += 1
-          f = open('karma_stats.dict', 'wb')
-          pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
-          f.close()
           
         # show karma stats
         pass
     
     def movie_night(tokens):
+        pass
+    
+    def notifications(tokens):
+        pass
+    
+    def print_usage():
         pass
 
