@@ -1,10 +1,10 @@
+from collections import defaultdict
 from urllib import urlencode
 from urllib2 import urlopen, URLError
-import re
 import pickle
-from collections import defaultdict
-
+import re
 import settings
+
 
 def static_var(varname, value):
     """Create a static var `varname` with initial `value` on a decorated function."""
@@ -23,9 +23,11 @@ class BotLogic:
         self.actions = {}   # actions dict, holding 'keyword':action_func, easily populated below for multiple keywords per action
                             # action_func accepts one argument, which is a list of tokens following the keyword
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats', ))
-        movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
-        notify = (self.notifications, ('notify', 'remind', 'tell', ))
-        for action in (karma, movies, notify):
+        cookie = (self.cookie, ('cookie', 'fortune',))
+        help = (self.help, ('help', 'commands', 'man', '???', 'usage',  ))
+        #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
+        #notify = (self.notifications, ('notify', 'remind', 'tell', ))
+        for action in (karma, cookie, help): #movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
         
@@ -97,23 +99,22 @@ class BotLogic:
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
                 self.bot.say(msg[12:])   
             
-            # FFA fortune cookies
-            if msg_lower.startswith('i want a cookie'):
-                self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')))
-            
-            if msg_lower == '@all':
-              self.bot.say('CC: ' + ', '.join(self.known_users.values()))
+            if '@all' in msg_lower:
+                blacklist = [settings.BOT_NICK, nick]
+                self.bot.say('CC: ' + ', '.join([i for i in self.known_users.values() if i not in blacklist]))
             
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
-                    if user.startswith('++') and user[2:] in self.known_users and user[2:] != nick:
-                        self.increase_karma(self.known_users[user[2:]])
-                    elif user.endswith('++') and user[:-2] in self.known_users and user[:-2] != nick:
-                        self.increase_karma(self.known_users[user[:-2]])
-                  
+                    self.bot.say(', '.join(self.known_users) + " "  + user[:-2] + " sss " + nick)
+                 
+                    if (user.endswith('++') or user.startswith('++')) and user[:-2] in self.known_users:
+                        if user[:-2] == nick:
+                            self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!")
+                        else:
+                            self.increase_karma(self.known_users[user[:-2]])
             
-            tokens = self.trimmer.sub(' ', msg_lower).split(' ')
+            tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             
             # other actions require that botko is called first, e.g.
             # Someone: _botko_ gief karma statz
@@ -132,29 +133,32 @@ class BotLogic:
                     self.bot.say('What you want, I don\'t even...')
                     self.print_usage()
     
-    def karma(tokens):          
-        # show karma stats
+    def karma(self, tokens):          
+        self.bot.say("hello")
         pass
         
-    def increase_karma(user):
-        try:
-            f = open('karma_stats.dict', 'rb')
-            stats = pickle.load(f)
-            f.close()
-        except pickle.UnpicklingError:
-            stats = defaultdict(int)
+    def increase_karma(self, user):
+        self.bot.say(user + " just got an upboat")
         
-        stats[user] += 1
-        f = open('karma_stats.dict', 'wb')
-        pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
-        f.close()
     
-    def movie_night(tokens):
+    def movie_night(self, tokens):
         pass
     
-    def notifications(tokens):
+    def notifications(self, tokens):
         pass
     
-    def print_usage():
-        pass
+    
+    def help(self, tokens):
+        self.print_usage()
+        
+    # FFA fortune cookies
+    def cookie(self, tokens):
+        self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')))
+    
+    def print_usage(self):
+        self.bot.say("Write my name, and then one of the following commands:")
+        self.bot.say("karma   -- shows karma stats")
+        self.bot.say("cookie  -- gives you a cookie")
+        self.bot.say("@all    -- mentions ALL the users (hint: you don't need to mention me for this one)")
+        self.bot.say("help    -- shows help")
 
