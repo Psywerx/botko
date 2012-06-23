@@ -107,9 +107,9 @@ class BotLogic:
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
-                    if user.startswith('++') and user[2:] in self.known_users:
+                    if user.startswith('++') and user[2:] in self.known_users and user[2:] != nick:
                         self.increase_karma(self.known_users[user[2:]])
-                    elif user.endswith('++') and user[:-2] in self.known_users:
+                    elif user.endswith('++') and user[:-2] in self.known_users and user[:-2] != nick:
                         self.increase_karma(self.known_users[user[:-2]])
                   
             
