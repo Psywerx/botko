@@ -21,19 +21,17 @@ class Bot(asynchat.async_chat):
         self.nick = settings.BOT_NICK
         self.realname = settings.BOT_NAME
         self.channel = settings.CHANNEL
-        self.ident = None
+        self.ident = 'botko'
         self.debug = debug
-        self.joined_channel = False
         self.logic = logic.BotLogic(self)
         self.ac_in_buffer_size = self.ac_out_buffer_size = 8192   # 2*default
 
     def write(self, text):
-        if self.debug:
-            print '>> %s' % text
+        if self.debug: print '>> %s' % text
         self.push(text + '\r\n') 
     
     def say(self, text):
-        self.write('PRIVMSG ' + self.channel + ' :' + text)
+        self.write('PRIVMSG %s :%s' % (self.channel, text))
  
     def handle_connect(self):
         self.write('NICK %s' % self.nick)
@@ -47,21 +45,19 @@ class Bot(asynchat.async_chat):
         f.write(str(datetime.now()) + '\n')
         f.write(str(error + '\n\n'))
         f.close()
-        if self.debug:
-          print error
+        if self.debug: print error
     
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
-        if self.debug:
-            print '%s' % line
+        if self.debug: print line
         self.logic.new_input(line)
     
     def run(self, host, port):
         def handler(frame, neki):
             self.write('PRIVMSG ' + self.channel + ' :' + response.MSGS[random.randint(0, len(response.MSGS) - 1)])
             signal.signal(signal.SIGALRM, handler)
-            signal.alarm(random.random() * 6 * 60 * 60)   # say something about every 6 hours
+            signal.alarm(int(random.random() * 6 * 60 * 60))   # say something about every 6 hours
             
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))

@@ -1,5 +1,5 @@
 from urllib import urlencode
-from urllib2 import urlopen
+from urllib2 import urlopen, URLError
 import re
 import pickle
 from collections import defaultdict
@@ -61,7 +61,7 @@ class BotLogic:
     def parse_msg(self, line):
         nick = line[1:line.find('!')]
         msg_start = line.find(':', 1)
-        msg = line[msg_start:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
+        msg = line[msg_start + 1:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
         return nick, msg
 
     def new_input(self, line):
@@ -71,22 +71,22 @@ class BotLogic:
         except:
             return self.bot.log_error('ERROR on IRC: ' + line)
           
-        if action_code is 'END_MOTD':  # after server MOTD, join desired channel
-            self.bot.write('JOIN ' + bot.channel)
-        elif action_code is 'NAMES_LIST':
-            self.known_users = {nick.lower():nick for nick in self.usertrim(line.split(':')[2], '').split(' ')}
-        elif action_code is 'END_NAMES':  # after NAMES list, the bot is in the channel
+        if action_code == 'END_MOTD':  # after server MOTD, join desired channel
+            self.bot.write('JOIN ' + self.bot.channel)
+        elif action_code == 'NAMES_LIST':
+            self.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
+        elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.joined_channel = True
 
         elif self.joined_channel:  # respond to some messages     
             try:
-                nick, msg = parse_msg(line)
+                nick, msg = self.parse_msg(line)
             except:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
             
-            if action_code is 'JOIN':
+            if action_code == 'JOIN':
                 self.known_users[nick.lower()] = nick  # make newly-joined user known
-            elif action_code is in ('PART', 'QUIT'):
+            elif action_code in ('PART', 'QUIT'):
                 del self.known_users[nick]  # forget user when he quits/parts?
             
             self.log_line_and_notify_on_repost(line)
@@ -102,22 +102,22 @@ class BotLogic:
                 self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')))
             
             if msg_lower == '@all':
-              self.bot.say('CC: ' + self.known_users.values().join(', '))
+              self.bot.say('CC: ' + ', '.join(self.known_users.values()))
             
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
                     if user.startswith('++') and user[2:] in self.known_users:
-                        self.karma.increase(self.known_users[user[2:]])
+                        self.increase_karma(self.known_users[user[2:]])
                     elif user.endswith('++') and user[:-2] in self.known_users:
-                        self.karma.increase(self.known_users[user[:-2]])
+                        self.increase_karma(self.known_users[user[:-2]])
                   
             
             tokens = self.trimmer.sub(' ', msg_lower).split(' ')
             
             # other actions require that botko is called first, e.g.
             # Someone: _botko_ gief karma statz
-            if len(tokens) >= 2 and tokens[0] == bot.nick:
+            if len(tokens) >= 2 and tokens[0] == self.bot.nick:
               
                 # allow action keyword on the first or the second place, e.g.
                 #   Someone: _botko_ action_kw_here action_params
@@ -132,23 +132,22 @@ class BotLogic:
                     self.bot.say('What you want, I don\'t even...')
                     self.print_usage()
     
-    @static_var('increase', None)
-    def karma(tokens):
-        karma.increase = lambda user:
-            try:
-                f = open('karma_stats.dict', 'rb')
-                stats = pickle.load(f)
-                f.close()
-            except pickle.UnpicklingError:
-                stats = defaultdict(int)
-            
-            stats[user] += 1
-            f = open('karma_stats.dict', 'wb')
-            pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
-            f.close()
-          
+    def karma(tokens):          
         # show karma stats
         pass
+        
+    def increase_karma(user):
+        try:
+            f = open('karma_stats.dict', 'rb')
+            stats = pickle.load(f)
+            f.close()
+        except pickle.UnpicklingError:
+            stats = defaultdict(int)
+        
+        stats[user] += 1
+        f = open('karma_stats.dict', 'wb')
+        pickle.dump(stats, f, pickle.HIGHEST_PROTOCOL)
+        f.close()
     
     def movie_night(tokens):
         pass
