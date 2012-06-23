@@ -22,9 +22,9 @@ class BotLogic:
         self.known_users = {}   # dict of known users present in the channel
         self.actions = {}   # actions dict, holding 'keyword':action_func, easily populated below for multiple keywords per action
                             # action_func accepts one argument, which is a list of tokens following the keyword
-        karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats', ))
+        karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
-        help = (self.help, ('help', 'commands', 'man', '???', 'usage',  ))
+        help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
         for action in (karma, cookie, help): #movies, notify):
@@ -34,7 +34,7 @@ class BotLogic:
     def log_line_and_notify_on_repost(self, line):
       try:
           params = urlencode({'raw': line, 'token': settings.TOKEN})
-          response = urlopen(settings.SERVER_URL, params).read()
+          response = urlopen(settings.SERVER_URL + 'irc/add', params).read()
           if response.startswith('REPOST'):
               _, nick, repostNick, messageType = response.split(' ')
               if messageType == 'M':
@@ -106,16 +106,13 @@ class BotLogic:
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
-                    self.bot.say(', '.join(self.known_users) + " "  + user[:-2] + " sss " + nick)
-                 
-                    if (user.endswith('++') or user.startswith('++')) and user[:-2] in self.known_users:
-                        if user[:-2] == nick:
+                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '') in self.known_users:
+                        if user.replace('+', '') == nick:
                             self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!")
                         else:
-                            self.increase_karma(self.known_users[user[:-2]])
+                            self.increase_karma(self.known_users[user.replace('+', '')])
             
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
-            
             # other actions require that botko is called first, e.g.
             # Someone: _botko_ gief karma statz
             if len(tokens) >= 2 and tokens[0] == self.bot.nick:
@@ -128,17 +125,30 @@ class BotLogic:
                     action, kw_pos = self.actions.get(tokens[2]), 2
                 
                 if action is not None:
-                    action(tokens[kw_pos+1:])   # send following tokens to the action logic
+                    action(tokens[kw_pos + 1:])   # send following tokens to the action logic
                 else:
                     self.bot.say('What you want, I don\'t even...')
                     self.print_usage()
     
     def karma(self, tokens):          
-        self.bot.say("hello")
+        if len(tokens) != 1:
+            self.bot.say("Please enter a nick")
+            return
+        
+        try:
+            params = urlencode({'nick': tokens[0], 'token': settings.TOKEN})
+            response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
+            self.bot.say(tokens[0] + " has " + response + " karma.")
+        except:
+            self.bot.log_error('ERROR getting upboats for ' + tokens[0])
         pass
         
     def increase_karma(self, user):
-        self.bot.say(user + " just got an upboat")
+        try:
+            params = urlencode({'nick': user, 'token': settings.TOKEN})
+            response = urlopen(settings.SERVER_URL + 'irc/karma', params).read()
+        except:
+            self.bot.log_error('ERROR giving upboat to ' + user)
         
     
     def movie_night(self, tokens):
@@ -157,8 +167,8 @@ class BotLogic:
     
     def print_usage(self):
         self.bot.say("Write my name, and then one of the following commands:")
-        self.bot.say("karma   -- shows karma stats")
-        self.bot.say("cookie  -- gives you a cookie")
-        self.bot.say("@all    -- mentions ALL the users (hint: you don't need to mention me for this one)")
-        self.bot.say("help    -- shows help")
+        self.bot.say("karma <nick> -- tells how much karma <nick> has")
+        self.bot.say("cookie       -- gives you a cookie")
+        self.bot.say("@all         -- mentions ALL the users (hint: you don't need to mention me for this one)")
+        self.bot.say("help         -- shows help")
 
