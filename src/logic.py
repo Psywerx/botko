@@ -95,7 +95,7 @@ class BotLogic:
             if action_code == 'JOIN':
                 self.known_users[nick.lower()] = nick  # make newly-joined user known
             elif action_code in ('PART', 'QUIT'):
-                del self.known_users[nick]  # forget user when he quits/parts?
+                if nick in self.known_users: del self.known_users[nick]  # forget user when he quits/parts?
             
             self.log_line_and_notify_on_repost(line)
                 
