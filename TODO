@@ -22,11 +22,7 @@ botko-store: saving things into named variables.
          Smotko: _botko_ movie-night clear
         _botko_: All items in movie-night cleared.
        
-botko-count: everytime somebody says <nick>++, _botko_ should count.
-    Use cases:
-        * Every week, month, year *
-        _botko_: Best IRCer this week/month/year is <nick>, with 42 upboats!
-        _botko_: Closely followed by <some-other-nick>, with 36 upboats!
-        
-         Smotko: _botko_ leaderboard for this month
-        _botko_: <nick> 42, <some-other-nick> 36, ...
+improve botko-count: everytime somebody says <nick>++, _botko_ should count.
+    add support for <nick>--
+    add top 5 list
+    

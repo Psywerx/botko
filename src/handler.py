@@ -43,7 +43,7 @@ class Bot(asynchat.async_chat):
     def log_error(self, error):
         f = open('error.log', 'a')
         f.write(str(datetime.now()) + '\n')
-        f.write(str(error + '\n\n'))
+        f.write(str(error) + '\n\n')
         f.close()
         if self.debug: print error
     

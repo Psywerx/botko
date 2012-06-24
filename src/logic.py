@@ -4,6 +4,8 @@ from urllib2 import urlopen, URLError
 import pickle
 import re
 import settings
+import response
+import random
 
 
 def static_var(varname, value):
@@ -32,18 +34,23 @@ class BotLogic:
                 self.actions[keyword] = action[0]
         
     def log_line_and_notify_on_repost(self, line):
-      try:
-          params = urlencode({'raw': line, 'token': settings.TOKEN})
-          response = urlopen(settings.SERVER_URL + 'irc/add', params).read()
-          if response.startswith('REPOST'):
-              _, nick, repostNick, messageType = response.split(' ')
-              if messageType == 'M':
-                  responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
-                  self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick})
-          elif response != 'OK':
-              self.bot.log_error(response)
-      except URLError:
-          self.bot.log_error('ERROR Could not log line: ' + line)
+       
+        try:
+            params = urlencode({'raw': line, 'token': settings.TOKEN})
+            r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
+            if r.startswith('REPOST'):
+                _, nick, repostNick, messageType = r.split(' ')
+                if messageType == 'M':
+                    responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
+                    self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick})
+            elif r != 'OK':
+                self.bot.log_error(r)
+        except URLError:
+            self.bot.log_error('ERROR Could not log line: ' + line)
+          
+          
+          
+    
     
     def get_action_code(self, line):
         if line.startswith('ERROR'): raise Exception('some IRC error')
