@@ -127,7 +127,7 @@ class BotLogic:
                 #   Someone: _botko_ action_kw_here action_params
                 #   Someone: _botko_ whatever action_kw_here action_params
                 action, kw_pos = self.actions.get(tokens[1]), 1
-                if action is None and len():
+                if action is None:# and len(): #len()???
                     action, kw_pos = self.actions.get(tokens[2]), 2
                 
                 if action is not None:
