@@ -76,7 +76,13 @@ class BotLogic:
         if action_code == 'END_MOTD':  # after server MOTD, join desired channel
             self.bot.write('JOIN ' + self.bot.channel)
         elif action_code == 'NAMES_LIST':
-            self.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
+            self.known_users = {}
+            for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
+                self.known_users[nick.lower()] = nick
+            # object comprehension does not work in python 2.6.x    
+            # self.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
+
+                
         elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.joined_channel = True
 
