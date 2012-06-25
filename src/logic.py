@@ -115,17 +115,17 @@ class BotLogic:
                 self.bot.say(msg[12:])   
             
             if '@all' in msg_lower:
-                blacklist = [settings.BOT_NICK, nick]
+                blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
                 self.bot.say('CC: ' + ', '.join([i for i in self.known_users.values() if i not in blacklist]))
             
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
-                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '') in self.known_users:
+                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.known_users:
                         if user.replace('+', '') == nick:
                             self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!")
                         else:
-                            self.increase_karma(self.known_users[user.replace('+', '')])
+                            self.increase_karma(self.known_users[user.replace('+', '').lower()])
             
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             # other actions require that botko is called first, e.g.
