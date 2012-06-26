@@ -1,3 +1,7 @@
+code evaluator:
+    You could use ideone.com
+
+
 local-settings: 
 	settings.py should have defaults that one can override with a local settings file
 
