@@ -136,14 +136,14 @@ class BotLogic:
                 #   Someone: _botko_ action_kw_here action_params
                 #   Someone: _botko_ whatever action_kw_here action_params
                 action, kw_pos = self.actions.get(tokens[1]), 1
-                if action is None:# and len(): #len()???
+                if action is None and len(tokens) > 2:# and len(): #len()???
                     action, kw_pos = self.actions.get(tokens[2]), 2
                 
                 if action is not None:
                     action(tokens[kw_pos + 1:])   # send following tokens to the action logic
                 else:
-                    self.bot.say('What you want, I don\'t even...')
-                    self.print_usage()
+                    self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
+                    #self.print_usage()
     
     def karma(self, tokens):          
         if len(tokens) != 1:
@@ -151,9 +151,11 @@ class BotLogic:
             return
         
         try:
-            params = urlencode({'nick': tokens[0], 'token': settings.TOKEN})
+            if tokens[0].lower() not in self.known_users:
+                return
+            params = urlencode({'nick': self.known_users[tokens[0].lower()], 'token': settings.TOKEN})
             response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-            self.bot.say(tokens[0] + " has " + response + " karma.")
+            self.bot.say(self.known_users[tokens[0].lower()] + " has " + response + " karma.")
         except:
             self.bot.log_error('ERROR getting upboats for ' + tokens[0])
         pass
