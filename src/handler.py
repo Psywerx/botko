@@ -31,7 +31,9 @@ class Bot(asynchat.async_chat):
         self.push(text + '\r\n') 
     
     def say(self, text):
-        self.write('PRIVMSG %s :%s' % (self.channel, text))
+        line = 'PRIVMSG %s :%s' % (self.channel, text)
+        self.write(line)
+        self.logic.log_line_and_notify_on_repost(":" + self.nick + "!~" + self.nick + "@6.6.6.6 " + line, True)
  
     def handle_connect(self):
         self.write('NICK %s' % self.nick)
@@ -55,7 +57,7 @@ class Bot(asynchat.async_chat):
     
     def run(self, host, port):
         def handler(frame, neki):
-            self.write('PRIVMSG ' + self.channel + ' :' + response.MSGS[random.randint(0, len(response.MSGS) - 1)])
+            self.say(response.MSGS[random.randint(0, len(response.MSGS) - 1)])
             
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))

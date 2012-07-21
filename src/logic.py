@@ -33,12 +33,11 @@ class BotLogic:
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
         
-    def log_line_and_notify_on_repost(self, line):
-       
+    def log_line_and_notify_on_repost(self, line, noRepost = False):
         try:
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
-            if r.startswith('REPOST'):
+            if not noRepost and r.startswith('REPOST'):
                 _, nick, repostNick, messageType = r.split(' ')
                 if messageType == 'M':
                     responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
