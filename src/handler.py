@@ -56,8 +56,6 @@ class Bot(asynchat.async_chat):
     def run(self, host, port):
         def handler(frame, neki):
             self.write('PRIVMSG ' + self.channel + ' :' + response.MSGS[random.randint(0, len(response.MSGS) - 1)])
-            signal.signal(signal.SIGALRM, handler)
-            signal.alarm(int(random.random() * 6 * 60 * 60))   # say something about every 6 hours
             
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))
