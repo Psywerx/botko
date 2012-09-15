@@ -31,7 +31,7 @@ class BotkoDaemon(Daemon):
         run_bot()
 
 if __name__ == "__main__":
-    daemon = BotkoDaemon('/tmp/daemon-example.pid')
+    daemon = BotkoDaemon('/tmp/botko.pid')
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
