@@ -6,6 +6,7 @@ import re
 import settings
 import response
 import random
+import json
 
 
 def static_var(varname, value):
@@ -27,13 +28,14 @@ class BotLogic:
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
         help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
+        
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
         for action in (karma, cookie, help): #movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
         
-    def log_line_and_notify_on_repost(self, line, noRepost = False):
+    def log_line_and_notify_on_repost(self, line, noRepost=False):
         try:
             params = urlencode({'raw': line, 'token': settings.TOKEN})
             r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
@@ -145,18 +147,21 @@ class BotLogic:
                     #self.print_usage()
     
     def karma(self, tokens):          
-        if len(tokens) != 1:
-            self.bot.say("Please enter a nick")
-            return
-        
         try:
-            if tokens[0].lower() not in self.known_users:
-                return
-            params = urlencode({'nick': self.known_users[tokens[0].lower()], 'token': settings.TOKEN})
-            response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-            self.bot.say(self.known_users[tokens[0].lower()] + " has " + response + " karma.")
+            if len(tokens) != 1:
+                params = urlencode({'token' : settings.TOKEN})
+                response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
+                r = json.loads(response)
+                s = ""
+                for p in r:
+                    s += str(p['nick']) + " (" + str(p['karma']) + "), "
+                self.bot.say(s[:-2])
+            else:
+                params = urlencode({'nick': self.known_users[tokens[0].lower()], 'token': settings.TOKEN})
+                response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
+                self.bot.say(self.known_users[tokens[0].lower()] + " has " + response + " karma.")
         except:
-            self.bot.log_error('ERROR getting upboats for ' + tokens[0])
+            self.bot.log_error('ERROR getting upboats')
         pass
         
     def increase_karma(self, user):
