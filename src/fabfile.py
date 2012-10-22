@@ -11,4 +11,4 @@ def update():
     with cd('botko'):
         out = run('git pull')
         if 'Already up-to-date.' not in out:
-            run('botko restart')
+            sudo('botko restart')
