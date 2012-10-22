@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from datetime import datetime
+from time import time
 import random
 import signal
 import socket
@@ -25,6 +26,7 @@ class Bot(asynchat.async_chat):
         self.debug = debug
         self.logic = logic.BotLogic(self)
         self.ac_in_buffer_size = self.ac_out_buffer_size = 8192   # 2*default
+        self.uptime = time()
 
     def write(self, text):
         if self.debug: print '>> %s' % text

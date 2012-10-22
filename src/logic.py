@@ -1,6 +1,9 @@
 from collections import defaultdict
 from urllib import urlencode
 from urllib2 import urlopen, URLError
+from time import time
+from datetime import timedelta
+from os import popen
 import pickle
 import re
 import settings
@@ -27,11 +30,12 @@ class BotLogic:
                             # action_func accepts one argument, which is a list of tokens following the keyword
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
+        uptime = (self.uptime, ('uptime',))
         help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
         
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
-        for action in (karma, cookie, help): #movies, notify):
+        for action in (karma, cookie, uptime, help): #movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
         
@@ -178,7 +182,12 @@ class BotLogic:
     def notifications(self, tokens):
         pass
     
-    
+    def uptime(self, tokens):
+        
+        server_uptime = popen("uptime").read()
+        current_uptime = time() - self.bot.uptime
+        t = str(timedelta(seconds=current_uptime)).split('.')[0]
+        self.bot.say("My uptime: %s, server uptime: %s" % (t, server_uptime.split(',')[0].split('up ')[1]))
     def help(self, tokens):
         self.print_usage()
         
@@ -187,9 +196,5 @@ class BotLogic:
         self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')))
     
     def print_usage(self):
-        self.bot.say("Write my name, and then one of the following commands:")
-        self.bot.say("karma <nick> -- tells how much karma <nick> has")
-        self.bot.say("cookie       -- gives you a cookie")
-        self.bot.say("@all         -- mentions ALL the users (hint: you don't need to mention me for this one)")
-        self.bot.say("help         -- shows help")
+        self.bot.say("Possible actions: " + ", ".join(self.actions.keys()))
 
