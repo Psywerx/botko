@@ -135,20 +135,22 @@ class BotLogic:
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             # other actions require that botko is called first, e.g.
             # Someone: _botko_ gief karma statz
-            if len(tokens) >= 2 and tokens[0] == self.bot.nick:
-              
+            if len(tokens) >= 1 and (tokens[0] == self.bot.nick or '@' in tokens[0]):
+                tokens[0] = tokens[0].replace('@', '')
                 # allow action keyword on the first or the second place, e.g.
                 #   Someone: _botko_ action_kw_here action_params
                 #   Someone: _botko_ whatever action_kw_here action_params
-                action, kw_pos = self.actions.get(tokens[1]), 1
+                
+                action, kw_pos = self.actions.get(tokens[0]), 0
+                if action is None and len(tokens) > 1:
+                    action, kw_pos = self.actions.get(tokens[1]), 1
                 if action is None and len(tokens) > 2:# and len(): #len()???
                     action, kw_pos = self.actions.get(tokens[2]), 2
                 
                 if action is not None:
                     action(tokens[kw_pos + 1:])   # send following tokens to the action logic
-                else:
-                    self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
-                    #self.print_usage()
+                #else:
+                    #self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
     
     def karma(self, tokens):          
         try:
