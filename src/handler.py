@@ -32,8 +32,8 @@ class Bot(asynchat.async_chat):
         if self.debug: print '>> %s' % text
         self.push(text + '\r\n') 
     
-    def say(self, text):
-        line = 'PRIVMSG %s :%s' % (self.channel, text)
+    def say(self, text, channel):
+        line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
         self.logic.log_line_and_notify_on_repost(":" + self.nick + "!~" + self.nick + "@6.6.6.6 " + line, True)
  
