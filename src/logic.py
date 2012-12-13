@@ -41,7 +41,6 @@ class BotLogic:
         
     def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
-            print line
             params = urlencode({'raw': line, 'token': settings.TOKEN, 'channel': channel})
             r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
             if not noRepost and r.startswith('REPOST'):
@@ -78,7 +77,8 @@ class BotLogic:
         msg_start = line.find(':', 1)
         msg_chan = line.find('#', 1)
         msg = line[msg_start + 1:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
-        channel = line[msg_chan:msg_start].strip()
+        end = msg_start if msg_start > 0 else len(line)
+        channel = line[msg_chan:end].strip()
         return nick, msg, channel
 
     def new_input(self, line):
@@ -108,7 +108,6 @@ class BotLogic:
                 nick, msg, channel = self.parse_msg(line)
             except:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
-            print self.known_users, nick, msg, channel
             if action_code == 'JOIN':
                 self.known_users[channel][nick.lower()] = nick  # make newly-joined user known
             elif action_code in ('PART', 'QUIT'):
