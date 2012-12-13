@@ -108,13 +108,23 @@ class BotLogic:
                 nick, msg, channel = self.parse_msg(line)
             except:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
+            
             if action_code == 'JOIN':
                 self.known_users[channel][nick.lower()] = nick  # make newly-joined user known
-            elif action_code in ('PART', 'QUIT'):
-                del self.known_users[channel][nick.lower()]  # forget user when he quits/parts?
-            elif action_code == 'NICK':
+            
+            elif action_code == 'QUIT':
+                for c in self.known_users.keys():
+                    if nick.lower() in self.known_users[c]:
+                        del self.known_users[c][nick.lower()] # forget user when he quits/parts?
+            
+            elif action_code == 'PART':
                 del self.known_users[channel][nick.lower()]
-                self.known_users[channel][msg.lower()] = msg
+
+            elif action_code == 'NICK':
+                for c in self.known_users.keys():
+                    if nick.lower() in self.known_users[c]:
+                        del self.known_users[c][nick.lower()] # forget user when he quits/parts?
+                        self.known_users[c][msg.lower()] = msg
             
             self.log_line_and_notify_on_repost(line, False, channel)
                 
