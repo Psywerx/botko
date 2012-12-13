@@ -180,8 +180,10 @@ class BotLogic:
             else:
                 params = urlencode({'nick': self.known_users[channel][tokens[0].lower()], 'token': settings.TOKEN, 'channel': channel})
                 response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-                self.bot.say(self.known_users[tokens[0].lower()] + " has " + response + " karma.", channel)
-        except:
+                self.bot.say(self.known_users[channel][tokens[0].lower()] + " has " + response + " karma.", channel)
+        except Exception as e:
+            from traceback import format_exc
+            print "ERR " + str(format_exc())
             self.bot.log_error('ERROR getting upboats')
         
     def increase_karma(self, user, channel):
