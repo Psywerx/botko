@@ -20,6 +20,8 @@ def run_bot():
             from datetime import datetime
             from time import sleep
             
+            print "ERR " + str(format_exc())
+            
             f = open('error_log', 'a')
             f.write(str(datetime.now()) + "\n")
             f.write(str(format_exc() + "\n\n"))

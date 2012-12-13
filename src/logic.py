@@ -22,7 +22,7 @@ def static_var(varname, value):
 class BotLogic:
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
-        self.joined_channel
+        self.joined_channel = False
         self.trimmer = re.compile('[ ]+')  # used for replacing a series of spaces with a single one
         self.usertrim = re.compile('[!+@]')  # used to strip nicknames of any mode-dependent prefixes (@-op, +-voice, etc.)
         self.known_users = {}   # dict of known users present in the channel
@@ -39,16 +39,16 @@ class BotLogic:
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
         
-    def log_line_and_notify_on_repost(self, line, noRepost=False):
+    def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
             print line
-            params = urlencode({'raw': line, 'token': settings.TOKEN})
+            params = urlencode({'raw': line, 'token': settings.TOKEN, 'channel': channel})
             r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
             if not noRepost and r.startswith('REPOST'):
                 _, nick, repostNick, messageType = r.split(' ')
                 if messageType == 'M':
                     responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
-                    self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick})
+                    self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick}, channel)
             elif r != 'OK':
                 self.bot.log_error(r)
         except URLError:
@@ -96,10 +96,12 @@ class BotLogic:
             _, _, channel = self.parse_msg(line)
             for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
                 self.known_users[channel][nick.lower()] = nick
+            # object comprehension does not work in python 2.6.x    
+            # self.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
+
                 
         elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
-            _, _, channel = self.parse_msg(line)
-            self.joined_channel[channel] = True
+            self.joined_channel = True
 
         elif self.joined_channel:  # respond to some messages     
             try:
@@ -115,7 +117,7 @@ class BotLogic:
                 del self.known_users[channel][nick.lower()]
                 self.known_users[channel][msg.lower()] = msg
             
-            self.log_line_and_notify_on_repost(line, channel)
+            self.log_line_and_notify_on_repost(line, False, channel)
                 
             msg_lower = msg.lower()
             
@@ -125,16 +127,16 @@ class BotLogic:
             
             if '@all' in msg_lower:
                 blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
-                self.bot.say('CC: ' + ', '.join([i for i in self.known_users.values() if i not in blacklist]), channel)
+                self.bot.say('CC: ' + ', '.join([i for i in self.known_users[channel].values() if i not in blacklist]), channel)
             
             # count karma upvote
             if '++' in msg_lower:
                 for user in msg.split(' '):
-                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.known_users:
+                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.known_users[channel]:
                         if user.replace('+', '') == nick:
-                            self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!")
+                            self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!", channel)
                         else:
-                            self.increase_karma(self.known_users[user.replace('+', '').lower()], channel)
+                            self.increase_karma(self.known_users[channel][user.replace('+', '').lower()], channel)
             
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             # other actions require that botko is called first, e.g.

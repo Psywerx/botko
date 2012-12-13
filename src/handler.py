@@ -29,7 +29,7 @@ class Bot(asynchat.async_chat):
         self.uptime = time()
 
     def write(self, text):
-        if self.debug: print '>> %s' % text
+        if self.debug: print '> %s' % text
         self.push(text + '\r\n') 
     
     def say(self, text, channel):
@@ -54,12 +54,12 @@ class Bot(asynchat.async_chat):
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
-        if self.debug: print line
+        if self.debug: print "< " + line
         self.logic.new_input(line)
     
     def run(self, host, port):
         def handler(frame, neki):
-            self.say(response.MSGS[random.randint(0, len(response.MSGS) - 1)])
+            pass
             
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))
