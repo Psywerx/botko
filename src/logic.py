@@ -44,10 +44,16 @@ class BotLogic:
             params = urlencode({'raw': line, 'token': settings.TOKEN, 'channel': channel})
             r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
             if not noRepost and r.startswith('REPOST'):
-                _, nick, repostNick, messageType = r.split(' ')
+                _, nick, repostNick, messageType, num = r.split(' ')
                 if messageType == 'M':
                     responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
-                    self.bot.say(responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick}, channel)
+                    if num == 1:
+                        self.bot.say(num + " " + responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick}, channel)
+                    elif num > 1:
+                        if nick == repostNick:
+                            self.bot.say("%s are you trying to make your link more popular? It has already been posted %s times" % (nick, num), channel)
+                        else:
+                            self.bot.say("This link is quite popular, it has been posted %s times. Original poster was %s" % (num, nick), channel)
             elif r != 'OK':
                 self.bot.log_error(r)
         except URLError:
