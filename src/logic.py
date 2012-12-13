@@ -4,10 +4,10 @@ from urllib2 import urlopen, URLError
 from time import time
 from datetime import timedelta
 from os import popen
+from response import *
 import pickle
 import re
 import settings
-import response
 import random
 import json
 
@@ -38,7 +38,9 @@ class BotLogic:
         for action in (karma, cookie, uptime, help): #movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
-        
+    
+    
+    
     def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
             params = urlencode({'raw': line, 'token': settings.TOKEN, 'channel': channel})
@@ -46,14 +48,14 @@ class BotLogic:
             if not noRepost and r.startswith('REPOST'):
                 _, nick, repostNick, messageType, num = r.split(' ')
                 if messageType == 'M':
-                    responses = response.SELF_REPOSTS if nick == repostNick else response.REPOSTS
-                    if num == 1:
-                        self.bot.say(num + " " + responses[random.randint(0, len(responses) - 1)] % {'nick':nick, 'repostNick':repostNick}, channel)
-                    elif num > 1:
+                    responses = SELF_REPOSTS if nick == repostNick else REPOSTS
+                    if int(num) == 1:
+                        self.bot.say(random_response(responses) % {'nick':nick, 'repostNick':repostNick}, channel)
+                    elif int(num) > 1:
                         if nick == repostNick:
-                            self.bot.say("%s are you trying to make your link more popular? It has already been posted %s times" % (nick, num), channel)
+                            self.bot.say(random_response(MULTIPLE_SELF_REPOST) % {'nick': nick, 'repostNick':repostNick, 'num': num}, channel)
                         else:
-                            self.bot.say("This link is quite popular, it has been posted %s times. Original poster was %s" % (num, nick), channel)
+                            self.bot.say(random_response(MULTIPLE_REPOST) % {'nick': nick, 'repostNick':repostNick, 'num': num}, channel)
             elif r != 'OK':
                 self.bot.log_error(r)
         except URLError:

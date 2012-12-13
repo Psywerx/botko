@@ -12,6 +12,7 @@ REPOSTS = [
             "%(nick)s, I've seen this link before. I think %(repostNick)s posted it.",
             "%(nick)s, my memory banks indicate that %(repostNick)s already posted this link.",
             "%(nick)s, you know what you did... and so does %(repostNick)s.",
+            "%(nick)s are you trying to impress %(repostNick)s by reposting his link?",
 ]
 SELF_REPOSTS = [
             "You really like that link, don't you? %(nick)s!",
@@ -25,6 +26,18 @@ SELF_REPOSTS = [
             "You sir, are a self-reposter.",
             "You sir, are a self-reposter poster.",
             "%(nick)s, I'd like to congratulate you on your original link... but you've posted it here before.",
+]
+MULTIPLE_REPOST = [
+            "I think %(repostNick)s will be very happy, his link has been reshared %(num)s times.",
+            "Everybody check out this fabulous link! I've seen it %(num)s times but I still like it.",
+            "This link is quite popular, it has been posted %(num)s times. The original poster was %(repostNick)s.",  
+            "Every time I see this link I become happy. Thank you %(repostNick)s for sharing it and %(nick)s for resharing it!",  
+]
+MULTIPLE_SELF_REPOST = [
+            "%(nick)s are you trying to make your link more popular? It has been posted %(num)s times already.",   
+            "%(nick)s you should share your link more often. I've only seen %(num)s times.",
+            "The number of times we have seen this link has just increased by one! The count is at %(num)s now. Yay.",
+            "Yay! Thanks to %(nick)s and his awesome link I can increase the reposted_link variable by one! It's new value is now %(num)s. I am happy.",   
 ]
 MSGS = [
             'Check out my homepage @ http://psywerx.net/irc',
@@ -64,3 +77,6 @@ MSGS = [
             "I would rather be coding",
             "I know the question to 42. But I'm not tellin'",
 ]
+def random_response(responses):
+    from random import randint
+    return responses[randint(0, len(responses) - 1)]
