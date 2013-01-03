@@ -81,12 +81,14 @@ class BotLogic:
         return action.upper()
 
     def parse_msg(self, line):
-        nick = line[1:line.find('!')]
-        msg_start = line.find(':', 1)
-        msg_chan = line.find('#', 1)
-        msg = line[msg_start + 1:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
-        end = msg_start if msg_start > 0 else len(line)
-        channel = line[msg_chan:end].strip()
+        sline = line.split(' ', 1)
+        
+        nick = line[1:sline[0].find('!')]
+        msg_start = sline[1].find(':', 1)
+        msg_chan = sline[1].find('#', 1)
+        msg = sline[1][msg_start + 1:].strip() if msg_start > 0 else ''   # JOIN messages have no ': message'
+        end = msg_start if msg_start > 0 else len(sline[1])
+        channel = sline[1][msg_chan:end].strip()
         return nick, msg, channel
 
     def new_input(self, line):
