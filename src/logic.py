@@ -144,9 +144,57 @@ class BotLogic:
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
                 self.bot.say(msg[12:], channel)   
             
-            if '@all' in msg_lower:
-                blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
-                self.bot.say('CC: ' + ', '.join([i for i in self.known_users[channel].values() if i not in blacklist]), channel)
+            if msg_lower.startswith('@join'):
+                
+                def parse_join(splt):
+                
+                    if len(splt) == 2:
+                        return splt[1].replace('@', ''), False
+                    elif len(splt) == 3:
+                        return splt[1].replace('@', ''), True
+                    else: 
+                        return False
+                g = parse_join(msg_lower.split(' '))
+                if g:
+                    params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'nick':nick,  'group': g[0], 'offline': g[1]})
+                    response = urlopen(settings.SERVER_URL + 'irc/join', params).read()
+                    self.bot.say(response.replace('"', ''), channel)
+            elif msg_lower.startswith('@leaveall'):
+                params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'nick':nick})
+                response = urlopen(settings.SERVER_URL + 'irc/leaveAll', params).read()
+                self.bot.say(response.replace('"', ''), channel)
+            elif msg_lower.startswith('@leave'):
+                splited = msg_lower.split(' ') 
+                if(len(splited) == 2):
+                    group = splited[1].replace('@', '')
+                    params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'nick':nick,  'group': group})
+                    response = urlopen(settings.SERVER_URL + 'irc/leave', params).read()
+                    self.bot.say(response.replace('"', ''), channel)
+            else:
+                for group in re.findall(r'@(\w+)', msg_lower):
+                    if group in ["join", "leave", "leaveAll"] or nick == '_haibot_':
+                        continue
+                    
+                    params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'group': group})
+                    response = json.loads(urlopen(settings.SERVER_URL + 'irc/mention', params).read())
+                    mentions = []
+                    offline_mentions = []
+                    for n, c, o  in response:
+                        if n == nick:
+                            continue
+                        if n in self.known_users[channel]:
+                            mentions.append(n.encode('ascii', 'ignore'))
+                        elif o:
+                            offline_mentions.append(n.encode('ascii', 'ignore'))
+                    
+                    if(len(mentions) > 0):
+                        print mentions
+                        self.bot.say("CC: " + ', '.join(mentions), channel)
+                    if(len(offline_mentions) > 0):
+                        self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
+                
+                #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
+                #self.bot.say('CC: ' + ', '.join([i for i in self.known_users[channel].values() if i not in blacklist]), channel)
             
             # count karma upvote
             if '++' in msg_lower:
