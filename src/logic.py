@@ -172,7 +172,7 @@ class BotLogic:
                     self.bot.say(response.replace('"', ''), channel)
             else:
                 for group in re.findall(r'@(\w+)', msg_lower):
-                    if group in ["join", "leave", "leaveAll"] or nick == '_haibot_':
+                    if group in ["join", "leave", "leaveAll"] or nick.lower() == '_haibot_':
                         continue
                     
                     params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'group': group})
@@ -180,15 +180,14 @@ class BotLogic:
                     mentions = []
                     offline_mentions = []
                     for n, c, o  in response:
-                        if n == nick:
+                        if n.lower() == nick.lower():
                             continue
-                        if n in self.known_users[channel]:
+                        if n.lower() in self.known_users[channel]:
                             mentions.append(n.encode('ascii', 'ignore'))
                         elif o:
                             offline_mentions.append(n.encode('ascii', 'ignore'))
                     
                     if(len(mentions) > 0):
-                        print mentions
                         self.bot.say("CC: " + ', '.join(mentions), channel)
                     if(len(offline_mentions) > 0):
                         self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
