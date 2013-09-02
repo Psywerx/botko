@@ -171,26 +171,26 @@ class BotLogic:
                     response = urlopen(settings.SERVER_URL + 'irc/leave', params).read()
                     self.bot.say(response.replace('"', ''), channel)
             else:
+                mentions = set()
+                offline_mentions = set()
                 for group in re.findall(r'@(\w+)', msg_lower):
                     if group in ["join", "leave", "leaveAll"] or nick.lower() == '_haibot_':
                         continue
                     
                     params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'group': group})
                     response = json.loads(urlopen(settings.SERVER_URL + 'irc/mention', params).read())
-                    mentions = []
-                    offline_mentions = []
                     for n, c, o  in response:
                         if n.lower() == nick.lower():
                             continue
                         if n.lower() in self.known_users[channel]:
-                            mentions.append(n.encode('ascii', 'ignore'))
+                            mentions.add(n.encode('ascii', 'ignore'))
                         elif o:
-                            offline_mentions.append(n.encode('ascii', 'ignore'))
+                            offline_mentions.add(n.encode('ascii', 'ignore'))
                     
-                    if(len(mentions) > 0):
-                        self.bot.say("CC: " + ', '.join(mentions), channel)
-                    if(len(offline_mentions) > 0):
-                        self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
+                if(len(mentions) > 0):
+                    self.bot.say("CC: " + ', '.join(mentions), channel)
+                if(len(offline_mentions) > 0):
+                    self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
                 
                 #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
                 #self.bot.say('CC: ' + ', '.join([i for i in self.known_users[channel].values() if i not in blacklist]), channel)
