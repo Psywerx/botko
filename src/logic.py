@@ -142,8 +142,11 @@ class BotLogic:
             
             # Simon says action
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
-                self.bot.say(msg[12:], channel)   
-            
+                self.bot.say(msg[12:], channel) 
+            if msg_lower.startswith('@group'):
+                params = urlencode({'token' : settings.TOKEN, 'channel' : channel})
+                response = urlopen(settings.SERVER_URL + 'irc/groups', params).read()
+                self.bot.say(response.replace('"', ''), channel) 
             if msg_lower.startswith('@join'):
                 
                 def parse_join(splt):
