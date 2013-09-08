@@ -143,11 +143,15 @@ class BotLogic:
             # Simon says action
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
                 self.bot.say(msg[12:], channel) 
-            if msg_lower.startswith('@group'):
+            elif msg_lower.startswith('@mygroup'):
+                params = urlencode({'token' : settings.TOKEN, 'channel' : channel, 'nick': nick})
+                response = urlopen(settings.SERVER_URL + 'irc/mygroups', params).read()
+                self.bot.say(response.replace('"', ''), channel) 
+            elif msg_lower.startswith('@group'):
                 params = urlencode({'token' : settings.TOKEN, 'channel' : channel})
                 response = urlopen(settings.SERVER_URL + 'irc/groups', params).read()
                 self.bot.say(response.replace('"', ''), channel) 
-            if msg_lower.startswith('@join'):
+            elif msg_lower.startswith('@join'):
                 
                 def parse_join(splt):
                 
@@ -274,5 +278,5 @@ class BotLogic:
         self.bot.say(' '.join(urlopen(settings.COOKIEZ_URL).read().split('\n')), channel)
     
     def print_usage(self, channel):
-        self.bot.say("Possible actions: " + ", ".join(self.actions.keys()), channel)
+        self.bot.say("Commands: uptime, karma [nick], join <group name> [offline], leave <group name>, leaveall, group, mygroup", channel)
 
