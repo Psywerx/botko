@@ -9,7 +9,7 @@ REPOSTS = [
             "Hey %(repostNick)s, %(nick)s is reposting your stuff",
             "%(nick)s, maybe you weren't online then, but %(repostNick)s has already posted this link.",
             "I want to be rude %(nick)s, so I'll point out that %(repostNick)s has already posted this link!",
-            "In Soviet Russia %(repostNick)s reposts %(nick)ss links.",
+            "In Soviet Russia %(repostNick)s reposts %(nick)s's links.",
             "%(nick)s, I've seen this link before. I think %(repostNick)s posted it.",
             "%(nick)s, my memory banks indicate that %(repostNick)s already posted this link.",
             "%(nick)s, you know what you did... and so does %(repostNick)s.",
