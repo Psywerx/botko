@@ -9,7 +9,7 @@ from logic import BotLogic
 import unittest
 
 class BotTest(unittest.TestCase):
-    
+
     def setUp(self):
         self.bot = Bot()
         self.logic = BotLogic(self.bot)
@@ -25,7 +25,7 @@ class BotTest(unittest.TestCase):
         nick, msg, _ = self.logic.parse_msg(line)
         self.assertEqual("smotko", nick)
         self.assertEqual("Quit: smotko", msg)
-        
+
     def testParseWeird(self):
         line = ":smotko!~smotko@2001:1470:fffe:fe01:4c8b:3839:ad5f:3bbb JOIN #smotko-testing"
         nick, msg, channel = self.logic.parse_msg(line)
