@@ -8,6 +8,8 @@ import re
 import settings
 import json
 
+from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
+
 
 def static_var(varname, value):
     """
@@ -39,6 +41,9 @@ class BotLogic(object):
         for action in (karma, cookie, uptime, help):  # movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
+
+        # TODO: Proper plugin loading 'n stuff
+        self.plugins = [NSFWImageDetectorPlugin(bot=self)]
 
     def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
@@ -138,6 +143,11 @@ class BotLogic(object):
             self.log_line_and_notify_on_repost(line, False, channel)
 
             msg_lower = msg.lower()
+
+            # TODO: Proper plugin loading n' stuff
+            # Run plugins
+            for plugin in self.plugins:
+                plugin.handle_message(channel=channel, nick=nick, msg=msg)
 
             # Simon says action
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
