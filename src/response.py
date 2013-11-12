@@ -31,14 +31,14 @@ SELF_REPOSTS = [
 MULTIPLE_REPOST = [
             "I think %(repostNick)s will be very happy, his link has been reshared %(num)s times.",
             "Everybody check out this fabulous link! I've seen it %(num)s times but I still like it.",
-            "This link is quite popular, it has been posted %(num)s times. The original poster was %(repostNick)s.",  
-            "Every time I see this link I become happy. Thank you %(repostNick)s for sharing it and %(nick)s for resharing it!",  
+            "This link is quite popular, it has been posted %(num)s times. The original poster was %(repostNick)s.",
+            "Every time I see this link I become happy. Thank you %(repostNick)s for sharing it and %(nick)s for resharing it!",
 ]
 MULTIPLE_SELF_REPOST = [
-            "%(nick)s are you trying to make your link more popular? It has been posted %(num)s times already.",   
+            "%(nick)s are you trying to make your link more popular? It has been posted %(num)s times already.",
             "%(nick)s you should share your link more often. I've only seen %(num)s times.",
             "The number of times we have seen this link has just increased by one! The count is at %(num)s now. Yay.",
-            "Yay! Thanks to %(nick)s and his awesome link I can increase the reposted_link variable by one! It's new value is now %(num)s. I am happy.",   
+            "Yay! Thanks to %(nick)s and his awesome link I can increase the reposted_link variable by one! It's new value is now %(num)s. I am happy.",
 ]
 MSGS = [
             'Check out my homepage @ http://psywerx.net/irc',

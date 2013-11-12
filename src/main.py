@@ -6,22 +6,22 @@ from daemon import Daemon
 def run_bot():
     import settings
     from handler import Bot
-    
+
     while True:
         try:
             # initialize
             botko = Bot()
             # and run
             botko.run(settings.IRC_SERVER, settings.IRC_PORT)
-            
+
         except Exception as e:
             # log the error
             from traceback import format_exc
             from datetime import datetime
             from time import sleep
-            
+
             print "ERR " + str(format_exc())
-            
+
             f = open('error_log', 'a')
             f.write(str(datetime.now()) + "\n")
             f.write(str(format_exc() + "\n\n"))
