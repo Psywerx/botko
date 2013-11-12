@@ -9,7 +9,6 @@ import asyncore
 import asynchat
 
 import settings
-import response
 import logic
 
 
@@ -29,13 +28,15 @@ class Bot(asynchat.async_chat):
         self.uptime = time()
 
     def write(self, text):
-        if self.debug: print '> %s' % text
+        if self.debug:
+            print '> %s' % text
         self.push(text + '\r\n')
 
     def say(self, text, channel):
         line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
-        self.logic.log_line_and_notify_on_repost(":" + self.nick + "!~" + self.nick + "@6.6.6.6 " + line, True)
+        msg = ":" + self.nick + "!~" + self.nick + "@6.6.6.6 " + line
+        self.logic.log_line_and_notify_on_repost(msg, True)
 
     def handle_connect(self):
         self.write('NICK %s' % self.nick)
@@ -49,12 +50,14 @@ class Bot(asynchat.async_chat):
         f.write(str(datetime.now()) + '\n')
         f.write(str(error) + '\n\n')
         f.close()
-        if self.debug: print error
+        if self.debug:
+            print error
 
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
-        if self.debug: print "< " + line
+        if self.debug:
+            print "< " + line
         self.logic.new_input(line)
 
     def run(self, host, port):
@@ -70,4 +73,3 @@ class Bot(asynchat.async_chat):
         signal.alarm(20)
 
         asyncore.loop()
-

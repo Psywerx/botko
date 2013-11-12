@@ -8,6 +8,7 @@ from logic import BotLogic
 
 import unittest
 
+
 class BotTest(unittest.TestCase):
 
     def setUp(self):
