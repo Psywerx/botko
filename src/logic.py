@@ -43,7 +43,7 @@ class BotLogic(object):
                 self.actions[keyword] = action[0]
 
         # TODO: Proper plugin loading 'n stuff
-        self.plugins = [NSFWImageDetectorPlugin(bot=self)]
+        self.plugins = [NSFWImageDetectorPlugin(bot=bot)]
 
     def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
