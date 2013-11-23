@@ -34,11 +34,12 @@ class BotLogic(object):
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
         uptime = (self.uptime, ('uptime',))
+        fuck = (self.fuck, ('fuck'))
         help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
 
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
-        for action in (karma, cookie, uptime, help):  # movies, notify):
+        for action in (karma, cookie, uptime, help, fuck):  # movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
 
@@ -239,6 +240,34 @@ class BotLogic(object):
                     action(tokens[kw_pos + 1:], channel)   # send following tokens to the action logic
                 #else:
                     #self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
+
+    # factorize users current karma
+    def fuck(self, tokens, channel):
+        try:
+            def pf(number):
+                factors=[]
+                d=2
+                while(number>1):
+                    while(number%d==0):
+                        factors.append(d)
+                        number=number/d
+                    d+=1
+                return factors
+
+            if len(tokens) != 1:
+                params = urlencode({'token': settings.TOKEN, 'channel': channel})
+                response = urlopen(settings.SERVER_URL + 'irc/karma_nick_all', params).read()
+                r = json.loads(response)
+                for p in r:
+                    karmas = pf(p['karma'])
+                    # insert sleep to prevent flods
+                    self.bot.say( str(p['nick']) + " (" + ", ".join(map(str,karmas)) + "), ")
+
+        except Exception:
+            from traceback import format_exc
+            print "ERR " + str(format_exc())
+            self.bot.log_error('ERROR getting upboats')
+
 
     def karma(self, tokens, channel):
         try:
