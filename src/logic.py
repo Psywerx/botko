@@ -34,12 +34,12 @@ class BotLogic(object):
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
         uptime = (self.uptime, ('uptime',))
-        fuck = (self.fuck, ('fuck'))
+        fact = (self.fact, ('fact',))
         help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
 
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
-        for action in (karma, cookie, uptime, help, fuck):  # movies, notify):
+        for action in (karma, cookie, uptime, help, fact):  # movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
 
@@ -242,7 +242,7 @@ class BotLogic(object):
                     #self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
 
     # factorize users current karma
-    def fuck(self, tokens, channel):
+    def fact(self, tokens, channel):
         try:
             def pf(number):
                 factors=[]
@@ -258,10 +258,13 @@ class BotLogic(object):
                 params = urlencode({'token': settings.TOKEN, 'channel': channel})
                 response = urlopen(settings.SERVER_URL + 'irc/karma_nick_all', params).read()
                 r = json.loads(response)
+                r = sorted(r, key=lambda x: pf(x['karma']))
                 for p in r:
                     karmas = pf(p['karma'])
+                    if int(p['karma']) < 2: continue
                     # insert sleep to prevent flods
-                    self.bot.say( str(p['nick']) + " (" + ", ".join(map(str,karmas)) + "), ")
+                    self.bot.say(str(p['nick']) + " " + str(max(karmas)) + " (" + str(p['karma']) + "=" + "*".join(map(str,karmas)) + ")", channel)
+                self.bot.say(str("**** CONGRATS " + p['nick'] + " ****"), channel) 
 
         except Exception:
             from traceback import format_exc
@@ -302,7 +305,6 @@ class BotLogic(object):
         pass
 
     def uptime(self, tokens, channel):
-
         server_uptime = popen("uptime").read()
         current_uptime = time() - self.bot.uptime
         t = str(timedelta(seconds=current_uptime)).split('.')[0]
