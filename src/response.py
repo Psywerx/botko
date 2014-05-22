@@ -78,6 +78,18 @@ MSGS = [
             "I would rather be coding",
             "I know the question to 42. But I'm not tellin'",
 ]
+NSFW_LINKS = [
+            'Thanks %(nick)s, you just scared me for life with that link!',
+            'I wouldn\' call that last link %(nick)s posted NSFW, I\'d call it NSFL.',
+            'If my calculations are correct, that last url is NSFW.',
+            'Don\'t click on %(url)s, it will burn your eyes!',
+            'I clicked that last link and now I have to wash my hands.',
+            'There is a naked person on that last link!',
+            'I made a HUGE mistake by clicking on the link above.',
+            '%(nick)s! Why do you keep posting NSFW content?',
+            'I know I\'m only a little bot, but that url was really offensive.'
+
+]
 def random_response(responses):
     from random import randint
     return responses[randint(0, len(responses) - 1)]

@@ -58,7 +58,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
         nsfw_image_urls = self._process_images(urls=image_urls)
 
         for url in nsfw_image_urls:
-            msg = '%(url)s is probably NSFW' % {'url': url}
+            from response import NSFW_LINKS, random_response
+            msg = random_response(NSFW_LINKS) % {'url': url, 'nick': nick}
             self.bot.say(msg, channel)
 
     def _process_images(self, urls):
