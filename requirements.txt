@@ -1,2 +1,3 @@
 requests==2.0.1
 Pillow==2.2.1
+TwitterAPI==2.1.13
