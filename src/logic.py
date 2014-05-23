@@ -9,6 +9,7 @@ import settings
 import json
 
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
+from plugins.read_links import ReadLinks
 
 
 def static_var(varname, value):
@@ -44,7 +45,7 @@ class BotLogic(object):
                 self.actions[keyword] = action[0]
 
         # TODO: Proper plugin loading 'n stuff
-        self.plugins = [NSFWImageDetectorPlugin(bot=bot)]
+        self.plugins = [NSFWImageDetectorPlugin(bot=bot), ReadLinks(bot=bot)]
 
     def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
         try:
@@ -264,7 +265,7 @@ class BotLogic(object):
                     if int(p['karma']) < 2: continue
                     # insert sleep to prevent flods
                     self.bot.say(str(p['nick']) + " " + str(max(karmas)) + " (" + str(p['karma']) + "=" + "*".join(map(str,karmas)) + ")", channel)
-                self.bot.say(str("**** CONGRATS " + p['nick'] + " ****"), channel) 
+                self.bot.say(str("**** CONGRATS " + p['nick'] + " ****"), channel)
 
         except Exception:
             from traceback import format_exc
