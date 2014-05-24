@@ -5,6 +5,7 @@ import unittest
 from mock import Mock, patch
 
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
+from plugins.read_links import ReadLinks
 from tests import BasePluginTestCase
 
 
@@ -66,8 +67,35 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 
             self.plugin.handle_message('channel', 'nick', message)
 
+
             expected_args = ['%s is probably NSFW' % (file_path), 'channel']
-            self.plugin.bot.say.assert_called_with(*expected_args)
+
+        self.assertTrue(self.plugin.bot.say.call_count == len(self.unsafe_images))
+
+class ReadLinksTestCase(BasePluginTestCase):
+    def setUp(self):
+        super(ReadLinksTestCase, self).setUp()
+
+        self.plugin = ReadLinks(bot=self.bot)
+
+    def test_sanity(self):
+
+        self.plugin.handle_message('channel', 'nick', 'No tweet')
+        self.assertFalse(self.plugin.bot.say.called)
+
+    def test_tweet_in_message(self):
+        say = self.plugin.bot.say
+        self.plugin.handle_message('channel', 'nick', 'https://twitter.com/Smotko/status/469540345366450177')
+        self.assertTrue(say.called)
+        self.assertTrue("@Smotko on Twitter says" in say.call_args[0][0])
+
+    def test_unicode(self):
+        say = self.plugin.bot.say
+        self.plugin.handle_message('channel', 'nick', 'https://twitter.com/davision/status/470158246335250432')
+        self.assertTrue(say.called)
+        self.assertFalse('Sorry, I wasn\'t able to read the last tweet :(' in say.call_args[0][0])
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,8 +1,10 @@
 from plugins.base import BotPlugin
-from TwitterAPI import TwitterAPI
+from tweepy import OAuthHandler, API
 from settings import TWITTER as t
 import re,json
-twt = TwitterAPI(t['consumer_key'], t['consumer_secret'], t['access_token_key'], t['access_token_secret'])
+oauth = OAuthHandler(t['consumer_key'], t['consumer_secret'])
+oauth.set_access_token(t['access_token_key'], t['access_token_secret'])
+twt = API(oauth)
 twt_regex = re.compile("https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9]+).*")
 
 class ReadLinks(BotPlugin):
@@ -11,8 +13,9 @@ class ReadLinks(BotPlugin):
         res = twt_regex.search(msg)
         if not res: return
         try:
-            r = twt.request('statuses/show/:' + str(res.groups()[0]))
-            d = json.loads(r.text)
-            self.bot.say(str("@" + d['user']['screen_name'] + " on Twitter says: " + d['text']), channel)
+            status = twt.get_status(str(res.groups()[0]))
+            response = unicode("@" + status.user.screen_name + " on Twitter says: " + status.text)
+            response = response.encode('utf8')
+            self.bot.say(response, channel)
         except Exception, e:
-            self.bot.say('Sorry, I wasn\'t able to read the last tweet :(', channel)
+            self.bot.say('Sorry, I wasn\'t able to read the last tweet :(' + str(e), channel)
