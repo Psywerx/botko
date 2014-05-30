@@ -9,7 +9,7 @@ twt_regex = re.compile("https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9
 
 class ReadLinks(BotPlugin):
 
-    def handle_message(self, channel, nick, msg):
+    def handle_message(self, channel, nick, msg, line=None):
         res = twt_regex.search(msg)
         if not res: return
         try:

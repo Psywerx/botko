@@ -35,8 +35,7 @@ class Bot(asynchat.async_chat):
     def say(self, text, channel):
         line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
-        msg = ":" + self.nick + "!~" + self.nick + "@6.6.6.6 " + line
-        self.logic.log_line_and_notify_on_repost(msg, True)
+        return line
 
     def handle_connect(self):
         self.write('NICK %s' % self.nick)

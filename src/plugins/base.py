@@ -17,7 +17,7 @@ class BotPlugin(object):
         """
         self.bot = bot
 
-    def handle_message(self, channel, nick, msg):
+    def handle_message(self, channel, nick, msg, line):
         """
         Function which handles channel message lines and optionally, performs
         any necessary action.
@@ -27,3 +27,23 @@ class BotPlugin(object):
         :param msg: Actual message.
         """
         raise NotImplementedError('handle_message not implemented')
+
+class PsywerxPlugin(BotPlugin):
+    """
+    Base class that communicates with the psywerx server
+    """
+
+    def request(self, channel, url, extra_params, line):
+        from settings import PSYWERX as p
+        from urllib import urlencode
+        from urllib2 import urlopen, URLError
+        try:
+            params = urlencode(dict({
+                'token': p['TOKEN'],
+                'channel': channel
+            }, **extra_params))
+            return urlopen(p['SERVER_URL'] + url, params).read()
+        except URLError:
+            self.bot.log_error('ERROR Could not log line: ' + line)
+        except Exception:
+            pass

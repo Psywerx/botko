@@ -95,7 +95,5 @@ class ReadLinksTestCase(BasePluginTestCase):
         self.assertTrue(say.called)
         self.assertFalse('Sorry, I wasn\'t able to read the last tweet :(' in say.call_args[0][0])
 
-
-
 if __name__ == '__main__':
     unittest.main()

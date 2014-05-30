@@ -10,6 +10,7 @@ import json
 
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
 from plugins.read_links import ReadLinks
+from plugins.psywerx_history import PsywerxHistory
 
 
 def static_var(varname, value):
@@ -45,27 +46,11 @@ class BotLogic(object):
                 self.actions[keyword] = action[0]
 
         # TODO: Proper plugin loading 'n stuff
-        self.plugins = [NSFWImageDetectorPlugin(bot=bot), ReadLinks(bot=bot)]
-
-    def log_line_and_notify_on_repost(self, line, noRepost=False, channel=""):
-        try:
-            params = urlencode({'raw': line, 'token': settings.TOKEN, 'channel': channel})
-            r = urlopen(settings.SERVER_URL + 'irc/add', params).read()
-            if not noRepost and r.startswith('REPOST'):
-                _, nick, repostNick, messageType, num = r.split(' ')
-                if messageType == 'M':
-                    responses = SELF_REPOSTS if nick == repostNick else REPOSTS
-                    if int(num) == 1:
-                        self.bot.say(random_response(responses) % {'nick': nick, 'repostNick': repostNick}, channel)
-                    elif int(num) > 1:
-                        if nick == repostNick:
-                            self.bot.say(random_response(MULTIPLE_SELF_REPOST) % {'nick': nick, 'repostNick': repostNick, 'num': num}, channel)
-                        else:
-                            self.bot.say(random_response(MULTIPLE_REPOST) % {'nick': nick, 'repostNick': repostNick, 'num': num}, channel)
-            elif r != 'OK':
-                self.bot.log_error(r)
-        except URLError:
-            self.bot.log_error('ERROR Could not log line: ' + line)
+        self.plugins = [
+            PsywerxHistory(bot=bot),
+            NSFWImageDetectorPlugin(bot=bot),
+            ReadLinks(bot=bot)
+        ]
 
     def get_action_code(self, line):
         if line.startswith('ERROR'):
@@ -142,14 +127,12 @@ class BotLogic(object):
                         del self.known_users[c][nick.lower()]  # forget user when he quits/parts?
                         self.known_users[c][msg.lower()] = msg
 
-            self.log_line_and_notify_on_repost(line, False, channel)
-
             msg_lower = msg.lower()
 
             # TODO: Proper plugin loading n' stuff
             # Run plugins
             for plugin in self.plugins:
-                plugin.handle_message(channel=channel, nick=nick, msg=msg)
+                plugin.handle_message(channel, nick, msg, line)
 
             # Simon says action
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:

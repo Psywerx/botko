@@ -44,7 +44,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         super(NSFWImageDetectorPlugin, self).__init__(bot=bot)
         self._images_dir = tempfile.mkdtemp(suffix='nsfw-images')
 
-    def handle_message(self, channel, nick, msg):
+    def handle_message(self, channel, nick, msg, line=None):
         urls = re.findall(r'(https?://[^\s]+)', msg)
 
         if not urls:
