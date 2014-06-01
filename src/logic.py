@@ -174,8 +174,9 @@ class BotLogic(object):
             else:
                 mentions = set()
                 offline_mentions = set()
-                for group in re.findall(r'@(\w+)', msg_lower):
+                for group in re.findall(r'@(\w+\'?)', msg_lower):
                     offline_mention = group[-1] != "'" # if @group' ends with ', don't send to offline
+                    print offline_mention, group[-1]
                     if not offline_mention: group = group[:-1]
 
                     if group in ["join", "leave", "leaveAll"] or nick.lower() == '_haibot_':
@@ -188,12 +189,12 @@ class BotLogic(object):
                             continue
                         if n.lower() in self.known_users[channel]:
                             mentions.add(n.encode('ascii', 'ignore'))
-                        elif o:
+                        elif o and offline_mention:
                             offline_mentions.add(n.encode('ascii', 'ignore'))
 
                 if(len(mentions) > 0):
                     self.bot.say("CC: " + ', '.join(mentions), channel)
-                if(offline_mention and len(offline_mentions) > 0):
+                if(len(offline_mentions) > 0):
                     self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
 
                 #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
