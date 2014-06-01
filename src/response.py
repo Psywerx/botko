@@ -80,7 +80,7 @@ MSGS = [
 ]
 NSFW_LINKS = [
             'Thanks %(nick)s, you just scared me for life with that link!',
-            'I wouldn\' call that last link %(nick)s posted NSFW, I\'d call it NSFL.',
+            'I wouldn\'t call that last link %(nick)s posted NSFW, I\'d call it NSFL.',
             'If my calculations are correct, that last url is NSFW.',
             'Don\'t click on %(url)s, it will burn your eyes!',
             'I clicked that last link and now I have to wash my hands.',

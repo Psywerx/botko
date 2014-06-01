@@ -33,6 +33,7 @@ CHUNK_SIZE = 1024
 
 SKIN_PERCENTAGE_THRESHOLD = 30
 
+imgur_regex = re.compile("(?:https?://)(?:www[.])?(?:imgur.com/)(?:(?:gallery/)|(?:r/[a-z]+/))?([A-Za-z0-9]+)")
 
 class NSFWImageDetectorPlugin(BotPlugin):
 
@@ -50,7 +51,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         if not urls:
             return
 
-        image_urls = [url for url in urls if self._is_image_url(url=url)]
+        image_urls = self._get_image_urls(urls) 
 
         if not image_urls:
             return
@@ -89,7 +90,12 @@ class NSFWImageDetectorPlugin(BotPlugin):
         return skin_percent > SKIN_PERCENTAGE_THRESHOLD
 
     def _get_skin_ratio_percentage(self, file_path):
-        im = Image.open(file_path)
+        try:
+            im = Image.open(file_path)
+        except Exception:
+            self.bot.log_error('ERROR opening NSFW image ' + file_path)
+            return 0.0
+
         im = im.convert('RGB')
 
         im = im.crop((int(im.size[0] * 0.2), int(im.size[1] * 0.2),
@@ -105,6 +111,27 @@ class NSFWImageDetectorPlugin(BotPlugin):
         percentage = float(skin) / float(im.size[0] * im.size[1])
         percentage = percentage * 100
         return percentage
+
+    def _get_image_urls(self, urls):
+        """
+        Filters urls to returns only image urls.
+
+        Contains url transformers for a few common image sharers.
+        """
+
+        if not urls:
+            return
+
+        image_urls = []
+        for url in urls:
+            imgur_id = imgur_regex.search(url)
+            if imgur_id:
+                url = "https://i.imgur.com/" + imgur_id.group(1) + ".jpg"
+
+            if self._is_image_url(url=url):
+                image_urls.append(url)
+
+        return image_urls
 
     def _is_image_url(self, url):
         # Very simple logic, doesn't support urls which don't have an extension
