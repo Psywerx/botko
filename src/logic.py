@@ -37,7 +37,7 @@ class BotLogic(object):
         cookie = (self.cookie, ('cookie', 'fortune',))
         uptime = (self.uptime, ('uptime',))
         fact = (self.fact, ('fact',))
-        help = (self.help, ('help', 'commands', 'man', '???', 'usage',))
+        help = (self.help, ('help', 'halp', 'commands', 'man', '???', 'usage',))
 
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
@@ -175,6 +175,9 @@ class BotLogic(object):
                 mentions = set()
                 offline_mentions = set()
                 for group in re.findall(r'@(\w+)', msg_lower):
+                    offline_mention = group[-1] != "'" # if @group' ends with ', don't send to offline
+                    if not offline_mention: group = group[:-1]
+
                     if group in ["join", "leave", "leaveAll"] or nick.lower() == '_haibot_':
                         continue
 
@@ -190,7 +193,7 @@ class BotLogic(object):
 
                 if(len(mentions) > 0):
                     self.bot.say("CC: " + ', '.join(mentions), channel)
-                if(len(offline_mentions) > 0):
+                if(offline_mention and len(offline_mentions) > 0):
                     self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
 
                 #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
@@ -198,7 +201,7 @@ class BotLogic(object):
 
             # count karma upvote
             if '++' in msg_lower:
-                for user in msg.split(' '):
+                for user in re.split('[.,!?]* ', msg):
                     if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.known_users[channel]:
                         if user.replace('+', '') == nick:
                             self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!", channel)

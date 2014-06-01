@@ -1,3 +1,5 @@
 src/error_log
 error_log
 venv/*
+*.pyc
+*~
