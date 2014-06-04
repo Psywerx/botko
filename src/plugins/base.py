@@ -10,7 +10,6 @@ class BotPlugin(object):
 
     name = None
     description = None
-    process_self = False
 
     def __init__(self, bot):
         """
@@ -26,15 +25,22 @@ class BotPlugin(object):
         :param channel: Channel to which the message was sent to.
         :param nick: User which has sent the message.
         :param msg: Actual message.
+        :param line: Raw line received from serve
         """
         raise NotImplementedError('handle_message not implemented')
+
+    def handle_say(self, channel, msg, line):
+        """
+        Function which handles responses the bot has made.
+        """
+        pass
 
 class PsywerxPlugin(BotPlugin):
     """
     Base class that communicates with the psywerx server
     """
 
-    def request(self, channel, url, extra_params, line):
+    def request(self, channel, url, extra_params):
         from settings import PSYWERX as p
         from urllib import urlencode
         from urllib2 import urlopen, URLError
@@ -44,7 +50,5 @@ class PsywerxPlugin(BotPlugin):
                 'channel': channel
             }, **extra_params))
             return urlopen(p['SERVER_URL'] + url, params).read()
-        except URLError:
-            self.bot.log_error('ERROR Could not log line: ' + line)
         except Exception:
-            pass
+            self.bot.log_error('Request failed: ' + url)

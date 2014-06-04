@@ -2,35 +2,36 @@ from plugins.base import PsywerxPlugin
 from settings import TOKEN, SERVER_URL
 
 class PsywerxHistory(PsywerxPlugin):
-    process_self = True
 
     def handle_message(self, channel, nick, msg, line=None):
-        r = self.request(channel, 'irc/add', {'raw': line}, line)
+        r = self.request(channel, 'irc/add', {'raw': line})
         if not r:
             return
         if r.startswith('REPOST'):
-            self.handle_repost(r, channel)
+            self._handle_repost(r, channel)
         elif r != 'OK':
             self.bot.log_error(r)
 
+    def handle_say(self, channel, msg, line):
+        msg = ":" + self.bot.nick + "!~" + self.bot.nick + "@6.6.6.6 " + line
+        self.request(channel, 'irc/add', {'raw': msg})
+
     # TODO: add a method to log bot responses
 
-    def handle_repost(self, r, channel):
+    def _handle_repost(self, r, channel):
         _, nick, repostNick, messageType, num = r.split(' ')
         if messageType != 'M':
             return
 
-        response = self.pick_response(nick == repostNick, int(num) > 1)
-        line = self.bot.say(response % {
+        response = self._pick_response(nick == repostNick, int(num) > 1)
+        self.bot.say(response % {
             'nick': nick,
             'repostNick': repostNick,
             'num': num
         }, channel)
 
-        msg = ":" + self.bot.nick + "!~" + self.bot.nick + "@6.6.6.6 " + line
-        self.request(channel, 'irc/add', {'raw': line}, line)
 
-    def pick_response(self, is_self, is_multiple):
+    def _pick_response(self, is_self, is_multiple):
         from response import *
         f = [
                 [REPOSTS, MULTIPLE_REPOST],
