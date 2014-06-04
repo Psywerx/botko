@@ -2,6 +2,7 @@ from plugins.base import PsywerxPlugin
 from settings import TOKEN, SERVER_URL
 
 class PsywerxHistory(PsywerxPlugin):
+    process_self = True
 
     def handle_message(self, channel, nick, msg, line=None):
         r = self.request(channel, 'irc/add', {'raw': line}, line)

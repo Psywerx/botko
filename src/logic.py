@@ -82,6 +82,15 @@ class BotLogic(object):
         channel = sline[1][msg_chan:end].strip()
         return nick, msg, channel
 
+    def self_input(self, line):
+        try:
+            nick, msg, channel = self.parse_msg(line)
+            for plugin in self.plugins:
+                if plugin.self_process:
+                    plugin.handle_message(channel, nick, msg, line)
+        except:
+            return self.bot.log_error('ERROR parsing self msg line: ' + line)
+
     def new_input(self, line):
         if line.startswith('PING'):
             return self.bot.write('PONG')  # ping-pong

@@ -10,6 +10,7 @@ class BotPlugin(object):
 
     name = None
     description = None
+    process_self = False
 
     def __init__(self, bot):
         """

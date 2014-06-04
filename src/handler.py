@@ -35,6 +35,7 @@ class Bot(asynchat.async_chat):
     def say(self, text, channel):
         line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
+        self.logic.self_input(line)
         return line
 
     def handle_connect(self):
