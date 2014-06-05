@@ -11,6 +11,7 @@ import json
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
 from plugins.read_links import ReadLinks
 from plugins.psywerx_history import PsywerxHistory
+from plugins.psywerx_groups import PsywerxGroups
 
 
 def static_var(varname, value):
@@ -30,7 +31,7 @@ class BotLogic(object):
         self.joined_channel = False
         self.trimmer = re.compile('[ ]+')  # used for replacing a series of spaces with a single one
         self.usertrim = re.compile('[!+@]')  # used to strip nicknames of any mode-dependent prefixes (@-op, +-voice, etc.)
-        self.known_users = {}   # dict of known users present in the channel
+        self.bot.known_users = {}   # dict of known users present in the channel
         self.actions = {}   # actions dict, holding 'keyword':action_func, easily populated below for multiple keywords per action
                             # action_func accepts one argument, which is a list of tokens following the keyword
         karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
@@ -49,7 +50,8 @@ class BotLogic(object):
         self.plugins = [
             PsywerxHistory(bot=bot),
             NSFWImageDetectorPlugin(bot=bot),
-            ReadLinks(bot=bot)
+            ReadLinks(bot=bot),
+            PsywerxGroups(bot=bot),
         ]
 
     def get_action_code(self, line):
@@ -99,14 +101,14 @@ class BotLogic(object):
 
         if action_code == 'END_MOTD':  # after server MOTD, join desired channel
             for c in self.bot.channel:
-                self.known_users[c] = {}
+                self.bot.known_users[c] = {}
                 self.bot.write('JOIN ' + c)
         elif action_code == 'NAMES_LIST':
             _, _, channel = self.parse_msg(line)
             for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
-                self.known_users[channel][nick.lower()] = nick
+                self.bot.known_users[channel][nick.lower()] = nick
             # object comprehension does not work in python 2.6.x
-            # self.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
+            # self.bot.known_users = {nick.lower():nick for nick in self.usertrim.sub('', line.split(':')[2]).split(' ')}
 
         elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.joined_channel = True
@@ -118,21 +120,21 @@ class BotLogic(object):
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
 
             if action_code == 'JOIN':
-                self.known_users[channel][nick.lower()] = nick  # make newly-joined user known
+                self.bot.known_users[channel][nick.lower()] = nick  # make newly-joined user known
 
             elif action_code == 'QUIT':
-                for c in self.known_users.keys():
-                    if nick.lower() in self.known_users[c]:
-                        del self.known_users[c][nick.lower()]  # forget user when he quits/parts?
+                for c in self.bot.known_users.keys():
+                    if nick.lower() in self.bot.known_users[c]:
+                        del self.bot.known_users[c][nick.lower()]  # forget user when he quits/parts?
 
             elif action_code == 'PART':
-                del self.known_users[channel][nick.lower()]
+                del self.bot.known_users[channel][nick.lower()]
 
             elif action_code == 'NICK':
-                for c in self.known_users.keys():
-                    if nick.lower() in self.known_users[c]:
-                        del self.known_users[c][nick.lower()]  # forget user when he quits/parts?
-                        self.known_users[c][msg.lower()] = msg
+                for c in self.bot.known_users.keys():
+                    if nick.lower() in self.bot.known_users[c]:
+                        del self.bot.known_users[c][nick.lower()]  # forget user when he quits/parts?
+                        self.bot.known_users[c][msg.lower()] = msg
 
             msg_lower = msg.lower()
 
@@ -144,77 +146,18 @@ class BotLogic(object):
             # Simon says action
             if msg_lower.startswith('simon says: ') and nick in settings.SIMON_USERS:
                 self.bot.say(msg[12:], channel)
-            elif msg_lower.startswith('@mygroup'):
-                params = urlencode({'token': settings.TOKEN, 'channel': channel, 'nick': nick})
-                response = urlopen(settings.SERVER_URL + 'irc/mygroups', params).read()
-                self.bot.say(response.replace('"', ''), channel)
-            elif msg_lower.startswith('@group'):
-                params = urlencode({'token': settings.TOKEN, 'channel': channel})
-                response = urlopen(settings.SERVER_URL + 'irc/groups', params).read()
-                self.bot.say(response.replace('"', ''), channel)
-            elif msg_lower.startswith('@join'):
-
-                def parse_join(splt):
-
-                    if len(splt) == 2:
-                        return splt[1].replace('@', ''), False
-                    elif len(splt) == 3:
-                        return splt[1].replace('@', ''), True
-                    else:
-                        return False
-                g = parse_join(msg_lower.split(' '))
-                if g:
-                    params = urlencode({'token': settings.TOKEN, 'channel': channel, 'nick': nick, 'group': g[0], 'offline': g[1]})
-                    response = urlopen(settings.SERVER_URL + 'irc/join', params).read()
-                    self.bot.say(response.replace('"', ''), channel)
-            elif msg_lower.startswith('@leaveall'):
-                params = urlencode({'token': settings.TOKEN, 'channel': channel, 'nick': nick})
-                response = urlopen(settings.SERVER_URL + 'irc/leaveAll', params).read()
-                self.bot.say(response.replace('"', ''), channel)
-            elif msg_lower.startswith('@leave'):
-                splited = msg_lower.split(' ')
-                if(len(splited) == 2):
-                    group = splited[1].replace('@', '')
-                    params = urlencode({'token': settings.TOKEN, 'channel': channel, 'nick': nick, 'group': group})
-                    response = urlopen(settings.SERVER_URL + 'irc/leave', params).read()
-                    self.bot.say(response.replace('"', ''), channel)
-            else:
-                mentions = set()
-                offline_mentions = set()
-                for group in re.findall(r'@(\w+\'?)', msg_lower):
-                    offline_mention = group[-1] != "'" # if @group' ends with ', don't send to offline
-                    print offline_mention, group[-1]
-                    if not offline_mention: group = group[:-1]
-
-                    if group in ["join", "leave", "leaveAll"] or nick.lower() == '_haibot_':
-                        continue
-
-                    params = urlencode({'token': settings.TOKEN, 'channel': channel, 'group': group})
-                    response = json.loads(urlopen(settings.SERVER_URL + 'irc/mention', params).read())
-                    for n, c, o in response:
-                        if n.lower() == nick.lower():
-                            continue
-                        if n.lower() in self.known_users[channel]:
-                            mentions.add(n.encode('ascii', 'ignore'))
-                        elif o and offline_mention:
-                            offline_mentions.add(n.encode('ascii', 'ignore'))
-
-                if(len(mentions) > 0):
-                    self.bot.say("CC: " + ', '.join(mentions), channel)
-                if(len(offline_mentions) > 0):
-                    self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
 
                 #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
-                #self.bot.say('CC: ' + ', '.join([i for i in self.known_users[channel].values() if i not in blacklist]), channel)
+                #self.bot.say('CC: ' + ', '.join([i for i in self.bot.known_users[channel].values() if i not in blacklist]), channel)
 
             # count karma upvote
             if '++' in msg_lower:
                 for user in re.split('[.,!?]* ', msg):
-                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.known_users[channel]:
+                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.bot.known_users[channel]:
                         if user.replace('+', '') == nick:
                             self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!", channel)
                         else:
-                            self.increase_karma(self.known_users[channel][user.replace('+', '').lower()], channel)
+                            self.increase_karma(self.bot.known_users[channel][user.replace('+', '').lower()], channel)
 
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             # other actions require that botko is called first, e.g.
@@ -278,9 +221,9 @@ class BotLogic(object):
                     s += str(p['nick']) + " (" + str(p['karma']) + "), "
                 self.bot.say(s[:-2], channel)
             else:
-                params = urlencode({'nick': self.known_users[channel][tokens[0].lower()], 'token': settings.TOKEN, 'channel': channel})
+                params = urlencode({'nick': self.bot.known_users[channel][tokens[0].lower()], 'token': settings.TOKEN, 'channel': channel})
                 response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-                self.bot.say(self.known_users[channel][tokens[0].lower()] + " has " + response + " karma.", channel)
+                self.bot.say(self.bot.known_users[channel][tokens[0].lower()] + " has " + response + " karma.", channel)
         except Exception:
             from traceback import format_exc
             print "ERR " + str(format_exc())

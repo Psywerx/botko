@@ -16,6 +16,7 @@ class Bot(asynchat.async_chat):
 
     def __init__(self, debug=True):
         asynchat.async_chat.__init__(self)
+        self.known_users = {}
         self.buffer = ''
         self.set_terminator('\r\n')
         self.nick = settings.BOT_NICK
@@ -33,6 +34,8 @@ class Bot(asynchat.async_chat):
         self.push(text + '\r\n')
 
     def say(self, text, channel):
+        if text == '':
+            return
         line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
         self.logic.self_input(channel, text, line)
