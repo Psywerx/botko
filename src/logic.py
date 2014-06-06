@@ -12,6 +12,7 @@ from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
 from plugins.read_links import ReadLinks
 from plugins.psywerx_history import PsywerxHistory
 from plugins.psywerx_groups import PsywerxGroups
+from plugins.psywerx_karma import PsywerxKarma
 
 
 def static_var(varname, value):
@@ -34,7 +35,6 @@ class BotLogic(object):
         self.bot.known_users = {}   # dict of known users present in the channel
         self.actions = {}   # actions dict, holding 'keyword':action_func, easily populated below for multiple keywords per action
                             # action_func accepts one argument, which is a list of tokens following the keyword
-        karma = (self.karma, ('karma', 'leaderboard', 'upboats', 'upvotes', 'stats',))
         cookie = (self.cookie, ('cookie', 'fortune',))
         uptime = (self.uptime, ('uptime',))
         fact = (self.fact, ('fact',))
@@ -42,13 +42,14 @@ class BotLogic(object):
 
         #movies = (self.movie_night, ('movie', 'movie-night', 'movies', 'moviez', ))
         #notify = (self.notifications, ('notify', 'remind', 'tell', ))
-        for action in (karma, cookie, uptime, help, fact):  # movies, notify):
+        for action in (cookie, uptime, help, fact):  # movies, notify):
             for keyword in action[1]:
                 self.actions[keyword] = action[0]
 
         # TODO: Proper plugin loading 'n stuff
         self.plugins = [
             PsywerxHistory(bot=bot),
+            PsywerxKarma(bot=bot),
             NSFWImageDetectorPlugin(bot=bot),
             ReadLinks(bot=bot),
             PsywerxGroups(bot=bot),
@@ -150,14 +151,7 @@ class BotLogic(object):
                 #blacklist = [settings.BOT_NICK, nick, '_awwbot_', '_haibot_', '_mehbot_']
                 #self.bot.say('CC: ' + ', '.join([i for i in self.bot.known_users[channel].values() if i not in blacklist]), channel)
 
-            # count karma upvote
-            if '++' in msg_lower:
-                for user in re.split('[.,!?]* ', msg):
-                    if (user.endswith('++') or user.startswith('++')) and user.replace('+', '').lower() in self.bot.known_users[channel]:
-                        if user.replace('+', '') == nick:
-                            self.bot.say("Nice try " + nick + ", but you can't give karma to yourself!", channel)
-                        else:
-                            self.increase_karma(self.bot.known_users[channel][user.replace('+', '').lower()], channel)
+
 
             tokens = self.trimmer.sub(' ', msg_lower).replace(':', '').split(' ')
             # other actions require that botko is called first, e.g.
@@ -176,8 +170,6 @@ class BotLogic(object):
 
                 if action is not None:
                     action(tokens[kw_pos + 1:], channel)   # send following tokens to the action logic
-                #else:
-                    #self.bot.say('Sorry, I don\'t understand that. Get a list of commands by typing \'' + settings.BOT_NICK + ' help\'.')
 
     # factorize users current karma
     def fact(self, tokens, channel):
@@ -208,33 +200,6 @@ class BotLogic(object):
             from traceback import format_exc
             print "ERR " + str(format_exc())
             self.bot.log_error('ERROR getting upboats')
-
-
-    def karma(self, tokens, channel):
-        try:
-            if len(tokens) != 1:
-                params = urlencode({'token': settings.TOKEN, 'channel': channel})
-                response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-                r = json.loads(response)
-                s = ""
-                for p in r:
-                    s += str(p['nick']) + " (" + str(p['karma']) + "), "
-                self.bot.say(s[:-2], channel)
-            else:
-                params = urlencode({'nick': self.bot.known_users[channel][tokens[0].lower()], 'token': settings.TOKEN, 'channel': channel})
-                response = urlopen(settings.SERVER_URL + 'irc/karma_nick', params).read()
-                self.bot.say(self.bot.known_users[channel][tokens[0].lower()] + " has " + response + " karma.", channel)
-        except Exception:
-            from traceback import format_exc
-            print "ERR " + str(format_exc())
-            self.bot.log_error('ERROR getting upboats')
-
-    def increase_karma(self, user, channel):
-        try:
-            params = urlencode({'nick': user, 'token': settings.TOKEN, 'channel': channel})
-            urlopen(settings.SERVER_URL + 'irc/karma', params).read()
-        except:
-            self.bot.log_error('ERROR giving upboat to ' + user)
 
     def movie_night(self, tokens, channel):
         pass

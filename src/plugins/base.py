@@ -2,6 +2,7 @@ __all__ = [
     'BotPlugin'
 ]
 
+import re
 
 class BotPlugin(object):
     """
@@ -10,12 +11,26 @@ class BotPlugin(object):
 
     name = None
     description = None
+    trimmer = re.compile('[ ]+')
 
     def __init__(self, bot):
         """
         :param bot: Bot instance.
         """
         self.bot = bot
+
+    def handle_tokens(self, channel, msg, keywords, callback):
+        tokens = self.trimmer.sub(' ', msg.lower()).replace(':', '').split(' ')
+        if len(tokens) >= 1 and (tokens[0] == self.bot.nick or '@' in tokens[0]):
+
+            tokens[0] = tokens[0].replace('@', '')
+            i = 0
+            for i, token in enumerate(tokens):
+                if token in keywords:
+                    callback(tokens[i+1:], channel)
+                    break
+                if i > 1:
+                    break
 
     def handle_message(self, channel, nick, msg, line):
         """
