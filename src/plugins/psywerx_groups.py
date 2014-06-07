@@ -1,5 +1,4 @@
-from plugins.base import PsywerxPlugin
-from settings import TOKEN, SERVER_URL
+from base import PsywerxPlugin
 
 class PsywerxGroups(PsywerxPlugin):
 
@@ -66,7 +65,7 @@ class PsywerxGroups(PsywerxPlugin):
 
             params = {'group': group}
             response = json.loads(self.request(channel, 'irc/mention', params))
-            for n, c, o in response:
+            for n, _, o in response:
                 if n.lower() == nick.lower():
                     continue
                 if n.lower() in self.bot.known_users[channel]:

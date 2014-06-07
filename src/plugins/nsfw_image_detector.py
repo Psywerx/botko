@@ -17,7 +17,7 @@ from os.path import join as pjoin
 import requests
 from PIL import Image
 
-from plugins.base import BotPlugin
+from base import BotPlugin
 
 __all__ = [
     'NSFWImageDetectorPlugin'

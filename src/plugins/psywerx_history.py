@@ -1,5 +1,6 @@
-from plugins.base import PsywerxPlugin
-from settings import TOKEN, SERVER_URL
+from base import PsywerxPlugin
+from response import REPOSTS, MULTIPLE_REPOST, \
+  SELF_REPOSTS, MULTIPLE_SELF_REPOST, random_response
 
 class PsywerxHistory(PsywerxPlugin):
 
@@ -16,8 +17,6 @@ class PsywerxHistory(PsywerxPlugin):
         msg = ":" + self.bot.nick + "!~" + self.bot.nick + "@6.6.6.6 " + line
         self.request(channel, 'irc/add', {'raw': msg})
 
-    # TODO: add a method to log bot responses
-
     def _handle_repost(self, r, channel):
         _, nick, repostNick, messageType, num = r.split(' ')
         if messageType != 'M':
@@ -30,9 +29,7 @@ class PsywerxHistory(PsywerxPlugin):
             'num': num
         }, channel)
 
-
     def _pick_response(self, is_self, is_multiple):
-        from response import *
         f = [
                 [REPOSTS, MULTIPLE_REPOST],
                 [SELF_REPOSTS, MULTIPLE_SELF_REPOST]

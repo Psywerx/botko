@@ -27,7 +27,7 @@ class BotPlugin(object):
             i = 0
             for i, token in enumerate(tokens):
                 if token in keywords:
-                    callback(tokens[i+1:], channel)
+                    callback(tokens[i + 1:], channel)
                     break
                 if i > 1:
                     break
@@ -58,7 +58,7 @@ class PsywerxPlugin(BotPlugin):
     def request(self, channel, url, extra_params):
         from settings import PSYWERX as p
         from urllib import urlencode
-        from urllib2 import urlopen, URLError
+        from urllib2 import urlopen
         try:
             params = urlencode(dict({
                 'token': p['TOKEN'],
@@ -66,4 +66,4 @@ class PsywerxPlugin(BotPlugin):
             }, **extra_params))
             return urlopen(p['SERVER_URL'] + url, params).read()
         except Exception:
-            self.bot.log_error('Request failed: ' + url)
+            self.bot.log_error('Request failed: ' + url + params)

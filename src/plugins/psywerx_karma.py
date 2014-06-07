@@ -1,7 +1,36 @@
-from plugins.base import PsywerxPlugin
+from base import PsywerxPlugin
 import re, json
 
 class PsywerxKarma(PsywerxPlugin):
+
+    # factorize users current karma
+    def fact(self, tokens, channel):
+        try:
+            def pf(number):
+                factors=[]
+                d=2
+                while(number>1):
+                    while(number%d==0):
+                        factors.append(d)
+                        number=number/d
+                    d+=1
+                return factors
+
+            if len(tokens) != 1:
+                response = self.request(channel, 'irc/karma_nick_all', {})
+                r = json.loads(response)
+                r = sorted(r, key=lambda x: pf(x['karma']))
+                for p in r:
+                    karmas = pf(p['karma'])
+                    if int(p['karma']) < 2: continue
+                    # insert sleep to prevent flods
+                    self.bot.say(str(p['nick']) + " " + str(max(karmas)) + " (" + str(p['karma']) + "=" + "*".join(map(str,karmas)) + ")", channel)
+                self.bot.say(str("**** CONGRATS " + p['nick'] + " ****"), channel)
+
+        except Exception:
+            from traceback import format_exc
+            print "ERR " + str(format_exc())
+            self.bot.log_error('ERROR getting upboats')
 
     def _karma(self, tokens, channel):
         if len(tokens) != 1:

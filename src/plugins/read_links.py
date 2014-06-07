@@ -1,7 +1,7 @@
-from plugins.base import BotPlugin
+from base import BotPlugin
 from tweepy import OAuthHandler, API
 from settings import TWITTER as t
-import re,json
+import re
 oauth = OAuthHandler(t['consumer_key'], t['consumer_secret'])
 oauth.set_access_token(t['access_token_key'], t['access_token_secret'])
 twt = API(oauth)
