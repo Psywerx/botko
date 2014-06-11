@@ -150,8 +150,11 @@ class NSFWImageDetectorPlugin(BotPlugin):
         Download image in a temporary directory and return path to the
         downloaded file.
         """
-        extension = os.path.splitext(url)[1]
-        response = requests.get(url, stream=True)
+        try:
+          extension = os.path.splitext(url)[1]
+          response = requests.get(url, stream=True)
+        except:
+          return
 
         if not response.status_code == 200:
             return
