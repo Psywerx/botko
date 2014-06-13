@@ -14,7 +14,7 @@ class ReadLinks(BotPlugin):
         if not res: return
         try:
             status = twt.get_status(str(res.groups()[0]))
-            response = unicode("@" + status.user.screen_name + " on Twitter says: " + status.text)
+            response = unicode("@" + status.user.screen_name + " on Twitter says: " + status.text.replace('\n', ' '))
             response = response.encode('utf8')
             self.bot.say(response, channel)
         except Exception, e:
