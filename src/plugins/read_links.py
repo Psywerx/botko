@@ -34,7 +34,6 @@ class ReadLinks(BotPlugin):
         try:
             index = msg.index('v=')
             video_id = msg[index+2:index+13]
-            print video_id
             from gdata.youtube import service
             client = service.YouTubeService()
             video = client.GetYouTubeVideoEntry(video_id=video_id)
