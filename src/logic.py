@@ -4,6 +4,7 @@ from plugins.psywerx_history import PsywerxHistory
 from plugins.psywerx_groups import PsywerxGroups
 from plugins.psywerx_karma import PsywerxKarma
 from plugins.uptime import Uptime
+import settings
 import re
 
 class BotLogic(object):
@@ -33,6 +34,8 @@ class BotLogic(object):
             return 'NAMES_LIST'
         if action == '366':
             return 'END_NAMES'
+        if action == '433':
+            return 'NICK_IN_USE'
         return action.upper()
 
     def parse_msg(self, line):
@@ -76,6 +79,9 @@ class BotLogic(object):
         elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
             self.joined_channel = True
 
+        elif action_code == 'NICK_IN_USE': # TODO: Could loop, if all nicks are taken
+            self.bot.next_nick()
+            
         elif self.joined_channel:  # respond to some messages
             try:
                 nick, msg, channel = self.parse_msg(line)

@@ -19,7 +19,9 @@ class Bot(asynchat.async_chat):
         self.known_users = {}
         self.buffer = ''
         self.set_terminator('\r\n')
-        self.nick = settings.BOT_NICK
+        self.nicks = settings.BOT_NICKS
+        self.nick_num = 0
+        self.nick = self.nicks[0]
         self.realname = settings.BOT_NAME
         self.channel = settings.CHANNEL
         self.ident = 'botko'
@@ -41,8 +43,16 @@ class Bot(asynchat.async_chat):
         self.logic.self_input(channel, text, line)
         return line
 
-    def handle_connect(self):
+    def set_nick(self):
+        self.nick = self.nicks[self.nick_num]
         self.write('NICK %s' % self.nick)
+
+    def next_nick(self):
+        self.nick_num = (self.nick_num + 1) % len(self.nicks)
+        self.set_nick()
+    
+    def handle_connect(self):
+        self.set_nick()
         self.write('USER %s iw 0 :%s' % (self.ident, self.realname))
 
     def collect_incoming_data(self, data):
