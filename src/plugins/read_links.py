@@ -15,7 +15,7 @@ YOUTUBE_RESPONSES = [
     "The title of that yt video is '%(title)s'. It has been viewed %(views)s times.",
     "Title: '%(title)s', Views: %(views)s, duration: %(seconds)ss.",
     "Title of that yt video is '%(title)s'.",
-    "Yt video titled '%(title)s' and it has an average rating of %(rating).2f.",
+    "Yt video is titled '%(title)s' and has %(rating)s.",
     "Here is the title of that yt video: '%(title)s'.",
     "I found the title of that yt video, here it is: '%(title)s'",
     "If you click that link you will watch a video titled '%(title)s'. Good luck!"
@@ -51,7 +51,7 @@ class ReadLinks(BotPlugin):
                 'title': video.title.text,
                 'seconds': video.media.duration.seconds,
                 'views': video.statistics.view_count,
-                'rating': float(video.rating.average) if video.rating != None else 3.0 + random.random()*2 # Noone will ever know ;)
+                'rating': ("an average rating of %.2f" % float(video.rating.average)) if video.rating != None else "no rating"
             }
             self.bot.say(random_response(YOUTUBE_RESPONSES) % video_info, channel)
         except Exception as e:
