@@ -57,7 +57,7 @@ class PsywerxGroups(PsywerxPlugin):
         import re, json
         for group in re.findall(r'@(\w+\'?)', msg_lower):
             # if @group' ends with ', or empty msg, don't send to offline
-            offline_mention = group[-1] != "'" and re.match('(@\w+\'? *)+$', msg_lower.strip()) == None
+            offline_mention = group[-1] != "'" and re.match('(@\w+\'?[ \^]*)+$', msg_lower.strip()) == None
             #print offline_mention, group[-1]
             if group[-1] == "'": group = group[:-1]
 
