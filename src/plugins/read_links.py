@@ -2,6 +2,7 @@ from base import BotPlugin
 from tweepy import OAuthHandler, API
 from settings import TWITTER as t
 from response import random_response
+import random
 import re
 oauth = OAuthHandler(t['consumer_key'], t['consumer_secret'])
 oauth.set_access_token(t['access_token_key'], t['access_token_secret'])
@@ -12,9 +13,9 @@ yt_regex = re.compile("https?://(?:www\\.)?(?:youtu[.]be|youtube[.]com)/(?:[^/ ]
 YOUTUBE_RESPONSES = [
     "That video is titled '%(title)s'. You will waste %(seconds)ss of your life watching it.",
     "The title of that yt video is '%(title)s'. It has been viewed %(views)s times.",
-    "Title: '%(title)s', Views: '%(views)s', duration: %(seconds)ss.",
+    "Title: '%(title)s', Views: %(views)s, duration: %(seconds)ss.",
     "Title of that yt video is '%(title)s'.",
-    "Yt video titled '%(title)s' and it has an average rating of %(rating).2f.",
+    "Yt video is titled '%(title)s' and has %(rating)s.",
     "Here is the title of that yt video: '%(title)s'.",
     "I found the title of that yt video, here it is: '%(title)s'",
     "If you click that link you will watch a video titled '%(title)s'. Good luck!"
@@ -50,7 +51,7 @@ class ReadLinks(BotPlugin):
                 'title': video.title.text,
                 'seconds': video.media.duration.seconds,
                 'views': video.statistics.view_count,
-                'rating': float(video.rating.average),
+                'rating': ("an average rating of %.2f" % float(video.rating.average)) if video.rating != None else "no rating"
             }
             self.bot.say(random_response(YOUTUBE_RESPONSES) % video_info, channel)
         except Exception as e:

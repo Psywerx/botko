@@ -56,9 +56,10 @@ class PsywerxGroups(PsywerxPlugin):
         offline_mentions = set()
         import re, json
         for group in re.findall(r'@(\w+\'?)', msg_lower):
-            offline_mention = group[-1] != "'" # if @group' ends with ', don't send to offline
+            # if @group' ends with ', or empty msg, don't send to offline
+            offline_mention = group[-1] != "'" and re.match('(@\w+\'?[ \^]*)+$', msg_lower.strip()) == None
             #print offline_mention, group[-1]
-            if not offline_mention: group = group[:-1]
+            if group[-1] == "'": group = group[:-1]
 
             if nick.lower() == '_haibot_':
                 continue
