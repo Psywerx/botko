@@ -13,9 +13,9 @@ yt_regex = re.compile(
     + "/(?:[^/ ]*?[?&]v=)?([^/& ]+)")
 
 YOUTUBE_RESPONSES = [
-    "That video is titled '%(title)s'."
+    "That video is titled '%(title)s'. "
     + "You will waste %(seconds)ss of your life watching it. ",
-    "The title of that yt video is '%(title)s'."
+    "The title of that yt video is '%(title)s'. "
     + "It has been viewed %(views)s times. ",
     "Title: '%(title)s', Views: %(views)s, duration: %(seconds)ss.",
     "Title of that yt video is '%(title)s'.",
@@ -71,7 +71,7 @@ class ReadLinks(BotPlugin):
         except Exception as e:
             self.bot.log_error('ERROR could not get title of a yt link from: "'
                                + msg + '" the exception was: ' + str(e))
-            self.bot.say('For some reason I couldn\'t read the title of that'
+            self.bot.say('For some reason I couldn\'t read the title of that '
                          + 'yt link.', channel)
 
     def handle_message(self, channel, nick, msg, line=None):
