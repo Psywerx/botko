@@ -50,7 +50,7 @@ class Bot(asynchat.async_chat):
     def next_nick(self):
         self.nick_num = (self.nick_num + 1) % len(self.nicks)
         self.set_nick()
-    
+
     def handle_connect(self):
         self.set_nick()
         self.write('USER %s iw 0 :%s' % (self.ident, self.realname))

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import sys, time
+import sys
 from daemon import Daemon
+
 
 def run_bot():
     import settings
@@ -14,7 +15,7 @@ def run_bot():
             # and run
             botko.run(settings.IRC_SERVER, settings.IRC_PORT)
 
-        except Exception as e:
+        except Exception:
             # log the error
             from traceback import format_exc
             from datetime import datetime
@@ -27,6 +28,7 @@ def run_bot():
             f.write(str(format_exc() + "\n\n"))
             f.close()
             sleep(10)
+
 
 class BotkoDaemon(Daemon):
     def run(self):

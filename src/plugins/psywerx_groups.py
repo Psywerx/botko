@@ -1,16 +1,20 @@
 from base import PsywerxPlugin
+import re
+import json
+
 
 class PsywerxGroups(PsywerxPlugin):
 
     def __init__(self, bot=None):
         super(PsywerxPlugin, self).__init__(bot=bot)
         self.actions = {
-            '@mygroup' : self._basicAction('irc/mygroups'),
-            '@group' : self._basicAction('irc/groups'),
-            '@leaveall' : self._basicAction('irc/leaveAll'),
-            '@leave' : self._leaveAction,
-            '@join' : self._joinAction,
+            '@mygroup': self._basicAction('irc/mygroups'),
+            '@group': self._basicAction('irc/groups'),
+            '@leaveall': self._basicAction('irc/leaveAll'),
+            '@leave': self._leaveAction,
+            '@join': self._joinAction,
         }
+
     def _basicAction(self, url):
         def _req(channel, params, msg_lower):
             return self.request(channel, url, params)
@@ -54,12 +58,14 @@ class PsywerxGroups(PsywerxPlugin):
         msg_lower = msg.lower()
         mentions = set()
         offline_mentions = set()
-        import re, json
+
         for group in re.findall(r'@(\w+\'?)', msg_lower):
             # if @group' ends with ', or empty msg, don't send to offline
-            offline_mention = group[-1] != "'" and re.match('(@\w+\'?[ \^]*)+$', msg_lower.strip()) == None
-            #print offline_mention, group[-1]
-            if group[-1] == "'": group = group[:-1]
+            offline_mention = group[-1] != "'" and \
+                re.match('(@\w+\'?[ \^]*)+$', msg_lower.strip()) is None
+
+            if group[-1] == "'":
+                group = group[:-1]
 
             if nick.lower() == '_haibot_':
                 continue
@@ -77,7 +83,8 @@ class PsywerxGroups(PsywerxPlugin):
         if(len(mentions) > 0):
             self.bot.say("CC: " + ', '.join(mentions), channel)
         if(len(offline_mentions) > 0):
-            self.bot.say("@msg " + ','.join(offline_mentions) + " " + msg, channel)
+            self.bot.say("@msg " + ','.join(offline_mentions)
+                         + " " + msg, channel)
 
     def handle_message(self, channel, nick, msg, line=None):
         if not self._handleActions(channel, nick, msg, line):

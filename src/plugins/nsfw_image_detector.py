@@ -33,7 +33,11 @@ CHUNK_SIZE = 1024
 
 SKIN_PERCENTAGE_THRESHOLD = 30
 
-imgur_regex = re.compile("(?:https?://)(?:www[.])?(?:imgur.com/)(?:(?:gallery/)|(?:r/[a-z]+/))?([A-Za-z0-9]+)")
+imgur_regex = re.compile(
+    "(?:https?://)(?:www[.])?(?:imgur.com/)"
+    + "(?:(?:gallery/)|(?:r/[a-z]+/))?([A-Za-z0-9]+)"
+)
+
 
 class NSFWImageDetectorPlugin(BotPlugin):
 
@@ -51,7 +55,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         if not urls:
             return
 
-        image_urls = self._get_image_urls(urls) 
+        image_urls = self._get_image_urls(urls)
 
         if not image_urls:
             return
@@ -151,10 +155,10 @@ class NSFWImageDetectorPlugin(BotPlugin):
         downloaded file.
         """
         try:
-          extension = os.path.splitext(url)[1]
-          response = requests.get(url, stream=True)
+            extension = os.path.splitext(url)[1]
+            response = requests.get(url, stream=True)
         except:
-          return
+            return
 
         if not response.status_code == 200:
             return
@@ -168,26 +172,35 @@ class NSFWImageDetectorPlugin(BotPlugin):
                 if first_chunk:
                     first_chunk = False
                     if not self._is_image(chunk):
-                        self.bot.log_error('ERROR NSFW image was not an image ' + url)
+                        self.bot.log_error('ERROR NSFW image was not an image '
+                                           + url)
                         return
 
                 fp.write(chunk)
 
         return file_path
 
-    # Taken from http://people.iola.dk/olau/python/imagedetect.py by Ole Laursen
+    # From http://people.iola.dk/olau/python/imagedetect.py by Ole Laursen
     def _is_jpg(self, data):
-        """Returns True if data is the first 2 bytes of a JPEG file."""
+        """
+        Returns True if data is the first 2 bytes of a JPEG file.
+        """
         return data[:2] == '\xff\xd8'
 
     def _is_png(self, data):
-        """Returns True if data is the first 8 bytes of a PNG file."""
+        """
+        Returns True if data is the first 8 bytes of a PNG file.
+        """
         return data[:8] == '\x89PNG\x0d\x0a\x1a\x0a'
 
     def _is_gif(self, data):
-        """Returns True if data is the first 4 bytes of a GIF file."""
+        """
+        Returns True if data is the first 4 bytes of a GIF file.
+        """
         return data[:4] == 'GIF8'
 
     def _is_image(self, data):
-        """Returns True if data conforms to the magic numbers of an image file"""
+        """
+        Returns True if data conforms to the magic numbers of an image file
+        """
         return self._is_jpg(data) or self._is_png(data) or self._is_gif(data)

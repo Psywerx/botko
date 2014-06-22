@@ -4,14 +4,14 @@ from plugins.psywerx_history import PsywerxHistory
 from plugins.psywerx_groups import PsywerxGroups
 from plugins.psywerx_karma import PsywerxKarma
 from plugins.uptime import Uptime
-import settings
 import re
+
 
 class BotLogic(object):
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
         self.joined_channel = False
-        self.usertrim = re.compile('[!+@]')  # used to strip nicknames of any mode-dependent prefixes (@-op, +-voice, etc.)
+        self.usertrim = re.compile('[!+@]')
         self.bot.known_users = {}  # dict of known users present in the channel
 
         self.plugins = [
@@ -43,7 +43,7 @@ class BotLogic(object):
         nick = line[1:sline[0].find('!')]
         msg_start = sline[1].find(':', 1)
         msg_chan = sline[1].find('#', 1)
-        msg = sline[1][msg_start + 1:].strip() if msg_start > 0 else ''  # JOIN messages have no ': message'
+        msg = sline[1][msg_start + 1:].strip() if msg_start > 0 else ''
         end = msg_start if msg_start > 0 else len(sline[1])
         channel = sline[1][msg_chan:end].strip()
         return nick, msg, channel
@@ -53,7 +53,8 @@ class BotLogic(object):
             try:
                 plugin.handle_say(channel, msg, line)
             except:
-                return self.bot.log_error('ERROR parsing self msg line: ' + line)
+                return self.bot.log_error('ERROR parsing self msg line: '
+                                          + line)
 
     def new_input(self, line):
         if line.startswith('PING'):
@@ -63,7 +64,8 @@ class BotLogic(object):
         except:
             return self.bot.log_error('ERROR on IRC: ' + line)
 
-        if action_code == 'END_MOTD':  # after server MOTD, join desired channel
+        # after server MOTD, join desired channel
+        if action_code == 'END_MOTD':
             for c in self.bot.channel:
                 self.bot.known_users[c] = {}
                 self.bot.write('JOIN ' + c)
@@ -76,12 +78,14 @@ class BotLogic(object):
             for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
                 self.bot.known_users[channel][nick.lower()] = nick
 
-        elif action_code == 'END_NAMES':  # after NAMES list, the bot is in the channel
+        # after NAMES list, the bot is in the channel
+        elif action_code == 'END_NAMES':
             self.joined_channel = True
 
-        elif action_code == 'NICK_IN_USE': # TODO: Could loop, if all nicks are taken
+        # TODO: Could loop, if all nicks are taken
+        elif action_code == 'NICK_IN_USE':
             self.bot.next_nick()
-            
+
         elif self.joined_channel:  # respond to some messages
             try:
                 nick, msg, channel = self.parse_msg(line)

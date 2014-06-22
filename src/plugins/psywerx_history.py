@@ -1,6 +1,7 @@
 from base import PsywerxPlugin
 from response import REPOSTS, MULTIPLE_REPOST, \
-  SELF_REPOSTS, MULTIPLE_SELF_REPOST, random_response
+    SELF_REPOSTS, MULTIPLE_SELF_REPOST, random_response
+
 
 class PsywerxHistory(PsywerxPlugin):
 
@@ -31,7 +32,7 @@ class PsywerxHistory(PsywerxPlugin):
 
     def _pick_response(self, is_self, is_multiple):
         f = [
-                [REPOSTS, MULTIPLE_REPOST],
-                [SELF_REPOSTS, MULTIPLE_SELF_REPOST]
+            [REPOSTS, MULTIPLE_REPOST],
+            [SELF_REPOSTS, MULTIPLE_SELF_REPOST]
         ]
         return random_response(f[is_self][is_multiple])

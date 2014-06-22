@@ -1,5 +1,7 @@
 from base import PsywerxPlugin
-import re, json
+import re
+import json
+
 
 class PsywerxKarma(PsywerxPlugin):
 
@@ -7,13 +9,13 @@ class PsywerxKarma(PsywerxPlugin):
     def fact(self, tokens, channel):
         try:
             def pf(number):
-                factors=[]
-                d=2
-                while(number>1):
-                    while(number%d==0):
+                factors = []
+                d = 2
+                while(number > 1):
+                    while(number % d == 0):
                         factors.append(d)
-                        number=number/d
-                    d+=1
+                        number = number/d
+                    d += 1
                 return factors
 
             if len(tokens) != 1:
@@ -22,10 +24,13 @@ class PsywerxKarma(PsywerxPlugin):
                 r = sorted(r, key=lambda x: pf(x['karma']))
                 for p in r:
                     karmas = pf(p['karma'])
-                    if int(p['karma']) < 2: continue
+                    if int(p['karma']) < 2:
+                        continue
                     # insert sleep to prevent flods
-                    self.bot.say(str(p['nick']) + " " + str(max(karmas)) + " (" + str(p['karma']) + "=" + "*".join(map(str,karmas)) + ")", channel)
-                self.bot.say(str("**** CONGRATS " + p['nick'] + " ****"), channel)
+                    self.bot.say(str(p['nick']) + " " + str(max(karmas)) +
+                                 " (" + str(p['karma']) + "=" +
+                                 "*".join(map(str, karmas)) + ")", channel)
+                self.bot.say(str("** CONGRATS " + p['nick'] + " **"), channel)
 
         except Exception:
             from traceback import format_exc
@@ -40,7 +45,7 @@ class PsywerxKarma(PsywerxPlugin):
                 s += str(p['nick']) + " (" + str(p['karma']) + "), "
             self.bot.say(s[:-2], channel)
         else:
-            users =  self.bot.known_users[channel]
+            users = self.bot.known_users[channel]
             nick = tokens[0] if tokens[0] not in users else users[tokens[0]]
             params = {'nick': nick}
             response = self.request(channel, 'irc/karma_nick', params)
@@ -52,21 +57,24 @@ class PsywerxKarma(PsywerxPlugin):
     def handle_message(self, channel, nick, msg, line=None):
         msg_lower = msg.lower()
         self.handle_tokens(channel, msg,
-          ('karma', 'karmas', 'leaderboard', 'upboats', 'upvotes', 'stats',), self._karma)
+                           ('karma', 'karmas', 'leaderboard',
+                            'upboats', 'upvotes', 'stats',), self._karma)
 
         # count karma upvote
         if '++' not in msg_lower:
             return
 
         for user in re.split('[.,!?]* ', msg):
-            users =  self.bot.known_users[channel]
+            users = self.bot.known_users[channel]
             name = user.replace('+', '')
             name_lower = name.lower()
             if (user.endswith('++') or user.startswith('++')) \
-                and name_lower in users:
+                    and name_lower in users:
                 if name_lower == nick.lower():
-                    self.bot.say("Nice try " + nick + \
-                      ", but you can't give karma to yourself!", channel)
+                    self.bot.say("Nice try " + nick +
+                                 ", but you can't give karma to yourself!",
+                                 channel)
                     return
                 else:
-                    self.request(channel, 'irc/karma', {'nick': users[name_lower]})
+                    self.request(channel, 'irc/karma',
+                                 {'nick': users[name_lower]})

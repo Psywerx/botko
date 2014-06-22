@@ -4,6 +4,7 @@ __all__ = [
 
 import re
 
+
 class BotPlugin(object):
     """
     Represents a base class other plugins must inherit from.
@@ -21,7 +22,8 @@ class BotPlugin(object):
 
     def handle_tokens(self, channel, msg, keywords, callback):
         tokens = self.trimmer.sub(' ', msg.lower()).replace(':', '').split(' ')
-        if len(tokens) >= 1 and (tokens[0] == self.bot.nick or '@' in tokens[0]):
+        if len(tokens) >= 1 and \
+           (tokens[0] == self.bot.nick or '@' in tokens[0]):
 
             tokens[0] = tokens[0].replace('@', '')
             i = 0
@@ -49,6 +51,7 @@ class BotPlugin(object):
         Function which handles responses the bot has made.
         """
         pass
+
 
 class PsywerxPlugin(BotPlugin):
     """
