@@ -77,7 +77,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         for url in urls:
             file_path = self._download_image(url=url)
 
-            if(file_path and os.path.isfile(file_path)):
+            if file_path and os.path.isfile(file_path):
                 try:
                     is_nsfw = self._is_nsfw_image(file_path=file_path)
 
@@ -157,7 +157,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         try:
             extension = os.path.splitext(url)[1]
             response = requests.get(url, stream=True)
-        except:
+        except Exception:
             return
 
         if not response.status_code == 200:

@@ -1,10 +1,10 @@
 from base import BotPlugin
 from tweepy import OAuthHandler, API
-from settings import TWITTER as t
+from settings import TWITTER as T
 from response import random_response
 import re
-oauth = OAuthHandler(t['consumer_key'], t['consumer_secret'])
-oauth.set_access_token(t['access_token_key'], t['access_token_secret'])
+oauth = OAuthHandler(T['consumer_key'], T['consumer_secret'])
+oauth.set_access_token(T['access_token_key'], T['access_token_secret'])
 twt = API(oauth)
 twt_regex = re.compile(
     "https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9]+)")
