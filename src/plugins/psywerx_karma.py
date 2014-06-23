@@ -32,7 +32,7 @@ class PsywerxKarma(PsywerxPlugin):
                                  "*".join(map(str, karmas)) + ")", channel)
                 self.bot.say(str("** CONGRATS " + p['nick'] + " **"), channel)
 
-        except Exception:
+        except:
             from traceback import format_exc
             print "ERR " + str(format_exc())
             self.bot.log_error('ERROR getting upboats')

@@ -52,7 +52,7 @@ class BotLogic(object):
         for plugin in self.plugins:
             try:
                 plugin.handle_say(channel, msg, line)
-            except Exception:
+            except:
                 return self.bot.log_error('ERROR parsing self line: ' + line)
 
     def new_input(self, line):
@@ -60,7 +60,7 @@ class BotLogic(object):
             return self.bot.write('PONG')  # ping-pong
         try:
             action_code = self._get_action_code(line)
-        except Exception:
+        except:
             return self.bot.log_error('ERROR on IRC: ' + line)
 
         # after server MOTD, join desired channel
@@ -88,7 +88,7 @@ class BotLogic(object):
         elif self.joined_channel:  # respond to some messages
             try:
                 nick, msg, channel = self.parse_msg(line)
-            except Exception:
+            except:
                 return self.bot.log_error('ERROR parsing msg line: ' + line)
 
             if action_code == 'JOIN':
