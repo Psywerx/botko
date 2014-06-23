@@ -9,8 +9,8 @@ twt = API(oauth)
 twt_regex = re.compile(
     "https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9]+)")
 yt_regex = re.compile(
-    "https?://(?:www\\.)?(?:youtu[.]be|youtube[.]com)"
-    + "/(?:[^/ ]*?[?&]v=)?([^/& ]+)")
+    "https?://(?:www\\.)?(?:youtu[.]be|youtube[.]com)/"
+    + "(?:embed/)?(?:[^/ ]*?[?&]v=)?([^/& ]+)")
 
 YOUTUBE_RESPONSES = [
     "That video is titled '%(title)s'. "
