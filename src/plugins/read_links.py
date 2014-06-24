@@ -10,7 +10,7 @@ twt_regex = re.compile(
     "https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9]+)")
 yt_regex = re.compile(
     "https?://(?:www\\.)?(?:youtu[.]be|youtube[.]com)/"
-    + "(?:embed/)?(?:[^/ ]*?[?&]v=)?([^/& ]+)")
+    + "(?:embed/)?(?:[^/ ]*?[?&]v=)?([A-Za-z0-9_-]{11})(?:[^A-Za-z0-9_-]|$)")
 
 YOUTUBE_RESPONSES = [
     "That video is titled '%(title)s'. "
