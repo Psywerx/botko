@@ -12,7 +12,7 @@ class BotPlugin(object):
 
     name = None
     description = None
-    trimmer = re.compile(r'[ ]+')
+    trimmer = re.compile('[ ]+')
 
     def __init__(self, bot):
         """

@@ -64,7 +64,7 @@ class PsywerxKarma(PsywerxPlugin):
         if '++' not in msg_lower:
             return
 
-        for user in re.split(r'[.,!?]* ', msg):
+        for user in re.split('[.,!?]* ', msg):
             users = self.bot.known_users[channel]
             name = user.replace('+', '')
             name_lower = name.lower()

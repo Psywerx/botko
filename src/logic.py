@@ -11,7 +11,7 @@ class BotLogic(object):
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
         self.joined_channel = False
-        self.usertrim = re.compile(r'[!+@]')
+        self.usertrim = re.compile('[!+@]')
         self.bot.known_users = {}  # dict of known users present in the channel
 
         self.plugins = [
