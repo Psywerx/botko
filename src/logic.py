@@ -23,9 +23,9 @@ class BotLogic(object):
             Uptime(bot=bot),
         ]
 
-    def get_action_code(self, line):
+    def _get_action_code(self, line):
         if line.startswith('ERROR'):
-            raise Exception('some IRC error')
+            raise Exception('Unknown IRC error in line: ' + line)
 
         action = line.split(' ', 2)[1]
         if action == '376':
@@ -53,14 +53,13 @@ class BotLogic(object):
             try:
                 plugin.handle_say(channel, msg, line)
             except:
-                return self.bot.log_error('ERROR parsing self msg line: '
-                                          + line)
+                return self.bot.log_error('ERROR parsing self line: ' + line)
 
     def new_input(self, line):
         if line.startswith('PING'):
             return self.bot.write('PONG')  # ping-pong
         try:
-            action_code = self.get_action_code(line)
+            action_code = self._get_action_code(line)
         except:
             return self.bot.log_error('ERROR on IRC: ' + line)
 

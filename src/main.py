@@ -15,7 +15,7 @@ def run_bot():
             # and run
             botko.run(settings.IRC_SERVER, settings.IRC_PORT)
 
-        except Exception:
+        except:
             # log the error
             from traceback import format_exc
             from datetime import datetime

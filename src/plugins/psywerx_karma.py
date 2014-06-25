@@ -11,8 +11,8 @@ class PsywerxKarma(PsywerxPlugin):
             def pf(number):
                 factors = []
                 d = 2
-                while(number > 1):
-                    while(number % d == 0):
+                while number > 1:
+                    while number % d == 0:
                         factors.append(d)
                         number = number/d
                     d += 1
@@ -32,7 +32,7 @@ class PsywerxKarma(PsywerxPlugin):
                                  "*".join(map(str, karmas)) + ")", channel)
                 self.bot.say(str("** CONGRATS " + p['nick'] + " **"), channel)
 
-        except Exception:
+        except:
             from traceback import format_exc
             print "ERR " + str(format_exc())
             self.bot.log_error('ERROR getting upboats')

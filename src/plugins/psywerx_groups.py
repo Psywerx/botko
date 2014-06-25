@@ -6,7 +6,7 @@ import json
 class PsywerxGroups(PsywerxPlugin):
 
     def __init__(self, bot=None):
-        super(PsywerxPlugin, self).__init__(bot=bot)
+        super(PsywerxGroups, self).__init__(bot=bot)
         self.actions = {
             '@mygroup': self._basicAction('irc/mygroups'),
             '@group': self._basicAction('irc/groups'),
@@ -38,7 +38,7 @@ class PsywerxGroups(PsywerxPlugin):
 
     def _leaveAction(self, channel, params, msg_lower):
         splited = msg_lower.split(' ')
-        if(len(splited) == 2):
+        if len(splited) == 2:
             group = splited[1].replace('@', '')
             params['group'] = group
             return self.request(channel, 'irc/leave', params)
@@ -62,7 +62,7 @@ class PsywerxGroups(PsywerxPlugin):
         for group in re.findall(r'@(\w+\'?)', msg_lower):
             # if @group' ends with ', or empty msg, don't send to offline
             offline_mention = group[-1] != "'" and \
-                re.match('(@\w+\'?[ \^]*)+$', msg_lower.strip()) is None
+                re.match(r'(@\w+\'?[ \^]*)+$', msg_lower.strip()) is None
 
             if group[-1] == "'":
                 group = group[:-1]
@@ -80,9 +80,9 @@ class PsywerxGroups(PsywerxPlugin):
                 elif o and offline_mention:
                     offline_mentions.add(n.encode('ascii', 'ignore'))
 
-        if(len(mentions) > 0):
+        if len(mentions) > 0:
             self.bot.say("CC: " + ', '.join(mentions), channel)
-        if(len(offline_mentions) > 0):
+        if len(offline_mentions) > 0:
             self.bot.say("@msg " + ','.join(offline_mentions)
                          + " " + msg, channel)
 

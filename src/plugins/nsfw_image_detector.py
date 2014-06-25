@@ -77,7 +77,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         for url in urls:
             file_path = self._download_image(url=url)
 
-            if(file_path and os.path.isfile(file_path)):
+            if file_path and os.path.isfile(file_path):
                 try:
                     is_nsfw = self._is_nsfw_image(file_path=file_path)
 
@@ -101,7 +101,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
     def _get_skin_ratio_percentage(self, file_path):
         try:
             im = Image.open(file_path)
-        except Exception:
+        except:
             self.bot.log_error('ERROR opening NSFW image ' + file_path)
             return 0.0
 

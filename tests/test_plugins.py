@@ -6,7 +6,15 @@ from mock import Mock, patch
 
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
 from plugins.read_links import ReadLinks
-from tests import BasePluginTestCase
+
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+
+class BasePluginTestCase(unittest.TestCase):
+    def setUp(self):
+        self.bot = Mock()
+        self.fixtures_dir = os.path.join(BASE_DIR, 'fixtures/')
 
 
 class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
@@ -78,7 +86,6 @@ class ReadLinksTestCase(BasePluginTestCase):
         self.plugin = ReadLinks(bot=self.bot)
 
     def test_sanity(self):
-
         self.plugin.handle_message('channel', 'nick', 'No tweet')
         self.assertFalse(self.plugin.bot.say.called)
 

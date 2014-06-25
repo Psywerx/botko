@@ -59,14 +59,14 @@ class PsywerxPlugin(BotPlugin):
     """
 
     def request(self, channel, url, extra_params):
-        from settings import PSYWERX as p
+        from settings import PSYWERX as P
         from urllib import urlencode
         from urllib2 import urlopen
         try:
             params = urlencode(dict({
-                'token': p['TOKEN'],
+                'token': P['TOKEN'],
                 'channel': channel
             }, **extra_params))
-            return urlopen(p['SERVER_URL'] + url, params).read()
-        except Exception:
+            return urlopen(P['SERVER_URL'] + url, params).read()
+        except:
             self.bot.log_error('Request failed: ' + url + params)
