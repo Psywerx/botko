@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import glob
 import unittest
@@ -49,8 +52,9 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
         for url in invalid_image_urls:
             self.assertFalse(self.plugin._is_image_url(url))
 
+    @patch('os.remove')
     @patch('plugins.nsfw_image_detector.re')
-    def test_plugin_basic_functionality(self, mock_re):
+    def test_plugin_basic_functionality(self, mock_re, _):
         # Mock methods, we dont want plugin to actually download files
         self.plugin._download_image = Mock()
         self.plugin._is_image_url = Mock()
@@ -82,24 +86,32 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 class ReadLinksTestCase(BasePluginTestCase):
     def setUp(self):
         super(ReadLinksTestCase, self).setUp()
-
+        self.line_start = ":smotko!~smotko@193.188.1.1 PRIVMSG #psywerx "
         self.plugin = ReadLinks(bot=self.bot)
 
+    def handle_message(self, line):
+        self.plugin.handle_message('channel', 'nick',
+                                   line, self.line_start + line)
+
     def test_sanity(self):
-        self.plugin.handle_message('channel', 'nick', 'No tweet')
+        self.handle_message('No tweet')
         self.assertFalse(self.plugin.bot.say.called)
 
-    def test_tweet_in_message(self):
+    @patch("plugins.read_links.ReadLinks._get_name_text")
+    def test_tweet_in_message(self, name_text):
+        name_text.return_value = ("Smotko", '_')
         say = self.plugin.bot.say
         tweet = 'https://twitter.com/Smotko/status/469540345366450177'
-        self.plugin.handle_message('channel', 'nick', tweet)
+        self.handle_message(tweet)
         self.assertTrue(say.called)
         self.assertTrue("@Smotko on Twitter says" in say.call_args[0][0])
 
-    def test_unicode(self):
+    @patch("plugins.read_links.ReadLinks._get_name_text")
+    def test_unicode(self, name_text):
+        name_text.return_value = ("Smotko", u'☺')
         say = self.plugin.bot.say
-        tweet = 'https://twitter.com/davision/status/470158246335250432'
-        self.plugin.handle_message('channel', 'nick', tweet)
+        tweet = 'https://twitter.com/Smotko/status/501844653583659010'
+        self.handle_message(tweet)
         self.assertTrue(say.called)
         response = 'Sorry, I wasn\'t able to read the last tweet :('
         self.assertFalse(response in say.call_args[0][0])

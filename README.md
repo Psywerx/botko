@@ -1,4 +1,4 @@
-Botko - a simple IRC bot with some cool plugins
+Botko - a simple IRC bot with some cool plugins [![Build Status](https://travis-ci.org/Psywerx/botko.svg?branch=master)](https://travis-ci.org/Pyswerx/botko/builds)
 ======================================
 
 Plugins:

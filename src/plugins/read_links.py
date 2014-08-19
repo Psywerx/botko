@@ -29,18 +29,23 @@ YOUTUBE_RESPONSES = [
 
 class ReadLinks(BotPlugin):
 
+    def _get_name_text(self, id):
+        status = twt.get_status(id)
+        name = status.user.screen_name
+        text = status.text.replace('\n', ' ')
+        return name, text
+
     def _read_twitter(self, channel, msg):
         res = twt_regex.search(msg)
         if not res:
             return
         try:
-            status = twt.get_status(str(res.groups()[0]))
-            name = status.user.screen_name
-            text = status.text.replace('\n', ' ')
+            (name, text) = self._get_name_text(str(res.groups()[0]))
             response = unicode("@" + name + " on Twitter says: " + text)
             response = response.encode('utf8')
             self.bot.say(response, channel)
         except Exception as e:
+            print e
             self.bot.log_error('ERROR could not get tweet from: "'
                                + msg + '" the exception was: ' + str(e))
             self.bot.say('Sorry, I wasn\'t able to read the last tweet :(',
