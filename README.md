@@ -7,7 +7,7 @@ Plugins:
  * PsywerxKarma (Keep track of user karma)
  * PsywerxGroups (Define groups within a channel)
  * NSFW image detector
- * Read links (Read twitter links)
+ * Read links (Read twitter, youtube, and vimeo links)
  * Uptime (Show server and bot uptimes)
   
 All Psywerx* plugins require the psywerx server (https://github.com/Smotko/psywerx)
