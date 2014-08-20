@@ -101,7 +101,7 @@ class ReadLinksTestCase(BasePluginTestCase):
     def _test_helper(self, msg, response):
         self.handle_message(msg)
         self.assertTrue(self.say.called)
-        self.assertTrue(response in self.say.call_args[0][0])
+        assert response in self.say.call_args[0][0]
 
     @patch("plugins.read_links.ReadLinks._get_name_text")
     def test_tweet_in_message(self, name_text):
@@ -121,6 +121,11 @@ class ReadLinksTestCase(BasePluginTestCase):
     def test_youtube(self):
         msg = 'Look https://www.youtube.com/watch?v=2PUefiJBJQQ'
         response = 'Jack Gleeson'
+        self._test_helper(msg, response)
+
+    def test_youtube_no_average(self):
+        msg = 'https://www.youtube.com/watch?v=jc8zZ9PbYVM'
+        response = 'ASP 2014'
         self._test_helper(msg, response)
 
     def test_vimeo(self):
