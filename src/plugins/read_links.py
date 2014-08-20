@@ -63,13 +63,13 @@ class ReadLinks(BotPlugin):
             video_id = str(res.groups()[0])
             r = requests.get("http://vimeo.com/api/v2/video/"+video_id+".json")
             video = json.loads(r.text)[0]
-            if video.has_key("stats_number_of_likes"):
+            if "stats_number_of_likes" in video:
                 likes = ("%d likes." % video["stats_number_of_likes"])
             else:
                 likes = "an unknown number of likes"
             video_info = {
                 'service': "vimeo",
-                'title': video["title"],
+                'title': video["title"].encode('utf8'),
                 'seconds': str(video["duration"]),
                 'views': str(video["stats_number_of_plays"]),
                 'rating': likes
@@ -90,8 +90,8 @@ class ReadLinks(BotPlugin):
             from gdata.youtube import service
             client = service.YouTubeService()
             video = client.GetYouTubeVideoEntry(video_id=video_id)
-            average_rating = float(video.rating.average)
             if video.rating is not None:
+                average_rating = float(video.rating.average)
                 rating = ("an average rating of %.2f" % average_rating)
             else:
                 rating = "no rating"
