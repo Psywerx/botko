@@ -88,6 +88,7 @@ class ReadLinksTestCase(BasePluginTestCase):
         super(ReadLinksTestCase, self).setUp()
         self.line_start = ":smotko!~smotko@193.188.1.1 PRIVMSG #psywerx "
         self.plugin = ReadLinks(bot=self.bot)
+        self.say = self.plugin.bot.say
 
     def handle_message(self, line):
         self.plugin.handle_message('channel', 'nick',
@@ -97,24 +98,35 @@ class ReadLinksTestCase(BasePluginTestCase):
         self.handle_message('No tweet')
         self.assertFalse(self.plugin.bot.say.called)
 
+    def _test_helper(self, msg, response):
+        self.handle_message(msg)
+        self.assertTrue(self.say.called)
+        self.assertTrue(response in self.say.call_args[0][0])
+
     @patch("plugins.read_links.ReadLinks._get_name_text")
     def test_tweet_in_message(self, name_text):
         name_text.return_value = ("Smotko", '_')
-        say = self.plugin.bot.say
         tweet = 'https://twitter.com/Smotko/status/469540345366450177'
-        self.handle_message(tweet)
-        self.assertTrue(say.called)
-        self.assertTrue("@Smotko on Twitter says" in say.call_args[0][0])
+        response = "@Smotko on Twitter says"
+        self._test_helper(tweet, response)
 
     @patch("plugins.read_links.ReadLinks._get_name_text")
     def test_unicode(self, name_text):
         name_text.return_value = ("Smotko", u'☺')
-        say = self.plugin.bot.say
         tweet = 'https://twitter.com/Smotko/status/501844653583659010'
-        self.handle_message(tweet)
-        self.assertTrue(say.called)
-        response = 'Sorry, I wasn\'t able to read the last tweet :('
-        self.assertFalse(response in say.call_args[0][0])
+        self._test_helper(tweet, 'Smotko')
+
+    # TODO: mock out the actual request
+    # TODO: run similar tests in a loop
+    def test_youtube(self):
+        msg = 'Look https://www.youtube.com/watch?v=2PUefiJBJQQ'
+        response = 'Jack Gleeson'
+        self._test_helper(msg, response)
+
+    def test_vimeo(self):
+        msg = ':O http://vimeo.com/102825514'
+        response = 'Muscles'
+        self._test_helper(msg, response)
 
 if __name__ == '__main__':
     unittest.main()
