@@ -3,3 +3,4 @@ Pillow==2.2.1
 tweepy==2.3.0
 gdata==2.0.18
 pytest==2.6.1
+mock==1.0.1

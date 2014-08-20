@@ -12,12 +12,14 @@ Plugins:
   
 All Psywerx* plugins require the psywerx server (https://github.com/Smotko/psywerx)
  
-Run:
+Usage:
 ---
-     pip install -r requirements.txt
+     # setup:
+     pip install virtualenv
+     ./setup_venv
      # start dev in mode:
      ./run
-     # daemon:
+     # start as daemon:
      ./run_daemon start|stop|restart
-     # tests:
+     # run tests:
      ./run_tests
