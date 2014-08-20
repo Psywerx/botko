@@ -16,6 +16,8 @@ Run:
 ---
      pip install -r requirements.txt
      # start dev in mode:
-     python src/main.py nodaemon
+     ./run
      # daemon:
-     python src/main.py start|stop|restart
+     ./run_daemon start|stop|restart
+     # tests:
+     ./run_tests
