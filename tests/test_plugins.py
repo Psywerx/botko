@@ -133,5 +133,11 @@ class ReadLinksTestCase(BasePluginTestCase):
         response = 'Muscles'
         self._test_helper(msg, response)
 
+    def test_vimeo(self):
+        msg = 'This is a silly website http://smotko.si/'
+        response = 'Smotko\'s blog'
+        self._test_helper(msg, response)
+
+
 if __name__ == '__main__':
     unittest.main()

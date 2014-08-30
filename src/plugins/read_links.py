@@ -15,6 +15,9 @@ yt_regex = re.compile(
     + "(?:embed/)?(?:[^/ ]*?[?&]v=)?([A-Za-z0-9_-]{11})(?:[^A-Za-z0-9_-]|$)")
 vimeo_regex = re.compile(
     "https?://(?:www\\.)?vimeo.com/(?:videos?/)?([0-9]+)")
+web_regex = re.compile(
+    "https?://(?:www\\.)"
+)
 
 VIDEO_RESPONSES = [
     "That video is titled '%(title)s'. "
@@ -110,8 +113,22 @@ class ReadLinks(BotPlugin):
             self.bot.say('For some reason I couldn\'t read the title of that '
                          + 'yt link.', channel)
 
+    def _read_websites(self, channel, msg):
+        res = web_regex.search(msg)
+        if not res:
+            return
+
+        try:
+            import lxml.html
+            t = lxml.html.parse(str(res.groups()[0]))
+            self.bot.say(random_response(WEB_RESPONSES) % t, channel)
+        except Exception as e:
+            self.bot.say("Couldn't parse")
+
+
     def handle_message(self, channel, nick, msg, line=None):
         if "PRIVMSG" in line:
             self._read_twitter(channel, msg)
             self._read_youtube(channel, msg)
             self._read_vimeo(channel, msg)
+            self._read_websites(channel, msg)
