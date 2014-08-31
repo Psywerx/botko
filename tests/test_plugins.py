@@ -133,9 +133,9 @@ class ReadLinksTestCase(BasePluginTestCase):
         response = 'Muscles'
         self._test_helper(msg, response)
 
-    def test_vimeo(self):
+    def test_web(self):
         msg = 'This is a silly website http://smotko.si/'
-        response = 'Smotko\'s blog'
+        response = 'Smotko\'s Blog'
         self._test_helper(msg, response)
 
 

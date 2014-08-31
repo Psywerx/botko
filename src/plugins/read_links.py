@@ -5,6 +5,7 @@ from response import random_response
 import json
 import re
 import requests
+import lxml.html
 oauth = OAuthHandler(T['consumer_key'], T['consumer_secret'])
 oauth.set_access_token(T['access_token_key'], T['access_token_secret'])
 twt = API(oauth)
@@ -16,8 +17,11 @@ yt_regex = re.compile(
 vimeo_regex = re.compile(
     "https?://(?:www\\.)?vimeo.com/(?:videos?/)?([0-9]+)")
 web_regex = re.compile(
-    "https?://(?:www\\.)"
+    r"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s'!()\[\]{};:'\".,<>?']))"
 )
+
+# These will be filtered out in _read_webistes
+__all_non_web__ = [twt_regex, yt_regex, vimeo_regex]
 
 VIDEO_RESPONSES = [
     "That video is titled '%(title)s'. "
@@ -123,16 +127,20 @@ class ReadLinks(BotPlugin):
                          + 'yt link.', channel)
 
     def _read_websites(self, channel, msg):
-        res = web_regex.search(msg)
-        if not res:
-            return
-
-        try:
-            import lxml.html
-            t = lxml.html.parse(str(res.groups()[0]))
-            self.bot.say(random_response(WEB_RESPONSES) % t, channel)
-        except Exception as e:
-            self.bot.say("Couldn't parse")
+        links = web_regex.findall(msg)
+        for link in links:
+            link = link[0]
+            if len([r for r in __all_non_web__ if r.search(link)]) > 0:
+                continue
+            try:
+                t = lxml.html.parse(str(link))
+                t = t.find(".//title").text
+                self.bot.say(random_response(WEB_RESPONSES) % {'title': t}, channel)
+            except Exception as e:
+                self.bot.log_error('ERROR could not get title of a webpage: "'
+                                   + msg + '" the exception was: ' + str(e))
+                self.bot.say('For some reason I couldn\'t read the title of that '
+                             + 'web page.', channel)
 
     def handle_message(self, channel, nick, msg, line=None):
         if "PRIVMSG" in line:
