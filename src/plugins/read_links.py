@@ -33,6 +33,15 @@ VIDEO_RESPONSES = [
     + "Good luck!"
 ]
 
+WEB_RESPONSES = [
+    "The title of that page is '%(title)s'",
+    "That page might be about %(title)s",
+    "That page has an interesting title: '%(title)s'",
+    "The title of that page makes me want to read the whole thing '%(title)s'",
+    "%(title)s",
+
+]
+
 
 class ReadLinks(BotPlugin):
 
@@ -124,7 +133,6 @@ class ReadLinks(BotPlugin):
             self.bot.say(random_response(WEB_RESPONSES) % t, channel)
         except Exception as e:
             self.bot.say("Couldn't parse")
-
 
     def handle_message(self, channel, nick, msg, line=None):
         if "PRIVMSG" in line:
