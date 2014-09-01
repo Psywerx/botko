@@ -138,6 +138,10 @@ class ReadLinksTestCase(BasePluginTestCase):
         response = 'Smotko\'s Blog'
         self._test_helper(msg, response)
 
+    def test_web_no_title(self):
+        msg = 'This is a silly image https://i.imgur.com/ndsBKWn.jpg'
+        self.assertFalse(self.say.called)
+
 
 if __name__ == '__main__':
     unittest.main()

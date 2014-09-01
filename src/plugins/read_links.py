@@ -139,8 +139,6 @@ class ReadLinks(BotPlugin):
             except Exception as e:
                 self.bot.log_error('ERROR could not get title of a webpage: "'
                                    + msg + '" the exception was: ' + str(e))
-                self.bot.say('For some reason I couldn\'t read the title of that '
-                             + 'web page.', channel)
 
     def handle_message(self, channel, nick, msg, line=None):
         if "PRIVMSG" in line:
