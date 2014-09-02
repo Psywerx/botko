@@ -135,7 +135,10 @@ class ReadLinks(BotPlugin):
             try:
                 t = lxml.html.parse(str(link))
                 t = t.find(".//title").text
-                self.bot.say(random_response(WEB_RESPONSES) % {'title': t}, channel)
+                t = t.strip().replace('\n', ' ')
+                if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:
+                    self.bot.say(random_response(WEB_RESPONSES) % {'title': t},
+                                 channel)
             except Exception as e:
                 self.bot.log_error('ERROR could not get title of a webpage: "'
                                    + msg + '" the exception was: ' + str(e))
