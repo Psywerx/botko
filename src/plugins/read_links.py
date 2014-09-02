@@ -77,7 +77,7 @@ class ReadLinks(BotPlugin):
             return
         try:
             video_id = str(res.groups()[0])
-            r = requests.get("http://vimeo.com/api/v2/video/"+video_id+".json")
+            r = requests.get("https://vimeo.com/api/v2/video/"+video_id+".json")
             video = json.loads(r.text)[0]
             if "stats_number_of_likes" in video:
                 likes = ("%d likes." % video["stats_number_of_likes"])
