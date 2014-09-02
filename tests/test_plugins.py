@@ -101,7 +101,7 @@ class ReadLinksTestCase(BasePluginTestCase):
     def _test_helper(self, msg, response):
         self.handle_message(msg)
         self.assertTrue(self.say.called)
-        assert response in self.say.call_args[0][0]
+        assert response in self.say.call_args[0][0].split('\n')[0]
 
     @patch("plugins.read_links.ReadLinks._get_name_text")
     def test_tweet_in_message(self, name_text):
@@ -140,7 +140,12 @@ class ReadLinksTestCase(BasePluginTestCase):
 
     def test_web_no_title(self):
         msg = 'This is a silly image https://i.imgur.com/ndsBKWn.jpg'
+        self.handle_message(msg)
         self.assertFalse(self.say.called)
+
+    def test_web_title_with_new_lines(self):
+        msg = 'This page breaks http://www.theamountoffucksigive.com'
+        self._test_helper(msg, 'amount')
 
 
 if __name__ == '__main__':
