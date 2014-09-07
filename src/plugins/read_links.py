@@ -2,6 +2,7 @@ from base import BotPlugin
 from tweepy import OAuthHandler, API
 from settings import TWITTER as T
 from response import random_response
+from regex import twt_regex, yt_regex, vimeo_regex, web_regex
 import json
 import re
 import requests
@@ -9,16 +10,6 @@ import lxml.html
 oauth = OAuthHandler(T['consumer_key'], T['consumer_secret'])
 oauth.set_access_token(T['access_token_key'], T['access_token_secret'])
 twt = API(oauth)
-twt_regex = re.compile(
-    "https?://(?:www\\.)?twitter\\.com/.*/status(?:es)?/([0-9]+)")
-yt_regex = re.compile(
-    "https?://(?:www\\.)?(?:youtu[.]be|youtube[.]com)/"
-    + "(?:embed/)?(?:[^/ ]*?[?&]v=)?([A-Za-z0-9_-]{11})(?:[^A-Za-z0-9_-]|$)")
-vimeo_regex = re.compile(
-    "https?://(?:www\\.)?vimeo.com/(?:videos?/)?([0-9]+)")
-web_regex = re.compile(
-    r"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s'!()\[\]{};:'\".,<>?']))"
-)
 
 # These will be filtered out in _read_webistes
 __all_non_web__ = [twt_regex, yt_regex, vimeo_regex]
