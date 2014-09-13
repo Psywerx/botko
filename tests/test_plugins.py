@@ -9,6 +9,7 @@ from mock import Mock, patch
 
 from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
 from plugins.read_links import ReadLinks
+from plugins.read_links import VIDEO_RESPONSES, WEB_RESPONSES
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -89,6 +90,9 @@ class ReadLinksTestCase(BasePluginTestCase):
         self.line_start = ":smotko!~smotko@193.188.1.1 PRIVMSG #psywerx "
         self.plugin = ReadLinks(bot=self.bot)
         self.say = self.plugin.bot.say
+        self.video_response = {'seconds': '34227', 'rating': 'no rating',
+                               'views': '385293', 'service': 'youtube',
+                               'title': 'ASP 2014 J-Bay Open English Day 10'}
 
     def handle_message(self, line):
         self.plugin.handle_message('channel', 'nick',
@@ -116,23 +120,31 @@ class ReadLinksTestCase(BasePluginTestCase):
         tweet = 'https://twitter.com/Smotko/status/501844653583659010'
         self._test_helper(tweet, 'Smotko')
 
-    # TODO: mock out the actual request
-    # TODO: run similar tests in a loop
-    def test_youtube(self):
-        msg = 'Look https://www.youtube.com/watch?v=2PUefiJBJQQ'
-        response = 'Jack Gleeson'
-        self._test_helper(msg, response)
-
-    def test_youtube_no_average(self):
+    @patch("plugins.read_links.ReadLinks._get_youtube_info")
+    def test_youtube_no_average(self, yt_info):
+        yt_info.return_value = self.video_response
         msg = 'https://www.youtube.com/watch?v=jc8zZ9PbYVM'
         response = 'ASP 2014'
         self._test_helper(msg, response)
 
-    def test_vimeo(self):
+    @patch("plugins.read_links.ReadLinks._get_vimeo_info")
+    def test_vimeo(self, vimeo_info):
+        vimeo_info.return_value = self.video_response
         msg = ':O http://vimeo.com/102825514'
-        response = 'Muscles'
+        response = 'ASP 2014'
         self._test_helper(msg, response)
 
+    def test_all_video_responses(self):
+        for vr in VIDEO_RESPONSES:
+            self.bot.say(vr % self.video_response, "channel")
+            assert 'ASP 2014' in self.say.call_args[0][0].split('\n')[0]
+
+    def test_all_web_responses(self):
+        for wr in WEB_RESPONSES:
+            self.bot.say(wr % {'title': 'test___'}, "channel")
+            assert 'test___' in self.say.call_args[0][0].split('\n')[0]
+
+    # TODO: mock out the actual request
     def test_web(self):
         msg = 'This is a silly website http://smotko.si/'
         response = 'Smotko\'s Blog'
