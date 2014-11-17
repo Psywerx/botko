@@ -1,4 +1,4 @@
-Botko - a simple IRC bot with some cool plugins [![Build Status](https://travis-ci.org/Psywerx/botko.svg?branch=master)](https://travis-ci.org/Pyswerx/botko/builds) [![Dependency Status](https://www.versioneye.com/user/projects/5417525c69b273bcff0000df/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5417525c69b273bcff0000df)
+Botko - a simple IRC bot with some cool plugins [![Build Status](https://travis-ci.org/Psywerx/botko.svg?branch=master)](https://travis-ci.org/Pyswerx/botko/builds) [![Dependency Status](https://www.versioneye.com/user/projects/5417525c69b273bcff0000df/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5417525c69b273bcff0000df) [![Coverage Status](https://coveralls.io/repos/Psywerx/botko/badge.png)](https://coveralls.io/r/Psywerx/botko)
 ======================================
 
 Plugins:

@@ -5,3 +5,5 @@ gdata==2.0.18
 pytest==2.6.1
 mock==1.0.1
 lxml==3.3.6
+coverage==3.7.1
+coveralls==0.4.4

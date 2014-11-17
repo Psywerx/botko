@@ -1,4 +1,4 @@
 #!/bin/sh
 export PYTHONPATH=src/:$PYTHONPATH
 . venv/bin/activate
-py.test -s tests
+coverage run --source src -m py.test -s tests
