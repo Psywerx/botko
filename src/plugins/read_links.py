@@ -92,19 +92,20 @@ class ReadLinks(BotPlugin):
                          + 'vimeo link.', channel)
 
     def _get_youtube_info(self, video_id):
-        from gdata.youtube import service
-        client = service.YouTubeService()
-        video = client.GetYouTubeVideoEntry(video_id=video_id)
+        import pafy
+        url = "https://www.youtube.com/watch?v={0}".format(video_id)
+        video = pafy.new(url)
+
         if video.rating is not None:
-            average_rating = float(video.rating.average)
+            average_rating = float(video.rating)
             rating = ("an average rating of %.2f" % average_rating)
         else:
             rating = "no rating"
         return {
             'service': "youtube",
-            'title': video.title.text,
-            'seconds': video.media.duration.seconds,
-            'views': video.statistics.view_count,
+            'title': video.title,
+            'seconds': video.length,
+            'views': video.viewcount,
             'rating': rating
         }
 
