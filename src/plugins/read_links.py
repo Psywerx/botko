@@ -103,7 +103,7 @@ class ReadLinks(BotPlugin):
             rating = "no rating"
         return {
             'service': "youtube",
-            'title': video.title,
+            'title': video.title.encode('utf-8'),
             'seconds': video.length,
             'views': video.viewcount,
             'rating': rating
