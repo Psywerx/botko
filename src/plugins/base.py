@@ -1,8 +1,8 @@
+import re
+
 __all__ = [
     'BotPlugin'
 ]
-
-import re
 
 
 class BotPlugin(object):

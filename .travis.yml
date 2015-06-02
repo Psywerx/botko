@@ -9,7 +9,7 @@ install:
   - ./setup_venv 
 
 script: 
-  - pep8 --ignore=E501 src
+  - pep8 --ignore=E501,W503 src
   - pyflakes src
   - ./run_tests
 after_success:
