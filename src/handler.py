@@ -74,7 +74,7 @@ class Bot(asynchat.async_chat):
         self.logic.new_input(line)
 
     def run(self, host, port):
-        def handler(frame, neki):
+        def handler(signal, frame):
             pass
 
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
