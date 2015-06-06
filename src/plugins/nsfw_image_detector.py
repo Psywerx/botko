@@ -90,7 +90,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
     def _is_nsfw_image(self, file_path):
         """
-        Detects if the provided image file is NSFW.
+        Detect if the provided image file is NSFW.
 
         Current version of this function is very simple and only detects very
         basic nudity by measuring skin tone precentage in the image.
@@ -123,11 +123,10 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
     def _get_image_urls(self, urls):
         """
-        Filters urls to returns only image urls.
+        Filter urls to returns only image urls.
 
         Contains url transformers for a few common image sharers.
         """
-
         if not urls:
             return
 
@@ -150,10 +149,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         return extension in IMAGE_EXTENSIONS
 
     def _download_image(self, url):
-        """
-        Download image in a temporary directory and return path to the
-        downloaded file.
-        """
+        """Download image in a temporary directory and return its path."""
         try:
             extension = os.path.splitext(url)[1]
             response = requests.get(url, stream=True)
@@ -182,25 +178,17 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
     # From http://people.iola.dk/olau/python/imagedetect.py by Ole Laursen
     def _is_jpg(self, data):
-        """
-        Returns True if data is the first 2 bytes of a JPEG file.
-        """
+        """Return True if data is the first 2 bytes of a JPEG file."""
         return data[:2] == '\xff\xd8'
 
     def _is_png(self, data):
-        """
-        Returns True if data is the first 8 bytes of a PNG file.
-        """
+        """Return True if data is the first 8 bytes of a PNG file."""
         return data[:8] == '\x89PNG\x0d\x0a\x1a\x0a'
 
     def _is_gif(self, data):
-        """
-        Returns True if data is the first 4 bytes of a GIF file.
-        """
+        """Return True if data is the first 4 bytes of a GIF file."""
         return data[:4] == 'GIF8'
 
     def _is_image(self, data):
-        """
-        Returns True if data conforms to the magic numbers of an image file
-        """
+        """Return True if data conforms to the magic numbers of an image file."""
         return self._is_jpg(data) or self._is_png(data) or self._is_gif(data)

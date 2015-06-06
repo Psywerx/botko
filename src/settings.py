@@ -1,6 +1,4 @@
-'''
-Created on Oct 9, 2011
-'''
+"""Created on Oct 9, 2011"""
 TOKEN = '16edde56d1801c65ec96a4d607a67d89'
 SERVER_URL = 'http://localhost:8000/'
 BOT_NICKS = ['botko', 'botko_', '_botko_', 'botko__']

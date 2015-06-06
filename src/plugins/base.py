@@ -6,9 +6,8 @@ __all__ = [
 
 
 class BotPlugin(object):
-    """
-    Represents a base class other plugins must inherit from.
-    """
+
+    """Represents a base class other plugins must inherit from."""
 
     name = None
     description = None
@@ -36,8 +35,7 @@ class BotPlugin(object):
 
     def handle_message(self, channel, nick, msg, line):
         """
-        Function which handles channel message lines and optionally, performs
-        any necessary action.
+        Handle channel message lines and optionally perform actions.
 
         :param channel: Channel to which the message was sent to.
         :param nick: User which has sent the message.
@@ -47,16 +45,13 @@ class BotPlugin(object):
         raise NotImplementedError('handle_message not implemented')
 
     def handle_say(self, channel, msg, line):
-        """
-        Function which handles responses the bot has made.
-        """
+        """Handle responses the bot has made."""
         pass
 
 
 class PsywerxPlugin(BotPlugin):
-    """
-    Base class that communicates with the psywerx server
-    """
+
+    """Base class that communicates with the psywerx server."""
 
     def request(self, channel, url, extra_params):
         from settings import PSYWERX as P

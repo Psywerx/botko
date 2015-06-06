@@ -8,8 +8,9 @@ from signal import SIGTERM
 
 
 class Daemon(object):
+
     """
-    A generic daemon class.
+    Generic daemon class.
 
     Usage: subclass the Daemon class and override the run() method
     """
@@ -23,9 +24,11 @@ class Daemon(object):
 
     def daemonize(self):
         """
-        do the UNIX double-fork magic, see Stevens' "Advanced
-        Programming in the UNIX Environment" for details (ISBN 0201563177)
+        Do the UNIX double-fork magic.
+
+        See Stevens' "Advanced Programming in the UNIX Environment"
         http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16
+        (ISBN 0201563177)
         """
         try:
             pid = os.fork()
@@ -72,9 +75,7 @@ class Daemon(object):
         os.remove(self.pidfile)
 
     def start(self):
-        """
-        Start the daemon
-        """
+        """Start the daemon."""
         # Check for a pidfile to see if the daemon already runs
         try:
             pf = file(self.pidfile, 'r')
@@ -84,7 +85,7 @@ class Daemon(object):
             pid = None
 
         if pid:
-            message = "pidfile %s already exist. Daemon already running?\n"
+            message = "pidfile %s already exists. Daemon already running?\n"
             sys.stderr.write(message % self.pidfile)
             sys.exit(1)
 
@@ -93,9 +94,7 @@ class Daemon(object):
         self.run()
 
     def stop(self):
-        """
-        Stop the daemon
-        """
+        """Stop the daemon."""
         # Get the pid from the pidfile
         try:
             pf = file(self.pidfile, 'r')
@@ -124,9 +123,7 @@ class Daemon(object):
                 sys.exit(1)
 
     def restart(self):
-        """
-        Restart the daemon
-        """
+        """Restart the daemon."""
         self.stop()
         self.start()
 
