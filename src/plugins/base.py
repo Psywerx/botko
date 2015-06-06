@@ -7,7 +7,7 @@ __all__ = [
 
 class BotPlugin(object):
 
-    """Represents a base class other plugins must inherit from."""
+    """Base class other plugins must inherit from."""
 
     name = None
     description = None
