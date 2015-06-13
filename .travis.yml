@@ -1,4 +1,6 @@
-language: python
+language:
+  - python
+  - haskell
 python:
   - "2.7"
 install:
