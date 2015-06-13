@@ -1,3 +1,4 @@
 #!/bin/sh
 . venv/bin/activate
-python src/main.py $1
+# usage: start|stop|restart
+python src/main.py "$1"
