@@ -1,11 +1,15 @@
-language: python
+language:
+  - python
+  
 python:
   - "2.7"
+  
 install:
   - pip install virtualenv
   - pip install pep8 pyflakes pep257
   - pip install bashate
   - pip install coveralls
+  - pip install codecov
   - ./setup_venv 
 
 script: 
@@ -14,5 +18,7 @@ script:
   - pep257 --ignore=D100,D101,D102,D103,D200,D205,D400 src tests
   - bashate run run_daemon run_tests setup_venv
   - ./run_tests
+  
 after_success:
-  coveralls
+  - coveralls
+  - codecov

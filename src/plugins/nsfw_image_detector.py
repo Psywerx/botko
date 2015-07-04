@@ -108,8 +108,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
         im = im.convert('RGB')
 
         im = im.crop((int(im.size[0] * 0.2), int(im.size[1] * 0.2),
-                     im.size[0] - int(im.size[0] * 0.2),
-                     im.size[1] - int(im.size[1] * 0.2)))
+                      im.size[0] - int(im.size[0] * 0.2),
+                      im.size[1] - int(im.size[1] * 0.2)))
 
         colors = im.getcolors(im.size[0] * im.size[1])
 
