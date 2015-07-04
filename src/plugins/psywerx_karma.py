@@ -26,7 +26,7 @@ class PsywerxKarma(PsywerxPlugin):
                     karmas = pf(p['karma'])
                     if int(p['karma']) < 2:
                         continue
-                    # insert sleep to prevent flods
+                    # insert sleep to prevent floods
                     self.bot.say(str(p['nick']) + " " + str(max(karmas)) +
                                  " (" + str(p['karma']) + "=" +
                                  "*".join(map(str, karmas)) + ")", channel)
