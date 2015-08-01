@@ -3,10 +3,12 @@ from tweepy import OAuthHandler, API
 from settings import TWITTER as T
 from response import random_response
 from regex import twt_regex, yt_regex, vimeo_regex, web_regex
+from urllib2 import urlopen
 import json
 import re
 import requests
 import lxml.html
+
 oauth = OAuthHandler(T['consumer_key'], T['consumer_secret'])
 oauth.set_access_token(T['access_token_key'], T['access_token_secret'])
 twt = API(oauth)
@@ -131,7 +133,7 @@ class ReadLinks(BotPlugin):
             if len([r for r in __all_non_web__ if r.search(link)]) > 0:
                 continue
             try:
-                t = lxml.html.parse(str(link))
+                t = lxml.html.parse(urlopen(str(link)))
                 t = t.find(".//title").text
                 t = t.strip().replace('\n', ' ')
                 if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:
