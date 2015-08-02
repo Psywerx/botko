@@ -1,0 +1,9 @@
+#!/bin/sh
+export PYTHONPATH=src/:$PYTHONPATH
+. venv/bin/activate
+
+pip install -r requirements-analysis.txt
+pep8 --ignore=E501,W503 src tests
+pyflakes src tests
+pep257 --ignore=D100,D101,D102,D103,D200,D205,D400 src tests
+bashate run run_daemon run_analysis run_tests setup_venv
