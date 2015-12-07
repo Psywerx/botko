@@ -1,31 +1,25 @@
-from plugins.nsfw_image_detector import NSFWImageDetectorPlugin
-from plugins.read_links import ReadLinks
-from plugins.psywerx_history import PsywerxHistory
-from plugins.psywerx_groups import PsywerxGroups
-from plugins.psywerx_karma import PsywerxKarma
 from plugins.uptime import Uptime
 import re
 
 
 class BotLogic(object):
+
     def __init__(self, bot):
         self.bot = bot  # reference back to asynchat handler
         self.joined_channel = False
         self.usertrim = re.compile('[!+@]')
         self.bot.known_users = {}  # dict of known users present in the channel
+        self.init_actions()
 
         self.plugins = [
-            PsywerxHistory(bot=bot),
-            PsywerxKarma(bot=bot),
-            PsywerxGroups(bot=bot),
-            NSFWImageDetectorPlugin(bot=bot),
-            ReadLinks(bot=bot),
             Uptime(bot=bot),
         ]
 
     def _get_action_code(self, line):
         if line.startswith('ERROR'):
             raise Exception('Unknown IRC error in line: ' + line)
+        if line.startswith('PING'):
+            return 'PING'
 
         action = line.split(' ', 2)[1]
         if action == '376':
@@ -55,35 +49,35 @@ class BotLogic(object):
             except:
                 return self.bot.log_error('ERROR parsing self line: ' + line)
 
+    def handle_end_motd(self, line):
+        # after server MOTD, join desired channel
+        for c in self.bot.channel:
+            self.bot.known_users[c] = {}
+            self.bot.write('JOIN ' + c)
+
+    def handle_names_list(self, line):
+        # after NAMES list, the bot is in the channel
+        _, _, channel = self.parse_msg(line)
+        for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
+            self.bot.known_users[channel][nick.lower()] = nick
+
+    def handle_end_names(self, line):
+        self.joined_channel = True
+
+    def handle_nick_in_use(self, line):
+        # TODO: Could loop, if all nicks are taken
+        self.bot.next_nick()
+
     def new_input(self, line):
-        if line.startswith('PING'):
-            return self.bot.write('PONG')  # ping-pong
         try:
             action_code = self._get_action_code(line)
         except:
             return self.bot.log_error('ERROR on IRC: ' + line)
 
-        # after server MOTD, join desired channel
-        if action_code == 'END_MOTD':
-            for c in self.bot.channel:
-                self.bot.known_users[c] = {}
-                self.bot.write('JOIN ' + c)
-        elif action_code == "NOTICE" or action_code == "MODE":
-            # Ignore these
-            return
+        action = self._actions.get(action_code)
 
-        elif action_code == 'NAMES_LIST':
-            _, _, channel = self.parse_msg(line)
-            for nick in self.usertrim.sub('', line.split(':')[2]).split(' '):
-                self.bot.known_users[channel][nick.lower()] = nick
-
-        # after NAMES list, the bot is in the channel
-        elif action_code == 'END_NAMES':
-            self.joined_channel = True
-
-        # TODO: Could loop, if all nicks are taken
-        elif action_code == 'NICK_IN_USE':
-            self.bot.next_nick()
+        if action is not None:
+            return action(line)
 
         elif self.joined_channel:  # respond to some messages
             try:
@@ -111,3 +105,15 @@ class BotLogic(object):
             # Run plugins
             for plugin in self.plugins:
                 plugin.handle_message(channel, nick, msg, line)
+
+
+    def init_actions(self):
+        self._actions = {
+            'PING': lambda line: self.bot.write('PONG'),  # ping-pong
+            'END_MOTD': self.handle_end_motd,
+            'NAMES_LIST': self.handle_names_list,
+            "NOTICE": lambda line: None,
+            "MODE": lambda line: None,
+            'END_NAMES': self.handle_end_names,
+            'NICK_IN_USE': self.handle_nick_in_use,
+        }
