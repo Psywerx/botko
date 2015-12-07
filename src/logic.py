@@ -74,22 +74,9 @@ class BotLogic(object):
         except:
             return self.bot.log_error('ERROR parsing msg line: ' + line)
 
-        if action_code == 'JOIN':
-            self.bot.known_users[channel][nick.lower()] = nick
-
-        elif action_code == 'QUIT':
-            for c in self.bot.known_users.keys():
-                if nick.lower() in self.bot.known_users[c]:
-                    del self.bot.known_users[c][nick.lower()]
-
-        elif action_code == 'PART':
-            del self.bot.known_users[channel][nick.lower()]
-
-        elif action_code == 'NICK':
-            for c in self.bot.known_users.keys():
-                if nick.lower() in self.bot.known_users[c]:
-                    del self.bot.known_users[c][nick.lower()]
-                    self.bot.known_users[c][msg.lower()] = msg
+        action = self._channel_actions.get(action_code)
+        if action is not None:
+            action(channel, nick, msg)
 
         # Run plugins
         for plugin in self.plugins:
@@ -107,7 +94,7 @@ class BotLogic(object):
             return action(line)
 
         elif self.joined_channel:  # respond to some messages
-            self.handle_channel_input(line)
+            self.handle_channel_input(action_code, line)
 
     def init_actions(self):
         self._actions = {
@@ -118,4 +105,10 @@ class BotLogic(object):
             "MODE": lambda line: None,
             'END_NAMES': self.handle_end_names,
             'NICK_IN_USE': self.handle_nick_in_use,
+        }
+        self._channel_actions = {
+            'JOIN': self.bot.add_user,
+            'QUIT': self.bot.remove_user,
+            'PART': self.bot.part_user,
+            'NICK': self.bot.change_user,
         }
