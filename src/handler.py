@@ -86,3 +86,20 @@ class Bot(asynchat.async_chat):
         signal.alarm(20)
 
         asyncore.loop()
+
+    def part_user(self, channel, nick, msg):
+        del self.known_users[channel][nick.lower()]
+
+    def remove_user(self, channel, nick, msg):
+        for channel in self.known_users.keys():
+            if nick.lower() in self.known_users[c]:
+                self.part_user(nick, channel)
+
+    def add_user(self, channel, nick, msg):
+        self.known_users[channel][nick.lower()] = nick
+
+    def change_user(self, channel, old_nick, new_nick):
+        for channel in self.bot.known_users.keys():
+            if old_nick.lower() in self.bot.known_users[channel]:
+                del self.bot.known_users[channel][old_nick.lower()]
+                self.bot.known_users[channel][new_nick.lower()] = new_nick

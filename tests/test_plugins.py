@@ -155,10 +155,6 @@ class ReadLinksTestCase(BasePluginTestCase):
         self.handle_message(msg)
         self.assertFalse(self.say.called)
 
-    def test_web_title_with_new_lines(self):
-        msg = 'This page breaks http://www.theamountoffucksigive.com'
-        self._test_helper(msg, 'amount')
-
     def test_web_title_with_https(self):
         msg = 'https://news.ycombinator.com'
         self._test_helper(msg, 'News')
