@@ -23,7 +23,7 @@ class Bot(asynchat.async_chat):
         self.nick_num = 0
         self.nick = self.nicks[0]
         self.realname = settings.BOT_NAME
-        self.channel = settings.CHANNEL
+        self.channels = settings.CHANNELS
         self.ident = 'botko'
         self.debug = debug
         self.logic = logic.BotLogic(self)
@@ -59,10 +59,9 @@ class Bot(asynchat.async_chat):
         self.buffer += data
 
     def log_error(self, error):
-        f = open('error.log', 'a')
-        f.write(str(datetime.now()) + '\n')
-        f.write(str(error) + '\n\n')
-        f.close()
+        with open("error.log", "a") as f:
+            f.write(str(datetime.now()) + '\n')
+            f.write(str(error) + '\n\n')
         if self.debug:
             print error
 
@@ -92,7 +91,7 @@ class Bot(asynchat.async_chat):
 
     def remove_user(self, channel, nick, msg):
         for channel in self.known_users.keys():
-            if nick.lower() in self.known_users[c]:
+            if nick.lower() in self.known_users[channel]:
                 self.part_user(nick, channel)
 
     def add_user(self, channel, nick, msg):

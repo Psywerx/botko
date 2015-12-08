@@ -80,9 +80,9 @@ class PsywerxGroups(PsywerxPlugin):
                 elif o and offline_mention:
                     offline_mentions.add(n.encode('ascii', 'ignore'))
 
-        if len(mentions) > 0:
+        if mentions:
             self.bot.say("CC: " + ', '.join(mentions), channel)
-        if len(offline_mentions) > 0:
+        if offline_mentions:
             self.bot.say("@msg " + ','.join(offline_mentions)
                          + " " + msg, channel)
 
