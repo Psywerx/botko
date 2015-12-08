@@ -63,7 +63,7 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 
         # First test "safe" images
         for file_path in self.safe_images:
-            message = 'check this out %(url)s' % {'url': file_path}
+            message = 'check this out {url!s}'.format(**{'url': file_path})
 
             mock_re.findall.return_value = [file_path]
             self.plugin._download_image.return_value = file_path
@@ -73,7 +73,7 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 
         # Then test NSFW images
         for file_path in self.unsafe_images:
-            message = 'check this out %(url)s' % {'url': file_path}
+            message = 'check this out {url!s}'.format(**{'url': file_path})
 
             mock_re.findall.return_value = [file_path]
             self.plugin._download_image.return_value = file_path

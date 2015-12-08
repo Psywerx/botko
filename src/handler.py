@@ -32,20 +32,20 @@ class Bot(asynchat.async_chat):
 
     def write(self, text):
         if self.debug:
-            print '> %s' % text
+            print '> {0!s}'.format(text)
         self.push(text + '\r\n')
 
     def say(self, text, channel):
         if text == '':
             return
-        line = 'PRIVMSG %s :%s' % (channel, text)
+        line = 'PRIVMSG {0!s} :{1!s}'.format(channel, text)
         self.write(line)
         self.logic.self_input(channel, text, line)
         return line
 
     def set_nick(self):
         self.nick = self.nicks[self.nick_num]
-        self.write('NICK %s' % self.nick)
+        self.write('NICK {0!s}'.format(self.nick))
 
     def next_nick(self):
         self.nick_num = (self.nick_num + 1) % len(self.nicks)
@@ -53,7 +53,7 @@ class Bot(asynchat.async_chat):
 
     def handle_connect(self):
         self.set_nick()
-        self.write('USER %s iw 0 :%s' % (self.ident, self.realname))
+        self.write('USER {0!s} iw 0 :{1!s}'.format(self.ident, self.realname))
 
     def collect_incoming_data(self, data):
         self.buffer += data
