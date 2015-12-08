@@ -98,7 +98,7 @@ class Bot(asynchat.async_chat):
         self.known_users[channel][nick.lower()] = nick
 
     def change_user(self, channel, old_nick, new_nick):
-        for channel in self.bot.known_users.keys():
-            if old_nick.lower() in self.bot.known_users[channel]:
-                del self.bot.known_users[channel][old_nick.lower()]
-                self.bot.known_users[channel][new_nick.lower()] = new_nick
+        for channel in self.known_users.keys():
+            if old_nick.lower() in self.known_users[channel]:
+                del self.known_users[channel][old_nick.lower()]
+                self.known_users[channel][new_nick.lower()] = new_nick
