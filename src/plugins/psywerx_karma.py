@@ -56,9 +56,15 @@ class PsywerxKarma(PsywerxPlugin):
 
     def handle_message(self, channel, nick, msg, line=None):
         msg_lower = msg.lower()
-        self.handle_tokens(channel, msg,
-                           ('karma', 'karmas', 'leaderboard',
-                            'upboats', 'upvotes', 'stats',), self._karma)
+        tokens = {
+            'karma',
+            'karmas',
+            'leaderboard',
+            'upboats',
+            'upvotes',
+            'stats'
+        }
+        self.handle_tokens(msg, tokens, self._karma, channel)
 
         # count karma upvote
         if '++' not in msg_lower:

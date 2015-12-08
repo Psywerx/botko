@@ -19,7 +19,7 @@ class BotPlugin(object):
         """
         self.bot = bot
 
-    def handle_tokens(self, channel, msg, keywords, callback):
+    def handle_tokens(self, msg, keywords, callback, *args):
         """
         Tokenize message and handle callbacks.
 
@@ -33,7 +33,7 @@ class BotPlugin(object):
             token = tokens[1:].pop(0)
 
         if token in keywords:
-            callback(tokens, channel)
+            callback(tokens, *args)
 
     def handle_message(self, channel, nick, msg, line):
         """
