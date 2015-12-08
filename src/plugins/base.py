@@ -27,10 +27,11 @@ class BotPlugin(object):
         """
         tokens = msg.lower().replace(':', '').split()
         token = None
-        if tokens and tokens[0].startswith("@"):
-            token = tokens.pop(0).replace('@', '')
-        elif tokens[0] == self.bot.nick and len(tokens) > 1:
-            token = tokens[1:].pop(0)
+        if tokens:
+            if tokens[0].startswith("@"):
+                token = tokens.pop(0).replace('@', '')
+            elif tokens[0] == self.bot.nick and len(tokens) > 1:
+                token = tokens[1:].pop(0)
 
         if token in keywords:
             callback(tokens, channel)
