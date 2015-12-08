@@ -16,6 +16,16 @@ class BotTest(unittest.TestCase):
         bot.nick = "_test_bot_"
         self.plugin = base.BotPlugin(bot=bot)
 
+    def test_empty_tokens(self):
+
+        callback = mock.MagicMock()
+        self.plugin.handle_tokens(
+            "#test_channel",
+            "",
+            ('token',),
+            callback)
+        self.assertEqual(callback.call_count, 0)
+
     def test_handle_valid_tokens(self):
 
         callback = mock.MagicMock()
