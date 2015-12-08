@@ -20,9 +20,10 @@ class BotPlugin(object):
         self.bot = bot
 
     def handle_tokens(self, channel, msg, keywords, callback):
-        """ tokenize message and handle callbacks
+        """
+        Tokenize message and handle callbacks.
 
-        handle callbacks if the message starts with @ or the server name
+        Handle callbacks if the message starts with @ or the server name.
         """
         tokens = msg.lower().replace(':', '').split()
         token = None
