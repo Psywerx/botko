@@ -92,7 +92,7 @@ class Bot(asynchat.async_chat):
     def remove_user(self, channel, nick, msg):
         for channel in self.known_users.keys():
             if nick.lower() in self.known_users[channel]:
-                self.part_user(nick, channel)
+                self.part_user(nick, channel, msg)
 
     def add_user(self, channel, nick, msg):
         self.known_users[channel][nick.lower()] = nick
