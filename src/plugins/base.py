@@ -20,18 +20,20 @@ class BotPlugin(object):
         self.bot = bot
 
     def handle_tokens(self, channel, msg, keywords, callback):
-        tokens = self.trimmer.sub(' ', msg.lower()).replace(':', '').split(' ')
-        if len(tokens) >= 1 and \
-           (tokens[0] == self.bot.nick or '@' in tokens[0]):
+        """
+        Tokenize message and handle callbacks.
 
-            tokens[0] = tokens[0].replace('@', '')
-            i = 0
-            for i, token in enumerate(tokens):
-                if token in keywords:
-                    callback(tokens[i + 1:], channel)
-                    break
-                if i > 1:
-                    break
+        Handle callbacks if the message starts with @ or the server name.
+        """
+        tokens = msg.lower().replace(':', '').split()
+        token = None
+        if tokens and tokens[0].startswith("@"):
+            token = tokens.pop(0).replace('@', '')
+        elif tokens[0] == self.bot.nick and len(tokens) > 1:
+            token = tokens[1:].pop(0)
+
+        if token in keywords:
+            callback(tokens, channel)
 
     def handle_message(self, channel, nick, msg, line):
         """
