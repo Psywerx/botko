@@ -10,8 +10,7 @@ class Uptime(BotPlugin):
         server_uptime = popen("uptime").read()
         current_uptime = time() - self.bot.uptime
         t = str(timedelta(seconds=current_uptime)).split('.')[0]
-        self.bot.say("My uptime: %s, server uptime: %s"
-                     % (t, server_uptime.split(',')[0].split('up ')[1]),
+        self.bot.say("My uptime: {0!s}, server uptime: {1!s}".format(t, server_uptime.split(',')[0].split('up ')[1]),
                      channel)
 
     def handle_message(self, channel, nick, msg, line=None):

@@ -68,7 +68,7 @@ class ReadLinks(BotPlugin):
         r = requests.get("https://vimeo.com/api/v2/video/" + id + ".json")
         video = json.loads(r.text)[0]
         if "stats_number_of_likes" in video:
-            likes = ("%d likes." % video["stats_number_of_likes"])
+            likes = ("{0:d} likes.".format(video["stats_number_of_likes"]))
         else:
             likes = "an unknown number of likes"
         return {
@@ -100,7 +100,7 @@ class ReadLinks(BotPlugin):
 
         if video.rating is not None:
             average_rating = float(video.rating)
-            rating = ("an average rating of %.2f" % average_rating)
+            rating = ("an average rating of {0:.2f}".format(average_rating))
         else:
             rating = "no rating"
         return {
