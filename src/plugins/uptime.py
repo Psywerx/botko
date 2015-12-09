@@ -15,5 +15,4 @@ class Uptime(BotPlugin):
                      channel)
 
     def handle_message(self, channel, nick, msg, line=None):
-        self.handle_tokens(channel, msg,
-                           ('uptime',), self._uptime)
+        self.handle_tokens(msg, ('uptime',), self._uptime, channel)
