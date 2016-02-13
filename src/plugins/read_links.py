@@ -42,8 +42,8 @@ WEB_RESPONSES = [
 
 class ReadLinks(BotPlugin):
 
-    def _get_name_text(self, id):
-        status = twt.get_status(id)
+    def _get_name_text(self, status_id):
+        status = twt.get_status(status_id)
         name = status.user.screen_name
         text = status.text.replace('\n', ' ')
         return name, text
@@ -64,8 +64,8 @@ class ReadLinks(BotPlugin):
             self.bot.say('Sorry, I wasn\'t able to read the last tweet :(',
                          channel)
 
-    def _get_vimeo_info(self, id):
-        r = requests.get("https://vimeo.com/api/v2/video/" + id + ".json")
+    def _get_vimeo_info(self, video_id):
+        r = requests.get("https://vimeo.com/api/v2/video/" + video_id + ".json")
         video = json.loads(r.text)[0]
         if "stats_number_of_likes" in video:
             likes = ("%d likes." % video["stats_number_of_likes"])
@@ -130,7 +130,7 @@ class ReadLinks(BotPlugin):
         links = web_regex.findall(msg)
         for link in links:
             link = link[0]
-            if len([r for r in __all_non_web__ if r.search(link)]) > 0:
+            if [r for r in __all_non_web__ if r.search(link)]:
                 continue
             try:
                 t = lxml.html.parse(urlopen(str(link)))  # nosec: web_regex only allows http(s)
