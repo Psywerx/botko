@@ -133,7 +133,7 @@ class ReadLinks(BotPlugin):
             if len([r for r in __all_non_web__ if r.search(link)]) > 0:
                 continue
             try:
-                t = lxml.html.parse(urlopen(str(link)))
+                t = lxml.html.parse(urlopen(str(link)))  # nosec: web_regex only allows http(s)
                 t = t.find(".//title").text
                 t = t.strip().replace('\n', ' ')
                 if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:
