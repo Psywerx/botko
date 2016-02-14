@@ -34,7 +34,7 @@ class BotTest(unittest.TestCase):
     def test_parse_weird(self):
         line = ":smotko!~smotko@2001:1470:fffe:fe01:4c8b:3839:ad5f:3bbb " \
             + "JOIN #smotko-testing"
-        nick, msg, channel = self.logic.parse_msg(line)
+        nick, _, channel = self.logic.parse_msg(line)
         self.assertEqual("smotko", nick)
         self.assertEqual("#smotko-testing", channel)
 

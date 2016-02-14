@@ -58,7 +58,7 @@ class BotLogic(object):
             try:
                 plugin.handle_say(channel, msg, line)
             except:
-                return self.bot.log_error('ERROR parsing self line: ' + line)
+                return self.bot.log_error('Parsing self line error: ' + line)
 
     def handle_end_motd(self, line):
         # after server MOTD, join desired channel
@@ -83,7 +83,7 @@ class BotLogic(object):
         try:
             nick, msg, channel = self.parse_msg(line)
         except:
-            return self.bot.log_error('ERROR parsing msg line: ' + line)
+            return self.bot.log_error('Parsing msg line error: ' + line)
 
         action = self._channel_actions.get(action_code)
         if action is not None:
@@ -97,7 +97,7 @@ class BotLogic(object):
         try:
             action_code = self._get_action_code(line)
         except:
-            return self.bot.log_error('ERROR on IRC: ' + line)
+            return self.bot.log_error('IRC error: ' + line)
 
         action = self._actions.get(action_code)
 

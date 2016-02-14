@@ -34,8 +34,7 @@ class PsywerxKarma(PsywerxPlugin):
 
         except:
             from traceback import format_exc
-            print "ERR " + str(format_exc())
-            self.bot.log_error('ERROR getting upboats')
+            self.bot.log_error('Could not get upboats: ' + str(format_exc()))
 
     def _karma(self, tokens, channel):
         if len(tokens) != 1:

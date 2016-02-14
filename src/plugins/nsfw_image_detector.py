@@ -102,7 +102,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         try:
             im = Image.open(file_path)
         except:
-            self.bot.log_error('ERROR opening NSFW image ' + file_path)
+            self.bot.log_error('Could not open NSFW image: ' + file_path)
             return 0.0
 
         im = im.convert('RGB')
@@ -168,7 +168,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
                 if first_chunk:
                     first_chunk = False
                     if not self._is_image(chunk):
-                        self.bot.log_error('ERROR NSFW image was not an image '
+                        self.bot.log_error('NSFW image was not an image: '
                                            + url)
                         return
 
@@ -190,5 +190,5 @@ class NSFWImageDetectorPlugin(BotPlugin):
         return data[:4] == 'GIF8'
 
     def _is_image(self, data):
-        """Return True if data conforms to the magic numbers of an image file."""
+        """Return True if data conforms to a magic number of an image file."""
         return self._is_jpg(data) or self._is_png(data) or self._is_gif(data)

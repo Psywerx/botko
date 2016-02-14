@@ -71,14 +71,15 @@ class PsywerxGroups(PsywerxPlugin):
                 continue
 
             params = {'group': group}
-            response = json.loads(self.request(channel, 'irc/mention', params))
-            for n, _, o in response:
-                if n.lower() == nick.lower():
-                    continue
-                if n.lower() in self.bot.known_users[channel]:
-                    mentions.add(n.encode('ascii', 'ignore'))
-                elif o and offline_mention:
-                    offline_mentions.add(n.encode('ascii', 'ignore'))
+            response = self.request(channel, 'irc/mention', params)
+            if response:
+                for n, _, o in json.loads(response):
+                    if n.lower() == nick.lower():
+                        continue
+                    if n.lower() in self.bot.known_users[channel]:
+                        mentions.add(n.encode('ascii', 'ignore'))
+                    elif o and offline_mention:
+                        offline_mentions.add(n.encode('ascii', 'ignore'))
 
         if mentions:
             self.bot.say("CC: " + ', '.join(mentions), channel)

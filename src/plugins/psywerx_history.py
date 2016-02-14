@@ -12,7 +12,7 @@ class PsywerxHistory(PsywerxPlugin):
         if r.startswith('REPOST'):
             self._handle_repost(r, channel)
         elif r != 'OK':
-            self.bot.log_error(r)
+            self.bot.log_error("Response: " + r)
 
     def handle_say(self, channel, msg, line):
         msg = ":" + self.bot.nick + "!~" + self.bot.nick + "@6.6.6.6 " + line

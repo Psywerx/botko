@@ -1,5 +1,3 @@
-import re
-
 __all__ = [
     'BotPlugin'
 ]
@@ -11,7 +9,6 @@ class BotPlugin(object):
 
     name = None
     description = None
-    trimmer = re.compile('[ ]+')
 
     def __init__(self, bot):
         """
@@ -64,6 +61,6 @@ class PsywerxPlugin(BotPlugin):
                 'token': P['TOKEN'],
                 'channel': channel
             }, **extra_params))
-            return urlopen(P['SERVER_URL'] + url, params).read()
+            return urlopen(P['SERVER_URL'] + url, params).read()  # nopep8  # nosec: url prefix comes from settings, suffix hardcoded in plugins
         except:
             self.bot.log_error('Request failed: ' + url + params)

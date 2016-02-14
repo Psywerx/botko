@@ -105,4 +105,4 @@ NSFW_LINKS = [
 
 def random_response(responses):
     from random import randint
-    return responses[randint(0, len(responses) - 1)]
+    return responses[randint(0, len(responses) - 1)]  # nosec: random
