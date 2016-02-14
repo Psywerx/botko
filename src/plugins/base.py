@@ -61,6 +61,6 @@ class PsywerxPlugin(BotPlugin):
                 'token': P['TOKEN'],
                 'channel': channel
             }, **extra_params))
-            return urlopen(P['SERVER_URL'] + url, params).read()  # nosec: url prefix comes from settings, suffix hardcoded in plugins
+            return urlopen(P['SERVER_URL'] + url, params).read()  # nopep8  # nosec: url prefix comes from settings, suffix hardcoded in plugins
         except:
             self.bot.log_error('Request failed: ' + url + params)

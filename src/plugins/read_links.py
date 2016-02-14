@@ -27,7 +27,7 @@ VIDEO_RESPONSES = [
     "Here is the title of that %(service)s video: '%(title)s'.",
     "I found the title of that %(service)s video, here it is: '%(title)s'",
     "If you click that link you will watch a video titled '%(title)s'. "
-    + "Good luck!"
+    + "Good luck!",
 ]
 
 WEB_RESPONSES = [
@@ -36,7 +36,6 @@ WEB_RESPONSES = [
     "That page has an interesting title: '%(title)s'",
     "The title of that page makes me want to read the whole thing '%(title)s'",
     "%(title)s",
-
 ]
 
 
@@ -59,13 +58,14 @@ class ReadLinks(BotPlugin):
             self.bot.say(response, channel)
         except Exception as e:
             print e
-            self.bot.log_error('ERROR could not get tweet from: "'
+            self.bot.log_error('Could not get tweet from: "'
                                + msg + '" the exception was: ' + str(e))
             self.bot.say('Sorry, I wasn\'t able to read the last tweet :(',
                          channel)
 
     def _get_vimeo_info(self, video_id):
-        r = requests.get("https://vimeo.com/api/v2/video/" + video_id + ".json")
+        api_url = "https://vimeo.com/api/v2/video/" + video_id + ".json"
+        r = requests.get(api_url)
         video = json.loads(r.text)[0]
         if "stats_number_of_likes" in video:
             likes = ("%d likes." % video["stats_number_of_likes"])
@@ -86,9 +86,10 @@ class ReadLinks(BotPlugin):
         try:
             video_id = str(res.groups()[0])
             video_info = self._get_vimeo_info(video_id)
-            self.bot.say(random_response(VIDEO_RESPONSES) % video_info, channel)
+            self.bot.say(random_response(VIDEO_RESPONSES) % video_info,
+                         channel)
         except Exception as e:
-            self.bot.log_error('ERROR could not get title of vimeo link from: "'
+            self.bot.log_error('Could not get title of vimeo link from: "'
                                + msg + '" the exception was: ' + str(e))
             self.bot.say('For some reason I couldn\'t read the title of that '
                          + 'vimeo link.', channel)
@@ -121,10 +122,10 @@ class ReadLinks(BotPlugin):
             self.bot.say(random_response(VIDEO_RESPONSES) % video_info,
                          channel)
         except Exception as e:
-            self.bot.log_error('ERROR could not get title of a yt link from: "'
+            self.bot.log_error('Could not get title of youtube link from: "'
                                + msg + '" the exception was: ' + str(e))
             self.bot.say('For some reason I couldn\'t read the title of that '
-                         + 'yt link.', channel)
+                         + 'youtube link.', channel)
 
     def _read_websites(self, channel, msg):
         links = web_regex.findall(msg)
@@ -133,14 +134,14 @@ class ReadLinks(BotPlugin):
             if [r for r in __all_non_web__ if r.search(link)]:
                 continue
             try:
-                t = lxml.html.parse(urlopen(str(link)))  # nosec: web_regex only allows http(s)
+                t = lxml.html.parse(urlopen(str(link)))  # nopep8 # nosec: web_regex only allows http(s)
                 t = t.find(".//title").text
                 t = t.strip().replace('\n', ' ')
                 if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:
                     self.bot.say(random_response(WEB_RESPONSES) % {'title': t},
                                  channel)
             except Exception as e:
-                self.bot.log_error('ERROR could not get title of a webpage: "'
+                self.bot.log_error('Could not get title of webpage: "'
                                    + msg + '" the exception was: ' + str(e))
 
     def handle_message(self, channel, nick, msg, line=None):
