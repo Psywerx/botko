@@ -37,13 +37,13 @@ class BotkoDaemon(Daemon):
 if __name__ == "__main__":
     daemon = BotkoDaemon('/tmp/botko.pid')  # nosec: predictable, but low risk
     if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
+        if sys.argv[1] == 'start':
             daemon.start()
-        elif 'stop' == sys.argv[1]:
+        elif sys.argv[1] == 'stop':
             daemon.stop()
-        elif 'restart' == sys.argv[1]:
+        elif sys.argv[1] == 'restart':
             daemon.restart()
-        elif 'nodaemon' == sys.argv[1]:
+        elif sys.argv[1] == 'nodaemon':
             run_bot()
         else:
             print "Unknown command"
