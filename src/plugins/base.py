@@ -1,5 +1,3 @@
-import re
-
 __all__ = [
     'BotPlugin'
 ]
@@ -11,7 +9,6 @@ class BotPlugin(object):
 
     name = None
     description = None
-    trimmer = re.compile('[ ]+')
 
     def __init__(self, bot):
         """

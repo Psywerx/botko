@@ -8,13 +8,13 @@ class Uptime(BotPlugin):
     def _uptime(self, tokens, channel):
         try:
             with open("/proc/uptime", 'r') as f:
-                server_uptime_seconds = float(f.readline().split()[0])
-                server_uptime = str(timedelta(seconds=int(server_uptime_seconds)))
+                server_uptime_seconds = int(float(f.readline().split()[0]))
+                server_uptime = str(timedelta(seconds=server_uptime_seconds))
         except:
             server_uptime = "unknown"
 
-        bot_uptime_seconds = time() - self.bot.uptime
-        bot_uptime = str(timedelta(seconds=int(bot_uptime_seconds)))
+        bot_uptime_seconds = int(time() - self.bot.uptime)
+        bot_uptime = str(timedelta(seconds=bot_uptime_seconds))
         self.bot.say("My uptime: %s, server uptime: %s"
                      % (bot_uptime, server_uptime),
                      channel)
