@@ -33,14 +33,17 @@ class PsywerxKarma(PsywerxPlugin):
                 self.bot.say(str("** CONGRATS " + p['nick'] + " **"), channel)
 
         except:
-            from traceback import format_exc
-            self.bot.log_error('Could not get upboats: ' + str(format_exc()))
+            self.bot.log_error('Could not get upboats.')
 
     def _karma(self, tokens, channel):
         if len(tokens) != 1:
-            r = json.loads(self.request(channel, 'irc/karma_nick', {}))
+            response = self.request(channel, 'irc/karma_nick', {})
+            if not response:
+                msg = "Sorry, could not get karmas."
+                self.bot.say(msg, channel)
+                return
             s = ""
-            for p in r:
+            for p in json.loads(response):
                 s += str(p['nick']) + " (" + str(p['karma']) + "), "
             self.bot.say(s[:-2], channel)
         else:
@@ -49,6 +52,8 @@ class PsywerxKarma(PsywerxPlugin):
             params = {'nick': nick}
             response = self.request(channel, 'irc/karma_nick', params)
             if not response:
+                msg = "Sorry, could not get karma for " + nick + "."
+                self.bot.say(msg, channel)
                 return
             nick = tokens[0] if tokens[0] not in users else users[tokens[0]]
             self.bot.say(nick + " has " + response + " karma.", channel)

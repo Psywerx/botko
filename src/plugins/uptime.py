@@ -11,6 +11,7 @@ class Uptime(BotPlugin):
                 server_uptime_seconds = int(float(f.readline().split()[0]))
                 server_uptime = str(timedelta(seconds=server_uptime_seconds))
         except:
+            self.bot.log_error('Could not get server uptime.')
             server_uptime = "unknown"
 
         bot_uptime_seconds = int(time() - self.bot.uptime)
