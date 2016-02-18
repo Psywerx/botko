@@ -43,7 +43,7 @@ class PsywerxGroups(PsywerxPlugin):
             params['group'] = group
             return self.request(channel, 'irc/leave', params)
 
-    def _handle_actions(self, channel, nick, msg, line=None):
+    def _handle_actions(self, channel, nick, msg):
         msg_lower = msg.lower()
         for a in self.actions.keys():
             if msg_lower.startswith(a):
@@ -54,7 +54,7 @@ class PsywerxGroups(PsywerxPlugin):
                 return True
         return False
 
-    def _handle_mentions(self, channel, nick, msg, line=None):
+    def _handle_mentions(self, channel, nick, msg):
         msg_lower = msg.lower()
         mentions = set()
         offline_mentions = set()
@@ -88,5 +88,5 @@ class PsywerxGroups(PsywerxPlugin):
                          + " " + msg, channel)
 
     def handle_message(self, channel, nick, msg, line=None):
-        if not self._handle_actions(channel, nick, msg, line):
-            self._handle_mentions(channel, nick, msg, line)
+        if not self._handle_actions(channel, nick, msg):
+            self._handle_mentions(channel, nick, msg)
