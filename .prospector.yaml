@@ -1,0 +1,8 @@
+strictness: veryhigh
+test-warnings: false
+doc-warnings: false
+
+pep8:
+  disable:
+      - W503
+      
