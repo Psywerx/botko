@@ -26,7 +26,8 @@ class BotLogic(object):
             Uptime(bot=bot),
         ]
 
-    def _get_action_code(self, line):
+    @staticmethod
+    def _get_action_code(line):
         if line.startswith('ERROR'):
             raise Exception('Unknown IRC error in line: ' + line)
         if line.startswith('PING'):
@@ -43,7 +44,8 @@ class BotLogic(object):
             return 'NICK_IN_USE'
         return action.upper()
 
-    def parse_msg(self, line):
+    @staticmethod
+    def parse_msg(line):
         sline = line.split(' ', 1)
         nick = line[1:sline[0].find('!')]
         msg_start = sline[1].find(':', 1)

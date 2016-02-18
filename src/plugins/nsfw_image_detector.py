@@ -138,7 +138,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
         return image_urls
 
-    def _is_image_url(self, url):
+    @staticmethod
+    def _is_image_url(url):
         # Very simple logic, doesn't support urls which don't have an extension
         url = url.lower()
         extension = os.path.splitext(url)[1]
@@ -176,15 +177,18 @@ class NSFWImageDetectorPlugin(BotPlugin):
         return file_path
 
     # From http://people.iola.dk/olau/python/imagedetect.py by Ole Laursen
-    def _is_jpg(self, data):
+    @staticmethod
+    def _is_jpg(data):
         """Return True if data is the first 2 bytes of a JPEG file."""
         return data[:2] == '\xff\xd8'
 
-    def _is_png(self, data):
+    @staticmethod
+    def _is_png(data):
         """Return True if data is the first 8 bytes of a PNG file."""
         return data[:8] == '\x89PNG\x0d\x0a\x1a\x0a'
 
-    def _is_gif(self, data):
+    @staticmethod
+    def _is_gif(data):
         """Return True if data is the first 4 bytes of a GIF file."""
         return data[:4] == 'GIF8'
 

@@ -41,7 +41,8 @@ WEB_RESPONSES = [
 
 class ReadLinks(BotPlugin):
 
-    def _get_tweet_info(self, status_id):
+    @staticmethod
+    def _get_tweet_info(status_id):
         status = TWITTER.get_status(status_id)
         name = status.user.screen_name
         text = status.text.replace('\n', ' ')
@@ -61,7 +62,8 @@ class ReadLinks(BotPlugin):
             self.bot.say('Sorry, I wasn\'t able to read the last tweet :(',
                          channel)
 
-    def _get_vimeo_info(self, video_id):
+    @staticmethod
+    def _get_vimeo_info(video_id):
         api_url = "https://vimeo.com/api/v2/video/" + video_id + ".json"
         r = requests.get(api_url)
         video = json.loads(r.text)[0]
@@ -91,7 +93,8 @@ class ReadLinks(BotPlugin):
             self.bot.say('For some reason I couldn\'t read the title of that '
                          + 'vimeo link.', channel)
 
-    def _get_youtube_info(self, video_id):
+    @staticmethod
+    def _get_youtube_info(video_id):
         import pafy
         url = "https://www.youtube.com/watch?v={0}".format(video_id)
         video = pafy.new(url)

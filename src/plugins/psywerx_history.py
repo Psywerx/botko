@@ -30,7 +30,8 @@ class PsywerxHistory(PsywerxPlugin):
             'num': num
         }, channel)
 
-    def _pick_response(self, is_self, is_multiple):
+    @staticmethod
+    def _pick_response(is_self, is_multiple):
         f = [
             [REPOSTS, MULTIPLE_REPOST],
             [SELF_REPOSTS, MULTIPLE_SELF_REPOST]
