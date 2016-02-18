@@ -22,16 +22,7 @@ from plugins.read_links import VIDEO_RESPONSES, WEB_RESPONSES
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-class BasePluginTestCase(unittest.TestCase):
-    def setUp(self):
-        self.bot = Mock()
-        self.bot.channels = ["#psywerx"]
-        self.bot.known_users = {"#psywerx": {"smotko": "smotko",
-                                             "test1": "test1",
-                                             "test2": "test2"}}
-        self.bot.uptime = time() - 100
-        self.fixtures_dir = os.path.join(BASE_DIR, 'fixtures/')
-
+class TestHelperMixin(object):
     def _say_response(self, channel, nick, msg, response=None):
         self.plugin.bot.say.called = False
         line = (":" + nick + "!~" + nick + "@6.6.6.6 PRIVMSG " +
@@ -50,6 +41,27 @@ class BasePluginTestCase(unittest.TestCase):
         self.plugin.handle_message(channel, nick, msg, line)
         self.assertFalse(self.plugin.bot.say.called)
 
+    def _handle_message(self, line):
+        self.plugin.handle_message('channel', 'nick',
+                                   line, self.line_start + line)
+
+    def _test_helper(self, msg, response):
+        self._handle_message(msg)
+        self.assertTrue(self.bot.say.called)
+        assert response in self.bot.say.call_args[0][0].split('\n')[0]
+
+
+class BasePluginTestCase(unittest.TestCase, TestHelperMixin):
+    def setUp(self):
+        self.bot = Mock()
+        self.bot.channels = ["#psywerx"]
+        self.bot.known_users = {"#psywerx": {"smotko": "smotko",
+                                             "test1": "test1",
+                                             "test2": "test2"}}
+        self.bot.uptime = time() - 100
+
+        self.fixtures_dir = os.path.join(BASE_DIR, 'fixtures/')
+
 
 class UptimePluginTestCase(BasePluginTestCase):
     def setUp(self):
@@ -57,7 +69,7 @@ class UptimePluginTestCase(BasePluginTestCase):
         self.plugin = Uptime(bot=self.bot)
 
     @patch("__builtin__.open")
-    def test_mention(self, mock_open):
+    def test_uptime(self, mock_open):
         mock_open.return_value = ['123.4 5.6']
 
         response = self._say_response('#psywerx', 'smotko', '@uptime')
@@ -75,8 +87,7 @@ class PsywerxGroupsPluginTestCase(BasePluginTestCase):
                                 ' [ "test1", "#psywerx", false ],' +
                                 ' [ "test2", "#psywerx", false ]]')
 
-        msg = 'wow @all wow'
-        self._say_response('#psywerx', 'smotko', msg,
+        self._say_response('#psywerx', 'smotko', 'wow @all wow',
                            ['CC: test2, test1', 'CC: test1, test2'])
 
     @patch("plugins.psywerx_groups.PsywerxGroups.request")
@@ -85,15 +96,13 @@ class PsywerxGroupsPluginTestCase(BasePluginTestCase):
                                 ' [ "off1", "#psywerx", true ],' +
                                 ' [ "off2", "#psywerx", false ]]')
 
-        msg = 'wow @all\' wow'
-        self._say_no_response('#psywerx', 'smotko', msg)
-
-        msg = 'wow @all wow'
-        self._say_response('#psywerx', 'smotko', msg, '@msg off1 ' + msg)
+        self._say_response('#psywerx', 'smotko', 'wow @all wow',
+                           '@msg off1 wow @all wow')
+        self._say_no_response('#psywerx', 'smotko', 'wow @all\' wow')
 
     @patch("plugins.psywerx_groups.PsywerxGroups.request")
     def test_basic_action(self, request):
-        resp = 'anything goes'
+        resp = '_anything goes here_'
         request.return_value = resp
 
         for action in ['@mygroup', '@group', '@leaveall']:
@@ -115,10 +124,11 @@ class PsywerxKarmaPluginTestCase(BasePluginTestCase):
 
     @patch("plugins.psywerx_karma.PsywerxKarma.request")
     def test_nick_karma(self, request):
-        request.return_value = '50 (and anything that goes here)'
+        resp = '_anything goes here_'
+        request.return_value = resp
 
         self._say_response('#psywerx', 'smotko', '@karma test1',
-                           'test1 has 50 (and anything that goes here) karma.')
+                           'test1 has ' + resp + ' karma.')
 
 
 class PsywerxHistoryPluginTestCase(BasePluginTestCase):
@@ -208,23 +218,13 @@ class ReadLinksTestCase(BasePluginTestCase):
         super(ReadLinksTestCase, self).setUp()
         self.line_start = ":smotko!~smotko@193.188.1.1 PRIVMSG #psywerx "
         self.plugin = ReadLinks(bot=self.bot)
-        self.say = self.plugin.bot.say
         self.video_response = {'seconds': '34227', 'rating': 'no rating',
                                'views': '385293', 'service': 'youtube',
                                'title': 'ASP 2014 J-Bay Open English Day 10'}
 
-    def handle_message(self, line):
-        self.plugin.handle_message('channel', 'nick',
-                                   line, self.line_start + line)
-
     def test_sanity(self):
-        self.handle_message('No tweet')
+        self._handle_message('No tweet')
         self.assertFalse(self.plugin.bot.say.called)
-
-    def _test_helper(self, msg, response):
-        self.handle_message(msg)
-        self.assertTrue(self.say.called)
-        assert response in self.say.call_args[0][0].split('\n')[0]
 
     @patch("plugins.read_links.ReadLinks._get_tweet_info")
     def test_tweet_in_message(self, name_text):
@@ -256,12 +256,12 @@ class ReadLinksTestCase(BasePluginTestCase):
     def test_all_video_responses(self):
         for vr in VIDEO_RESPONSES:
             self.bot.say(vr % self.video_response, "channel")
-            assert 'ASP 2014' in self.say.call_args[0][0].split('\n')[0]
+            assert 'ASP 2014' in self.bot.say.call_args[0][0].split('\n')[0]
 
     def test_all_web_responses(self):
         for wr in WEB_RESPONSES:
             self.bot.say(wr % {'title': 'test___'}, "channel")
-            assert 'test___' in self.say.call_args[0][0].split('\n')[0]
+            assert 'test___' in self.bot.say.call_args[0][0].split('\n')[0]
 
     # TODO: mock out the actual request
     def test_web(self):
@@ -271,8 +271,8 @@ class ReadLinksTestCase(BasePluginTestCase):
 
     def test_web_no_title(self):
         msg = 'This is a silly image https://i.imgur.com/ndsBKWn.jpg'
-        self.handle_message(msg)
-        self.assertFalse(self.say.called)
+        self._handle_message(msg)
+        self.assertFalse(self.bot.say.called)
 
     def test_web_title_with_https(self):
         msg = 'https://news.ycombinator.com'
