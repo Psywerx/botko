@@ -8,10 +8,10 @@ Requirements:
 * jpeg decoder for PIL (libjpeg-dev package on Ubuntu)
 """
 
-import re
 import os
 import uuid
 import tempfile
+import regex
 from os.path import join as pjoin
 
 import requests
@@ -33,11 +33,6 @@ CHUNK_SIZE = 1024
 
 SKIN_PERCENTAGE_THRESHOLD = 30
 
-imgur_regex = re.compile(
-    "(?:https?://)(?:www[.])?(?:imgur.com/)"
-    + "(?:(?:gallery/)|(?:r/[a-z]+/))?([A-Za-z0-9]+)"
-)
-
 
 class NSFWImageDetectorPlugin(BotPlugin):
 
@@ -50,7 +45,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         self._images_dir = tempfile.mkdtemp(suffix='nsfw-images')
 
     def handle_message(self, channel, nick, msg, line=None):
-        urls = re.findall(r'(https?://[^\s]+)', msg)
+        urls = regex.WEB_URL.findall(msg)
 
         if not urls:
             return
@@ -102,7 +97,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
         try:
             im = Image.open(file_path)
         except:
-            self.bot.log_error('Could not open NSFW image: ' + file_path)
+            self.bot.log_error('Could not open NSFW image: "'
+                               + file_path + '"')
             return 0.0
 
         im = im.convert('RGB')
@@ -132,16 +128,18 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
         image_urls = []
         for url in urls:
-            imgur_id = imgur_regex.search(url)
-            if imgur_id:
-                url = "https://i.imgur.com/" + imgur_id.group(1) + ".jpg"
+            # Rewrite imgur urls
+            imgur_res = regex.IMGUR.search(url)
+            if imgur_res:
+                url = "https://i.imgur.com/" + imgur_res.group('id') + ".jpg"
 
             if self._is_image_url(url=url):
                 image_urls.append(url)
 
         return image_urls
 
-    def _is_image_url(self, url):
+    @staticmethod
+    def _is_image_url(url):
         # Very simple logic, doesn't support urls which don't have an extension
         url = url.lower()
         extension = os.path.splitext(url)[1]
@@ -154,6 +152,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
             extension = os.path.splitext(url)[1]
             response = requests.get(url, stream=True)
         except:
+            self.bot.log_error('Failed to download NSFW image: "'
+                               + url + '"')
             return
 
         if not response.status_code == 200:
@@ -168,8 +168,8 @@ class NSFWImageDetectorPlugin(BotPlugin):
                 if first_chunk:
                     first_chunk = False
                     if not self._is_image(chunk):
-                        self.bot.log_error('NSFW image was not an image: '
-                                           + url)
+                        self.bot.log_error('NSFW image was not an image: "'
+                                           + url + '"')
                         return
 
                 fp.write(chunk)
@@ -177,15 +177,18 @@ class NSFWImageDetectorPlugin(BotPlugin):
         return file_path
 
     # From http://people.iola.dk/olau/python/imagedetect.py by Ole Laursen
-    def _is_jpg(self, data):
+    @staticmethod
+    def _is_jpg(data):
         """Return True if data is the first 2 bytes of a JPEG file."""
         return data[:2] == '\xff\xd8'
 
-    def _is_png(self, data):
+    @staticmethod
+    def _is_png(data):
         """Return True if data is the first 8 bytes of a PNG file."""
         return data[:8] == '\x89PNG\x0d\x0a\x1a\x0a'
 
-    def _is_gif(self, data):
+    @staticmethod
+    def _is_gif(data):
         """Return True if data is the first 4 bytes of a GIF file."""
         return data[:4] == 'GIF8'
 

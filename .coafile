@@ -1,0 +1,5 @@
+[Default]
+bears = SpaceConsistencyBear,PyLintBear,PyCommentedCodeBear,PEP8Bear,PyUnusedCodeBear
+files = src/**/*.py
+use_spaces = yes
+pylint_disable = W0702,C0122,R0902,W0613,W0621,W0511,C0411,C0412,W0141,W0703,W0223,W0631,R0204,C0111,C0301,W0403,E0401,R0201,C0103

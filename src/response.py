@@ -1,31 +1,34 @@
 REPOSTS = [
-    "I don't want to be rude %(nick)s, but %(repostNick)s "
+    "I don't want to be rude %(nick)s, but %(repost_nick)s "
     + "has already posted this link!",
-    "I don't want to be Rude %(nick)s, but %(repostNick)s has already "
+    "I don't want to be Rude %(nick)s, but %(repost_nick)s has already "
     + "posted this link!",
     "I am sorry %(nick)s, but this link has already been posted "
-    + "by %(repostNick)s!",
-    "You were too slow %(nick)s, %(repostNick)s has already posted this link!",
-    "%(nick)s, this link has already been posted by %(repostNick)s.",
+    + "by %(repost_nick)s!",
+    "You were too slow %(nick)s, %(repost_nick)s has already "
+    + "posted this link!",
+    "%(nick)s, this link has already been posted by %(repost_nick)s.",
     "Strong with the force %(nick)s is not. "
-    + "Already posted by %(repostNick)s, this link was.",
+    + "Already posted by %(repost_nick)s, this link was.",
     "Strong with the force %(nick)s is not. "
-    + "Already posted %(repostNick)s this link has.",
-    "Hey %(repostNick)s, %(nick)s is reposting your stuff",
-    "%(nick)s, maybe you weren't online then, but %(repostNick)s has already "
+    + "Already posted %(repost_nick)s this link has.",
+    "Hey %(repost_nick)s, %(nick)s is reposting your stuff",
+    "%(nick)s, maybe you weren't online then, but %(repost_nick)s has already "
     + "posted this link.",
-    "I want to be rude %(nick)s, so I'll point out that %(repostNick)s has "
+    "I want to be rude %(nick)s, so I'll point out that %(repost_nick)s has "
     + "already posted this link!",
-    "In Soviet Russia %(repostNick)s reposts %(nick)s's links.",
-    "%(nick)s, I've seen this link before. I think %(repostNick)s posted it.",
-    "%(nick)s, my memory banks indicate that %(repostNick)s already posted "
+    "In Soviet Russia %(repost_nick)s reposts %(nick)s's links.",
+    "%(nick)s, I've seen this link before. I think %(repost_nick)s posted it.",
+    "%(nick)s, my memory banks indicate that %(repost_nick)s already posted "
     + "this link.",
-    "%(nick)s, you know what you did... and so does %(repostNick)s.",
-    "%(nick)s are you trying to impress %(repostNick)s by reposting his link?",
+    "%(nick)s, you know what you did... and so does %(repost_nick)s.",
+    "%(nick)s are you trying to impress %(repost_nick)s by "
+    + "reposting their link?",
 ]
 SELF_REPOSTS = [
     "You really like that link, don't you? %(nick)s!",
-    "Hey everyone, %(nick)s is reposting his own link, so it has to be good.",
+    "Hey everyone, %(nick)s is reposting their own link, "
+    + "so it has to be good.",
     "I don't want to be rude %(nick)s, but you have already posted this link!",
     "I want to be rude %(nick)s, so I'll point out that you have already "
     + "posted this link!",
@@ -39,13 +42,13 @@ SELF_REPOSTS = [
     + "But you've posted it here before.",
 ]
 MULTIPLE_REPOST = [
-    "I think %(repostNick)s will be very happy, his link has been reshared "
+    "I think %(repost_nick)s will be very happy, their link has been reshared "
     + "%(num)s times.",
     "Everybody check out this fabulous link! I've seen it %(num)s times "
     + "but I still like it.",
     "This link is quite popular, it has been posted %(num)s times. "
-    + "The original poster was %(repostNick)s.",
-    "Every time I see this link I become happy. Thank you %(repostNick)s for "
+    + "The original poster was %(repost_nick)s.",
+    "Every time I see this link I become happy. Thank you %(repost_nick)s for "
     + "sharing it and %(nick)s for resharing it!",
 ]
 MULTIPLE_SELF_REPOST = [
@@ -55,7 +58,7 @@ MULTIPLE_SELF_REPOST = [
     + "I've only seen %(num)s times.",
     "The number of times we have seen this link has just increased by one! "
     + "The count is at %(num)s now. Yay.",
-    "Yay! Thanks to %(nick)s and his awesome link I can increase the "
+    "Yay! Thanks to %(nick)s and their awesome link I can increase the "
     + "reposted_link variable by one! It's new value is now %(num)s. "
     + "I am happy.",
 ]
@@ -98,8 +101,7 @@ NSFW_LINKS = [
     'There is a naked person on that last link!',
     'I made a HUGE mistake by clicking on the link above.',
     '%(nick)s! Why do you keep posting NSFW content?',
-    'I know I\'m only a little bot, but that url was really offensive.'
-
+    'I know I\'m only a little bot, but that url was really offensive.',
 ]
 
 

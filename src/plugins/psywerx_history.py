@@ -12,25 +12,26 @@ class PsywerxHistory(PsywerxPlugin):
         if r.startswith('REPOST'):
             self._handle_repost(r, channel)
         elif r != 'OK':
-            self.bot.log_error("Response: " + r)
+            self.bot.log_error("Response not OK: " + r)
 
     def handle_say(self, channel, msg, line):
         msg = ":" + self.bot.nick + "!~" + self.bot.nick + "@6.6.6.6 " + line
         self.request(channel, 'irc/add', {'raw': msg})
 
     def _handle_repost(self, r, channel):
-        _, nick, repostNick, messageType, num = r.split(' ')
-        if messageType != 'M':
+        _, nick, repost_nick, message_type, num = r.split(' ')
+        if message_type != 'M':
             return
 
-        response = self._pick_response(nick == repostNick, int(num) > 1)
+        response = self._pick_response(nick == repost_nick, int(num) > 1)
         self.bot.say(response % {
             'nick': nick,
-            'repostNick': repostNick,
+            'repost_nick': repost_nick,
             'num': num
         }, channel)
 
-    def _pick_response(self, is_self, is_multiple):
+    @staticmethod
+    def _pick_response(is_self, is_multiple):
         f = [
             [REPOSTS, MULTIPLE_REPOST],
             [SELF_REPOSTS, MULTIPLE_SELF_REPOST]

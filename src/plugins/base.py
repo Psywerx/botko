@@ -39,7 +39,7 @@ class BotPlugin(object):
         :param channel: Channel to which the message was sent to.
         :param nick: User which has sent the message.
         :param msg: Actual message.
-        :param line: Raw line received from serve
+        :param line: Raw line received from server
         """
         raise NotImplementedError('handle_message not implemented')
 

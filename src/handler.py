@@ -58,12 +58,20 @@ class Bot(asynchat.async_chat):
     def collect_incoming_data(self, data):
         self.buffer += data
 
-    def log_error(self, error):
+    def log_error(self, text):
         with open("error.log", "a") as f:
             f.write(str(datetime.now()) + '\n')
-            f.write('ERROR: ' + str(error) + '\n\n')
-        if self.debug:
-            print error
+            f.write('Error: ' + text + '\n')
+            if self.debug:
+                print text
+
+            from traceback import format_exception
+            from sys import exc_info
+            ex_type, ex_val, ex_tb = exc_info()
+            ex_text = ''.join(format_exception(ex_type, ex_val, ex_tb, 10))
+            f.write(ex_text + '\n')
+            if self.debug:
+                print ex_text
 
     def found_terminator(self):
         line = self.buffer

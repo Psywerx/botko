@@ -31,6 +31,7 @@ def run_bot():
 
 
 class BotkoDaemon(Daemon):
+
     def run(self):
         run_bot()
 

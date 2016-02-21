@@ -1,0 +1,5 @@
+[MESSAGES CONTROL]
+disable=import-error,no-self-use,invalid-name,missing-docstring,line-too-long,relative-import,wrong-import-order,broad-except,bare-except,unused-argument,fixme,too-many-instance-attributes,ungrouped-imports
+
+[REPORTS]
+reports=no
