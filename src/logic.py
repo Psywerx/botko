@@ -114,8 +114,8 @@ class BotLogic(object):
             'PING': lambda line: self.bot.write('PONG'),  # ping-pong
             'END_MOTD': self.handle_end_motd,
             'NAMES_LIST': self.handle_names_list,
-            "NOTICE": lambda line: None,
-            "MODE": lambda line: None,
+            'NOTICE': lambda line: None,
+            'MODE': lambda line: None,
             'END_NAMES': self.handle_end_names,
             'NICK_IN_USE': self.handle_nick_in_use,
         }
