@@ -106,7 +106,7 @@ class PsywerxGroupsPluginTestCase(BasePluginTestCase):
         request.return_value = resp
 
         for action in ['@mygroup', '@group', '@leaveall']:
-            assert self._say_response('#psywerx', 'smotko', '@mygroup', resp)
+            assert self._say_response('#psywerx', 'smotko', action, resp)
 
 
 class PsywerxKarmaPluginTestCase(BasePluginTestCase):
@@ -129,6 +129,27 @@ class PsywerxKarmaPluginTestCase(BasePluginTestCase):
 
         self._say_response('#psywerx', 'smotko', '@karma test1',
                            'test1 has ' + resp + ' karma.')
+
+    @patch("plugins.psywerx_karma.PsywerxKarma.request")
+    def test_karma_server_fail(self, request):
+        request.return_value = None
+
+        self._say_response('#psywerx', 'smotko', '@karma',
+                           'Sorry, could not get karmas.')
+        self._say_response('#psywerx', 'smotko', '@karma test1',
+                           'Sorry, could not get karma for test1.')
+
+    @patch("plugins.psywerx_karma.PsywerxKarma.request")
+    def test_give_karma(self, request):
+        request.return_value = '_return value ignored_'
+
+        self._say_no_response('#psywerx', 'smotko', 'test1++')
+        self.assertTrue(self.plugin.request.called)
+
+    def test_give_self_karma(self):
+        self._say_response('#psywerx', 'smotko', 'smotko++',
+                           'Nice try smotko, but you can\'t ' +
+                           'give karma to yourself!')
 
 
 class PsywerxHistoryPluginTestCase(BasePluginTestCase):
