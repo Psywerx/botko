@@ -6,6 +6,7 @@ import json
 class PsywerxKarma(PsywerxPlugin):
 
     # factorize users current karma
+
     def fact(self, tokens, channel):
         try:
             def pf(number):

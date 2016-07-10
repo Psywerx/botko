@@ -23,6 +23,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestHelperMixin(object):
+
     def _say_response(self, channel, nick, msg, response=None):
         self.plugin.bot.say.called = False
         line = (":" + nick + "!~" + nick + "@6.6.6.6 PRIVMSG " +
@@ -52,6 +53,7 @@ class TestHelperMixin(object):
 
 
 class BasePluginTestCase(unittest.TestCase, TestHelperMixin):
+
     def setUp(self):
         self.bot = Mock()
         self.bot.channels = ["#psywerx"]
@@ -64,6 +66,7 @@ class BasePluginTestCase(unittest.TestCase, TestHelperMixin):
 
 
 class UptimePluginTestCase(BasePluginTestCase):
+
     def setUp(self):
         super(UptimePluginTestCase, self).setUp()
         self.plugin = Uptime(bot=self.bot)
@@ -77,6 +80,7 @@ class UptimePluginTestCase(BasePluginTestCase):
 
 
 class PsywerxGroupsPluginTestCase(BasePluginTestCase):
+
     def setUp(self):
         super(PsywerxGroupsPluginTestCase, self).setUp()
         self.plugin = PsywerxGroups(bot=self.bot)
@@ -110,6 +114,7 @@ class PsywerxGroupsPluginTestCase(BasePluginTestCase):
 
 
 class PsywerxKarmaPluginTestCase(BasePluginTestCase):
+
     def setUp(self):
         super(PsywerxKarmaPluginTestCase, self).setUp()
         self.plugin = PsywerxKarma(bot=self.bot)
@@ -153,6 +158,7 @@ class PsywerxKarmaPluginTestCase(BasePluginTestCase):
 
 
 class PsywerxHistoryPluginTestCase(BasePluginTestCase):
+
     def setUp(self):
         super(PsywerxHistoryPluginTestCase, self).setUp()
         self.plugin = PsywerxHistory(bot=self.bot)
@@ -172,6 +178,7 @@ class PsywerxHistoryPluginTestCase(BasePluginTestCase):
 
 
 class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
+
     def setUp(self):
         # Test data and images are taken from
         # http://www.warriorhut.org/graphics/pornscanner/pornscanner.zip
@@ -235,6 +242,7 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 
 
 class ReadLinksTestCase(BasePluginTestCase):
+
     def setUp(self):
         super(ReadLinksTestCase, self).setUp()
         self.line_start = ":smotko!~smotko@193.188.1.1 PRIVMSG #psywerx "
