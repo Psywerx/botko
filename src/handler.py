@@ -32,7 +32,7 @@ class Bot(asynchat.async_chat):
 
     def write(self, text):
         if self.debug:
-            print '> %s' % text
+            print('> %s' % text)
         self.push(text + '\r\n')
 
     def say(self, text, channel):
@@ -63,7 +63,7 @@ class Bot(asynchat.async_chat):
             f.write(str(datetime.now()) + '\n')
             f.write('Error: ' + text + '\n')
             if self.debug:
-                print text
+                print(text)
 
             from traceback import format_exception
             from sys import exc_info
@@ -71,13 +71,13 @@ class Bot(asynchat.async_chat):
             ex_text = ''.join(format_exception(ex_type, ex_val, ex_tb, 10))
             f.write(ex_text + '\n')
             if self.debug:
-                print ex_text
+                print(ex_text)
 
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
         if self.debug:
-            print "< " + line
+            print("< " + line)
         self.logic.new_input(line)
 
     def run(self, host, port):
@@ -98,7 +98,7 @@ class Bot(asynchat.async_chat):
         del self.known_users[channel][nick.lower()]
 
     def remove_user(self, channel, nick, msg):
-        for channel in self.known_users.keys():
+        for channel in self.known_users:
             if nick.lower() in self.known_users[channel]:
                 self.part_user(channel, nick, msg)
 
@@ -106,7 +106,7 @@ class Bot(asynchat.async_chat):
         self.known_users[channel][nick.lower()] = nick
 
     def change_user(self, channel, old_nick, new_nick):
-        for channel in self.known_users.keys():
+        for channel in self.known_users:
             if old_nick.lower() in self.known_users[channel]:
                 del self.known_users[channel][old_nick.lower()]
                 self.known_users[channel][new_nick.lower()] = new_nick

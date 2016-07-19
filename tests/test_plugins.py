@@ -210,6 +210,11 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
         for url in invalid_image_urls:
             self.assertFalse(self.plugin._is_image_url(url))
 
+    def test_is_image(self):
+        for image_path in self.safe_images + self.unsafe_images:
+            with open(image_path, 'rb') as f:
+                self.assertTrue(self.plugin._is_image(f.read()))
+
     @patch('os.remove')
     @patch('regex.WEB_URL')
     def test_plugin_basic_functionality(self, mock_re, _):

@@ -45,10 +45,10 @@ class PsywerxGroups(PsywerxPlugin):
 
     def _handle_actions(self, channel, nick, msg):
         msg_lower = msg.lower()
-        for a in self.actions.keys():
-            if msg_lower.startswith(a):
+        for action in self.actions:
+            if msg_lower.startswith(action):
                 params = {'nick': nick}
-                response = self.actions[a](channel, params, msg_lower)
+                response = self.actions[action](channel, params, msg_lower)
                 if response:
                     self.bot.say(response.replace('"', ''), channel)
                 return True

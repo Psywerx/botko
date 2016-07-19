@@ -19,9 +19,9 @@ from PIL import Image
 
 from base import BotPlugin
 
-__all__ = [
+__all__ = (
     'NSFWImageDetectorPlugin'
-]
+)
 
 IMAGE_EXTENSIONS = [
     '.png',
@@ -96,7 +96,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
     def _get_skin_ratio_percentage(self, file_path):
         try:
             im = Image.open(file_path)
-        except:
+        except Exception:
             self.bot.log_error('Could not open NSFW image: "'
                                + file_path + '"')
             return 0.0
@@ -151,7 +151,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         try:
             extension = os.path.splitext(url)[1]
             response = requests.get(url, stream=True)
-        except:
+        except Exception:
             self.bot.log_error('Failed to download NSFW image: "'
                                + url + '"')
             return

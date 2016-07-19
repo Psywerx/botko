@@ -15,13 +15,13 @@ def run_bot():
             # and run
             botko.run(settings.IRC_SERVER, settings.IRC_PORT)
 
-        except:
+        except Exception:
             # log the error
             from traceback import format_exc
             from datetime import datetime
             from time import sleep
 
-            print "ERR " + str(format_exc())
+            print("ERR " + str(format_exc()))
 
             f = open('error_log', 'a')
             f.write(str(datetime.now()) + "\n")
@@ -47,9 +47,9 @@ if __name__ == "__main__":
         elif sys.argv[1] == 'nodaemon':
             run_bot()
         else:
-            print "Unknown command"
+            print("Unknown command")
             sys.exit(2)
         sys.exit(0)
     else:
-        print "usage: %s start|stop|restart" % sys.argv[0]
+        print("usage: %s start|stop|restart" % sys.argv[0])
         sys.exit(2)

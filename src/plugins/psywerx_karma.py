@@ -33,7 +33,7 @@ class PsywerxKarma(PsywerxPlugin):
                                  "*".join(map(str, karmas)) + ")", channel)
                 self.bot.say(str("** CONGRATS " + p['nick'] + " **"), channel)
 
-        except:
+        except Exception:
             self.bot.log_error('Could not get upboats.')
 
     def _karma(self, tokens, channel):
