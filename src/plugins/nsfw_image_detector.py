@@ -88,7 +88,7 @@ class NSFWImageDetectorPlugin(BotPlugin):
         Detect if the provided image file is NSFW.
 
         Current version of this function is very simple and only detects very
-        basic nudity by measuring skin tone precentage in the image.
+        basic nudity by measuring skin tone percentage in the image.
         """
         skin_percent = self._get_skin_ratio_percentage(file_path)
         return skin_percent > SKIN_PERCENTAGE_THRESHOLD
