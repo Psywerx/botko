@@ -10,7 +10,7 @@ class Uptime(BotPlugin):
             with open("/proc/uptime", 'r') as f:
                 server_uptime_seconds = int(float(f.readline().split()[0]))
                 server_uptime = str(timedelta(seconds=server_uptime_seconds))
-        except:
+        except Exception:
             self.bot.log_error('Could not get server uptime.')
             server_uptime = "unknown"
 

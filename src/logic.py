@@ -59,7 +59,7 @@ class BotLogic(object):
         for plugin in self.plugins:
             try:
                 plugin.handle_say(channel, msg, line)
-            except:
+            except Exception:
                 return self.bot.log_error('Parsing self line error: ' + line)
 
     def handle_end_motd(self, line):
@@ -78,13 +78,12 @@ class BotLogic(object):
         self.joined_channel = True
 
     def handle_nick_in_use(self, line):
-        # TODO: Could loop, if all nicks are taken
         self.bot.next_nick()
 
     def handle_channel_input(self, action_code, line):
         try:
             nick, msg, channel = self.parse_msg(line)
-        except:
+        except Exception:
             return self.bot.log_error('Parsing msg line error: ' + line)
 
         action = self._channel_actions.get(action_code)
@@ -98,7 +97,7 @@ class BotLogic(object):
     def new_input(self, line):
         try:
             action_code = self._get_action_code(line)
-        except:
+        except Exception:
             return self.bot.log_error('IRC error: ' + line)
 
         action = self._actions.get(action_code)

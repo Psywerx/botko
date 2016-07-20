@@ -57,7 +57,7 @@ class ReadLinks(BotPlugin):
             response = unicode("@" + name + " on Twitter says: " + text)
             response = response.encode('utf8')
             self.bot.say(response, channel)
-        except:
+        except Exception:
             self.bot.log_error('Could not get tweet from: "' + msg + '"')
             self.bot.say('Sorry, I wasn\'t able to read the last tweet :(',
                          channel)
@@ -87,7 +87,7 @@ class ReadLinks(BotPlugin):
             video_info = self._get_vimeo_info(vimeo_res.group('id'))
             self.bot.say(random_response(VIDEO_RESPONSES) % video_info,
                          channel)
-        except:
+        except Exception:
             self.bot.log_error('Could not get title of vimeo link from: "'
                                + msg + '"')
             self.bot.say('For some reason I couldn\'t read the title of that '
@@ -120,7 +120,7 @@ class ReadLinks(BotPlugin):
             video_info = self._get_youtube_info(yt_res.group('id'))
             self.bot.say(random_response(VIDEO_RESPONSES) % video_info,
                          channel)
-        except:
+        except Exception:
             self.bot.log_error('Could not get title of youtube link from: "'
                                + msg + '"')
             self.bot.say('For some reason I couldn\'t read the title of that '
@@ -138,7 +138,7 @@ class ReadLinks(BotPlugin):
                 if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:
                     self.bot.say(random_response(WEB_RESPONSES) % {'title': t},
                                  channel)
-            except:
+            except Exception:
                 self.bot.log_error('Could not get title of webpage: "'
                                    + msg + '"')
 

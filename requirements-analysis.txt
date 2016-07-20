@@ -3,3 +3,6 @@ pyflakes
 pep257
 bashate
 bandit
+flake8
+mastool
+hacking

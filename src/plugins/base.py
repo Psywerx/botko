@@ -1,6 +1,6 @@
-__all__ = [
+__all__ = (
     'BotPlugin'
-]
+)
 
 
 class BotPlugin(object):
@@ -62,5 +62,5 @@ class PsywerxPlugin(BotPlugin):
                 'channel': channel
             }, **extra_params))
             return urlopen(P['SERVER_URL'] + url, params).read()  # nopep8  # nosec: url prefix comes from settings, suffix hardcoded in plugins
-        except:
+        except Exception:
             self.bot.log_error('Request failed: ' + url + params)
