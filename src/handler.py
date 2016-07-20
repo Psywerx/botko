@@ -36,7 +36,7 @@ class Bot(asynchat.async_chat):
         self.push(text + '\r\n')
 
     def say(self, text, channel):
-        if text == '':
+        if not text:
             return
         line = 'PRIVMSG %s :%s' % (channel, text)
         self.write(line)
