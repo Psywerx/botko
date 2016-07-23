@@ -10,10 +10,9 @@ def run_bot():
 
     while True:
         try:
-            # initialize
-            botko = Bot()
-            # and run
-            botko.run(settings.IRC_SERVER, settings.IRC_PORT)
+            # initialize and run
+            botko = Bot(settings)
+            botko.run()
 
         except Exception:
             # log the error
@@ -28,6 +27,10 @@ def run_bot():
             f.write(str(format_exc() + "\n\n"))
             f.close()
             sleep(10)
+
+
+def print_usage():
+    print("usage: %s start|stop|restart|nodaemon" % sys.argv[0])
 
 
 class BotkoDaemon(Daemon):
@@ -47,9 +50,9 @@ if __name__ == "__main__":
         elif sys.argv[1] == 'nodaemon':
             run_bot()
         else:
-            print("Unknown command")
+            print_usage()
             sys.exit(2)
         sys.exit(0)
     else:
-        print("usage: %s start|stop|restart" % sys.argv[0])
+        print_usage()
         sys.exit(2)

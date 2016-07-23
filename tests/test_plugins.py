@@ -60,7 +60,7 @@ class BasePluginTestCase(unittest.TestCase, TestHelperMixin):
         self.bot.known_users = {"#psywerx": {"smotko": "smotko",
                                              "test1": "test1",
                                              "test2": "test2"}}
-        self.bot.uptime = time() - 100
+        self.bot.start_time = time() - 100
 
         self.fixtures_dir = os.path.join(BASE_DIR, 'fixtures/')
 

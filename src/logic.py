@@ -64,7 +64,7 @@ class BotLogic(object):
 
     def handle_end_motd(self, line):
         # after server MOTD, join desired channel
-        for channel in self.bot.channels:
+        for channel in self.bot.settings.CHANNELS:
             self.bot.known_users[channel] = {}
             self.bot.write('JOIN ' + channel)
 

@@ -6,13 +6,14 @@ Created on May 10, 2012
 from handler import Bot
 from logic import BotLogic
 
+import settings
 import unittest
 
 
 class BotTest(unittest.TestCase):
 
     def setUp(self):
-        self.bot = Bot()
+        self.bot = Bot(settings)
         self.logic = BotLogic(self.bot)
 
     def test_parse_priv_msg(self):

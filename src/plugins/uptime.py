@@ -14,7 +14,7 @@ class Uptime(BotPlugin):
             self.bot.log_error('Could not get server uptime.')
             server_uptime = "unknown"
 
-        bot_uptime_seconds = int(time() - self.bot.uptime)
+        bot_uptime_seconds = int(time() - self.bot.start_time)
         bot_uptime = str(timedelta(seconds=bot_uptime_seconds))
         self.bot.say("My uptime: %s, server uptime: %s"
                      % (bot_uptime, server_uptime),
