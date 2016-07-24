@@ -26,7 +26,7 @@ class Bot(asynchat.async_chat):
         self.start_time = time()
 
     def print_debug(self, text):
-        if (self.settings.DEBUG):
+        if self.settings.DEBUG:
             print(text)
 
     def write(self, text):
