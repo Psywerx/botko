@@ -67,7 +67,7 @@ class PsywerxGroups(PsywerxPlugin):
             if group[-1] == "'":
                 group = group[:-1]
 
-            if nick.lower() == '_haibot_':
+            if re.match(self.bot.settings.BOTS_REGEX, nick):
                 continue
 
             params = {'group': group}
