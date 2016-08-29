@@ -5,13 +5,12 @@ from daemon import Daemon
 
 
 def run_bot():
-    import settings
     from handler import Bot
 
     while True:
         try:
             # initialize and run
-            botko = Bot(settings)
+            botko = Bot()
             botko.run()
 
         except Exception:

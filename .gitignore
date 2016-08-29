@@ -1,5 +1,6 @@
 src/error_log
 error_log
+tests/.cache/*
 venv/*
 *.pyc
 *~

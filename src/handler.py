@@ -8,25 +8,25 @@ import socket
 import asyncore
 import asynchat
 
+import settings
 import logic
 
 
 class Bot(asynchat.async_chat):
 
-    def __init__(self, settings):
+    def __init__(self):
         asynchat.async_chat.__init__(self)
         self.known_users = {}
         self.buffer = ''
         self.set_terminator('\r\n')
-        self.settings = settings
         self.nick_num = 0
-        self.nick = self.settings.NICKS[self.nick_num]
+        self.nick = settings.NICKS[self.nick_num]
         self.logic = logic.BotLogic(self)
         self.ac_in_buffer_size = self.ac_out_buffer_size = 8192   # 2*default
         self.start_time = time()
 
     def print_debug(self, text):
-        if self.settings.DEBUG:
+        if settings.DEBUG:
             print(text)
 
     def write(self, text):
@@ -42,17 +42,17 @@ class Bot(asynchat.async_chat):
         return line
 
     def set_nick(self):
-        self.nick = self.settings.NICKS[self.nick_num]
+        self.nick = settings.NICKS[self.nick_num]
         self.write('NICK %s' % self.nick)
 
     def next_nick(self):
-        self.nick_num = (self.nick_num + 1) % len(self.settings.NICKS)
+        self.nick_num = (self.nick_num + 1) % len(settings.NICKS)
         self.set_nick()
 
     def handle_connect(self):
         self.set_nick()
         self.write('USER %s iw 0 :%s' %
-                   (self.settings.IDENT, self.settings.REAL_NAME))
+                   (settings.IDENT, settings.REAL_NAME))
 
     def collect_incoming_data(self, data):
         self.buffer += data
@@ -81,7 +81,7 @@ class Bot(asynchat.async_chat):
             pass
 
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connect((self.settings.IRC_SERVER, self.settings.IRC_PORT))
+        self.connect((settings.IRC_SERVER, settings.IRC_PORT))
 
         random.seed()
         # set the signal handler for shouting random messages
