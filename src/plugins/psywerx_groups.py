@@ -1,4 +1,5 @@
 from base import PsywerxPlugin
+import settings
 import re
 import json
 
@@ -67,7 +68,7 @@ class PsywerxGroups(PsywerxPlugin):
             if group[-1] == "'":
                 group = group[:-1]
 
-            if nick.lower() == '_haibot_':
+            if re.match(settings.BOTS_REGEX, nick):
                 continue
 
             params = {'group': group}

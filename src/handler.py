@@ -14,25 +14,23 @@ import logic
 
 class Bot(asynchat.async_chat):
 
-    def __init__(self, debug=True):
+    def __init__(self):
         asynchat.async_chat.__init__(self)
         self.known_users = {}
         self.buffer = ''
         self.set_terminator('\r\n')
-        self.nicks = settings.BOT_NICKS
         self.nick_num = 0
-        self.nick = self.nicks[0]
-        self.realname = settings.BOT_NAME
-        self.channels = settings.CHANNELS
-        self.ident = 'botko'
-        self.debug = debug
+        self.nick = settings.NICKS[self.nick_num]
         self.logic = logic.BotLogic(self)
         self.ac_in_buffer_size = self.ac_out_buffer_size = 8192   # 2*default
-        self.uptime = time()
+        self.start_time = time()
+
+    def print_debug(self, text):
+        if settings.DEBUG:
+            print(text)
 
     def write(self, text):
-        if self.debug:
-            print('> %s' % text)
+        self.print_debug('> %s' % text)
         self.push(text + '\r\n')
 
     def say(self, text, channel):
@@ -44,16 +42,17 @@ class Bot(asynchat.async_chat):
         return line
 
     def set_nick(self):
-        self.nick = self.nicks[self.nick_num]
+        self.nick = settings.NICKS[self.nick_num]
         self.write('NICK %s' % self.nick)
 
     def next_nick(self):
-        self.nick_num = (self.nick_num + 1) % len(self.nicks)
+        self.nick_num = (self.nick_num + 1) % len(settings.NICKS)
         self.set_nick()
 
     def handle_connect(self):
         self.set_nick()
-        self.write('USER %s iw 0 :%s' % (self.ident, self.realname))
+        self.write('USER %s iw 0 :%s' %
+                   (settings.IDENT, settings.REAL_NAME))
 
     def collect_incoming_data(self, data):
         self.buffer += data
@@ -62,30 +61,27 @@ class Bot(asynchat.async_chat):
         with open("error.log", "a") as f:
             f.write(str(datetime.now()) + '\n')
             f.write('Error: ' + text + '\n')
-            if self.debug:
-                print(text)
+            self.print_debug(text)
 
             from traceback import format_exception
             from sys import exc_info
             ex_type, ex_val, ex_tb = exc_info()
             ex_text = ''.join(format_exception(ex_type, ex_val, ex_tb, 10))
             f.write(ex_text + '\n')
-            if self.debug:
-                print(ex_text)
+            self.print_debug(ex_text)
 
     def found_terminator(self):
         line = self.buffer
         self.buffer = ''
-        if self.debug:
-            print("< " + line)
+        self.print_debug("< " + line)
         self.logic.new_input(line)
 
-    def run(self, host, port):
+    def run(self):
         def handler(signal, frame):
             pass
 
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connect((host, port))
+        self.connect((settings.IRC_SERVER, settings.IRC_PORT))
 
         random.seed()
         # set the signal handler for shouting random messages

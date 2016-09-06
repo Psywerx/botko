@@ -7,6 +7,8 @@ from plugins.psywerx_history import PsywerxHistory
 from plugins.psywerx_groups import PsywerxGroups
 from plugins.psywerx_karma import PsywerxKarma
 
+import settings
+
 
 class BotLogic(object):
 
@@ -64,7 +66,7 @@ class BotLogic(object):
 
     def handle_end_motd(self, line):
         # after server MOTD, join desired channel
-        for channel in self.bot.channels:
+        for channel in settings.CHANNELS:
             self.bot.known_users[channel] = {}
             self.bot.write('JOIN ' + channel)
 
