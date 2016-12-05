@@ -1,6 +1,4 @@
-__all__ = (
-    'BotPlugin'
-)
+__all__ = ('BotPlugin')
 
 
 class BotPlugin(object):
@@ -59,7 +57,7 @@ class PsywerxPlugin(BotPlugin):
         try:
             params = urlencode(dict({
                 'token': P['TOKEN'],
-                'channel': channel
+                'channel': channel,
             }, **extra_params))
             return urlopen(P['SERVER_URL'] + url, params).read()  # nopep8  # nosec: url prefix comes from settings, suffix hardcoded in plugins
         except Exception:
