@@ -76,7 +76,7 @@ class ReadLinks(BotPlugin):
             'title': video["title"].encode('utf8'),
             'seconds': str(video["duration"]),
             'views': str(video["stats_number_of_plays"]),
-            'rating': likes
+            'rating': likes,
         }
 
     def _read_vimeo(self, channel, msg):
@@ -109,7 +109,7 @@ class ReadLinks(BotPlugin):
             'title': video.title.encode('utf-8'),
             'seconds': video.length,
             'views': video.viewcount,
-            'rating': rating
+            'rating': rating,
         }
 
     def _read_youtube(self, channel, msg):

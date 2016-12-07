@@ -38,6 +38,7 @@ class BotTest(unittest.TestCase):
         self.assertEqual("smotko", nick)
         self.assertEqual("#smotko-testing", channel)
 
+
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

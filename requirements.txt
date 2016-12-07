@@ -1,8 +1,8 @@
-requests==2.11.1
-Pillow==3.3.1
+requests==2.12.3
+Pillow==3.4.2
 tweepy==3.5.0
 gdata==2.0.18
-pytest==3.0.1
+pytest==3.0.2
 mock==2.0.0
 lxml==3.6.4
 coverage==4.2

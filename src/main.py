@@ -37,6 +37,7 @@ class BotkoDaemon(Daemon):
     def run(self):
         run_bot()
 
+
 if __name__ == "__main__":
     daemon = BotkoDaemon('/tmp/botko.pid')  # nosec: predictable, but low risk
     if len(sys.argv) == 2:

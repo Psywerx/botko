@@ -27,13 +27,13 @@ class PsywerxHistory(PsywerxPlugin):
         self.bot.say(response % {
             'nick': nick,
             'repost_nick': repost_nick,
-            'num': num
+            'num': num,
         }, channel)
 
     @staticmethod
     def _pick_response(is_self, is_multiple):
         f = [
             [REPOSTS, MULTIPLE_REPOST],
-            [SELF_REPOSTS, MULTIPLE_SELF_REPOST]
+            [SELF_REPOSTS, MULTIPLE_SELF_REPOST],
         ]
         return random_response(f[is_self][is_multiple])

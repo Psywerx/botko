@@ -194,14 +194,14 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
 
     def test_is_image_url(self):
         valid_image_urls = [
-            'http://www.foo.bar/1.jpg'
-            'http://www.foo.bar/1.png'
-            'http://www.foo.bar/1.gif'
-            'http://www.foo.bar/1.JPG'
+            'http://www.foo.bar/1.jpg',
+            'http://www.foo.bar/1.png',
+            'http://www.foo.bar/1.gif',
+            'http://www.foo.bar/1.JPG',
         ]
         invalid_image_urls = [
-            'http://www.ponies.com/'
-            'http://www.ponies.com/bar'
+            'http://www.ponies.com/',
+            'http://www.ponies.com/bar',
         ]
 
         for url in valid_image_urls:
@@ -311,6 +311,7 @@ class ReadLinksTestCase(BasePluginTestCase):
     def test_web_title_with_https(self):
         msg = 'https://news.ycombinator.com'
         self._test_helper(msg, 'News')
+
 
 if __name__ == '__main__':
     unittest.main()

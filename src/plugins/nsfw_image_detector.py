@@ -19,14 +19,12 @@ from PIL import Image
 
 from base import BotPlugin
 
-__all__ = (
-    'NSFWImageDetectorPlugin'
-)
+__all__ = ('NSFWImageDetectorPlugin')
 
 IMAGE_EXTENSIONS = [
     '.png',
     '.jpg',
-    '.gif'
+    '.gif',
 ]
 
 CHUNK_SIZE = 1024
@@ -109,9 +107,9 @@ class NSFWImageDetectorPlugin(BotPlugin):
 
         colors = im.getcolors(im.size[0] * im.size[1])
 
-        skin = sum([count for count, rgb in colors if rgb[0] > 60
-                    and rgb[1] < (rgb[0] * 0.85) and rgb[1] < (rgb[0] * 0.7)
-                    and rgb[1] > (rgb[0] * 0.4) and rgb[1] > (rgb[0] * 0.2)])
+        skin = sum(count for count, rgb in colors if rgb[0] > 60
+                   and rgb[1] < (rgb[0] * 0.85) and rgb[1] < (rgb[0] * 0.70)
+                   and rgb[1] > (rgb[0] * 0.40) and rgb[1] > (rgb[0] * 0.20))
 
         percentage = float(skin) / float(im.size[0] * im.size[1])
         percentage = percentage * 100
