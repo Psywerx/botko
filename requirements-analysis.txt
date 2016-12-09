@@ -1,9 +1,6 @@
 pycodestyle
 pydocstyle
 
-pep8
-pep257
-
 pyflakes
 bashate
 bandit

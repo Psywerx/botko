@@ -7,6 +7,6 @@ pycodestyle --ignore=W503 src tests
 pydocstyle --ignore=D100,D101,D102,D103,D104,D212,D200,D205,D211,D400 src tests
 
 pyflakes src tests
-flake8 --ignore=W503,H101,H301,H306,H404,H405,M005,C101,C103 src tests
+flake8 --ignore=W503,H101,H301,H306,H404,H405,M005,C101,C103,S001 src tests
 bandit -r src
 bashate run run_daemon run_analysis run_tests setup_venv
