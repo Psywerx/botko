@@ -10,3 +10,5 @@ pyflakes src tests
 flake8 --ignore=W503,H101,H301,H306,H404,H405,M005,C101,C103,S001 src tests
 bandit -r src
 bashate run run_daemon run_analysis run_tests setup_venv
+
+find src tests -name *.py | xargs py2diatra

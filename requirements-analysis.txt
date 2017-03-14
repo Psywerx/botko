@@ -18,3 +18,5 @@ flake8-tuple
 flake8-deprecated
 flake8-builtins
 flake8-mutable
+
+pydiatra
