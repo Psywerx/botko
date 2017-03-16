@@ -19,4 +19,4 @@ flake8-deprecated==1.1
 flake8-builtins==0.2
 flake8-mutable==1.1.0
 
-pydiatra
+pydiatra==0.6
