@@ -16,7 +16,7 @@ flake8-string-format==0.2.3
 flake8-comprehensions==1.2.1
 flake8-tuple==0.2.12
 flake8-deprecated==1.1
-flake8-builtins
+flake8-builtins==0.2
 flake8-mutable
 
 pydiatra
