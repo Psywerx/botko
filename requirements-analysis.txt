@@ -6,7 +6,7 @@ bashate==0.5.1
 bandit==1.4.0
 
 flake8==3.3.0
-mastool
+mastool==0.1.3
 hacking
 flake8-commas
 flake8-coding
