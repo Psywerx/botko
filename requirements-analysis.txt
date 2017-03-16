@@ -17,6 +17,6 @@ flake8-comprehensions==1.2.1
 flake8-tuple==0.2.12
 flake8-deprecated==1.1
 flake8-builtins==0.2
-flake8-mutable
+flake8-mutable==1.1.0
 
 pydiatra
