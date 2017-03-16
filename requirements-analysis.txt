@@ -14,7 +14,7 @@ flake8-debugger==1.4.0
 flake8-pep3101==1.0
 flake8-string-format==0.2.3
 flake8-comprehensions==1.2.1
-flake8-tuple
+flake8-tuple==0.2.12
 flake8-deprecated
 flake8-builtins
 flake8-mutable
