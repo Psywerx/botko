@@ -83,3 +83,11 @@ class BotTest(unittest.TestCase):
             ('token',),
             callback)
         self.assertEqual(callback.call_count, 0)
+
+    def test_no_base_handle_message(self):
+        with self.assertRaises(NotImplementedError):
+          self.plugin.handle_message(
+              "#test_channel",
+              "nick",
+              "msg",
+              "line")
