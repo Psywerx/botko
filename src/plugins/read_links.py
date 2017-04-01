@@ -13,7 +13,7 @@ TWITTER_OAUTH = OAuthHandler(T['consumer_key'], T['consumer_secret'])
 TWITTER_OAUTH.set_access_token(T['access_token_key'], T['access_token_secret'])
 TWITTER = TWITTER_API(TWITTER_OAUTH)
 
-# These will be filtered out in _read_webistes
+# These will be filtered out in _read_websites
 __all_non_web__ = [regex.TWITTER, regex.YOUTUBE, regex.VIMEO]
 
 VIDEO_RESPONSES = [
