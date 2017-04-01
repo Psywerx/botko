@@ -86,8 +86,8 @@ class BotTest(unittest.TestCase):
 
     def test_no_base_handle_message(self):
         with self.assertRaises(NotImplementedError):
-          self.plugin.handle_message(
-              "#test_channel",
-              "nick",
-              "msg",
-              "line")
+            self.plugin.handle_message(
+                "#test_channel",
+                "nick",
+                "msg",
+                "line")
