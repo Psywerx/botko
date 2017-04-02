@@ -218,7 +218,7 @@ class NSFWImageDetectorPluginTestCase(BasePluginTestCase):
     @patch('os.remove')
     @patch('regex.WEB_URL')
     def test_plugin_basic_functionality(self, mock_re, _):
-        # Mock methods, we dont want plugin to actually download files
+        # Mock methods, we don't want plugin to actually download files
         self.plugin._download_image = Mock()
         self.plugin._is_image_url = Mock()
         self.plugin._is_image_url.return_value = True

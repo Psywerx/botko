@@ -13,7 +13,7 @@ TWITTER_OAUTH = OAuthHandler(T['consumer_key'], T['consumer_secret'])
 TWITTER_OAUTH.set_access_token(T['access_token_key'], T['access_token_secret'])
 TWITTER = TWITTER_API(TWITTER_OAUTH)
 
-# These will be filtered out in _read_webistes
+# These will be filtered out in _read_websites
 __all_non_web__ = [regex.TWITTER, regex.YOUTUBE, regex.VIMEO]
 
 VIDEO_RESPONSES = [
@@ -132,7 +132,7 @@ class ReadLinks(BotPlugin):
             if [r for r in __all_non_web__ if r.search(link)]:
                 continue
             try:
-                t = lxml.html.parse(urlopen(link))  # nopep8 # nosec: regex.WEB_URL only allows http(s)
+                t = lxml.html.parse(urlopen(link))  # noqa: E501 # nosec: regex.WEB_URL only allows http(s)
                 t = t.find(".//title").text
                 t = t.strip().replace('\n', ' ')
                 if len(re.sub("[^a-zA-Z0-9]", "", t)) >= 5:

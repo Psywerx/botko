@@ -8,7 +8,8 @@ bandit
 flake8
 mastool
 hacking
-flake8-commas
+#Outdated - causes exceptions
+#flake8-commas
 flake8-coding
 flake8-debugger
 flake8-pep3101
@@ -18,5 +19,14 @@ flake8-tuple
 flake8-deprecated
 flake8-builtins
 flake8-mutable
+
+# TODO
+# demand manual import of "future" features
+#flake8-future-import
+
+# Probably not
+#flake8-print
+#flake8-blind-except
+#flake8-quotes
 
 pydiatra
