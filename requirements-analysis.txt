@@ -8,8 +8,7 @@ bandit
 flake8
 mastool
 hacking
-#Outdated - causes exceptions
-#flake8-commas
+pep8-naming
 flake8-coding
 flake8-debugger
 flake8-pep3101
@@ -19,14 +18,25 @@ flake8-tuple
 flake8-deprecated
 flake8-builtins
 flake8-mutable
-
-# TODO
-# demand manual import of "future" features
-#flake8-future-import
-
+flake8-builtins
+flake8-debugger
+flake8-mock
+# Future
+#flake8-commas  # crashes, waiting for fix
+#flake8-bugbear # python 3.5+
+#flake8-pyi     # lints .pyi files
+#flake8-regex   # custom regex checks
 # Probably not
+#flake8-future-import
 #flake8-print
 #flake8-blind-except
 #flake8-quotes
+#flake8-todo
+
+#pylama?
 
 pydiatra
+
+vulture
+
+radon

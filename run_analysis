@@ -3,18 +3,38 @@ export PYTHONPATH=src/:$PYTHONPATH
 . venv/bin/activate
 pip install -r requirements-analysis.txt -U --pre
 
-echo "Running pycodestyle and pydocstyle"
+echo
+echo "Running pycodestyle $(pycodestyle --version)"
 pycodestyle --ignore=W503 src tests
+
+echo
+echo "Running pydocstyle $(pydocstyle --version)"
 pydocstyle --ignore=D100,D101,D102,D103,D104,D212,D200,D205,D211,D400 src tests
 
-echo "Running pyflakes"
+echo
+echo "Running pyflakes $(pyflakes --version)"
 pyflakes src tests
-echo "Running flake8"
-flake8 --ignore=W503,H101,H301,H306,H404,H405,M005,C101,C103,S001 src tests
-echo "Running pydiatra"
-find src tests -name *.py | xargs py2diatra
-echo "Running bandit"
-bandit -r src
-echo "Running bashate"
-bashate run run_daemon run_analysis run_tests setup_venv
 
+echo
+echo "Running flake8 $(flake8 --version)"
+flake8 --ignore=W503,H101,H301,H306,H404,H405,M005,C101,C103,S001 src tests
+
+echo
+echo "Running pydiatra $(py2diatra --version)"
+find src tests -name *.py | xargs py2diatra
+
+echo
+echo "Running vulture (dead code)"
+vulture src
+
+echo
+echo "Running Radon $(radon -v 2>&1) (complexity)"
+radon cc --total-average -nb src
+
+echo
+echo "Running $(bandit --version 2>&1) (security)"
+bandit -r src
+
+echo
+echo "Running bashate (scripts)"
+bashate run run_daemon run_analysis run_tests setup_venv
