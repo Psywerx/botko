@@ -1,5 +1,5 @@
 requests==2.20.0
-Pillow==3.4.2
+Pillow==8.3.2
 tweepy==3.5.0
 gdata==2.0.18
 pytest==3.0.2
