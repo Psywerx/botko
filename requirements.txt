@@ -1,4 +1,4 @@
-requests==2.20.0
+requests==2.31.0
 Pillow==9.3.0
 tweepy==3.5.0
 gdata==2.0.18
